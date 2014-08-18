@@ -1,48 +1,79 @@
 # Libraries
-library(lattice)
-require(PBSadmb)
-library(RColorBrewer)
-library(doBy)
+# library(lattice)
+# require(PBSadmb)
+# library(RColorBrewer)
+# library(doBy)
 
 # Set paths ---------------------------------------------------------------
 
-reposDir    <- "/home/ird/ERICK/PACKAGER/ADMB/jack_mackerel-master"
-#codePath    <- file.path(reposDir,"Code/R/")
-inputPath   <- file.path(reposDir,"Code/admb/")
-outputPath  <- file.path(reposDir,"Code/admb/arc/")
-#resultPath  <- file.path(reposDir,"Results/Assessment/")
-#setwd(codePath)
+reposDir    <- "F:/NvTomus InDemonic/test1/"
 
 # Model names
-modelName <- "mod3.2"
-compareList <- paste0("mod3.", 1:2)
-###
-source('./R/jjm.output-class.R')
-source('./R/jjm.data-class.R')
-source('./R/jjm.lstOuts-class.R')
-source('./R/jjmTools-auxiliar.R')
-source('./R/jjmTools-main.R')
-source('./R/jjmTools-internal.R')
-########################################
-# READING DATA
-########################################
-# READING OUTPUT DATA
-model = readJJM(outputPath, modelName)
-# READING INPUT DATA
-data  = readJJM(inputPath, modelName, 'data')
-# READING A LIST OF OUTPUT MODELS
-lstModel=readJJM(outputPath, compareList)
-# METADATA OF MODEL
-class(model)
-summary(model)
-summary(data)
-# PLOTTING DATA
-plot(model,data)
+modelName <- "mod4.2"
+compareList <- paste0("mod4.", 1:2)
 
-#####################################
-# END DEMO
-#####################################
+# source('./R/jjm.output-class.R')
+# source('./R/jjm.data-class.R')
+# source('./R/jjm.lstOuts-class.R')
+# source('./R/jjmTools-auxiliar.R')
+# source('./R/jjmTools-main.R')
+# source('./R/jjmTools-internal.R')
 
+
+# Reading Data ------------------------------------------------------------
+
+# OUTPUT DATA
+model <- readJJM(path = reposDir, modelName = modelName, type = "output")
+
+# INPUT DATA
+data  = readJJM(path = reposDir, modelName = modelName, type = 'data')
+
+# LIST OF OUTPUT MODELS
+lstModel=readJJM(path = reposDir, modelName = compareList, type = "lstOuts")
+
+
+# Print data --------------------------------------------------------------
+
+# OUTPUT DATA
+print(model)
+
+# INPUT DATA
+print(data)
+
+# LIST OF OUTPUT MODELS
+print(lstModel)
+
+
+# Get and print summaries -------------------------------------------------
+
+# OUTPUT DATA (not working, to be tested)
+# sumModel <- summary(model)
+# sumModel
+
+# INPUT DATA
+sumData <- summary(data)
+sumData
+
+# LIST OF OUTPUT MODELS
+sumList <- summary(lstModel)
+sumList
+
+
+# Plots -------------------------------------------------------------------
+
+# OUTPUT DATA
+# diagnostics function
+
+# INPUT DATA
+# diagnostics function
+
+# LIST OF OUTPUT MODELS
+# compareModels function
+
+# Diagnostics -------------------------------------------------------------
+
+diagnostics(inputObject = data, outputObject = model,
+            what = c("input", "fit", "projections", "ypr"))
 # 
 # 
 # mod1 = readJJM("jjm")
