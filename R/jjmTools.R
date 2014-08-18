@@ -15,7 +15,6 @@ outputPath  <- file.path(reposDir,"Code/admb/arc/")
 
 # Model names
 modelName <- "mod3.2"
-dataName <- "mod3.2.dat"
 compareList <- paste0("mod3.", 1:2)
 ###
 source('./R/jjm.output-class.R')
