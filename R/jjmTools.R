@@ -1,3 +1,49 @@
+# Libraries
+library(lattice)
+require(PBSadmb)
+library(RColorBrewer)
+library(doBy)
+
+# Set paths ---------------------------------------------------------------
+
+reposDir    <- "/home/ird/ERICK/PACKAGER/ADMB/jack_mackerel-master"
+#codePath    <- file.path(reposDir,"Code/R/")
+inputPath   <- file.path(reposDir,"Code/admb/")
+outputPath  <- file.path(reposDir,"Code/admb/arc/")
+#resultPath  <- file.path(reposDir,"Results/Assessment/")
+#setwd(codePath)
+
+# Model names
+modelName <- "mod3.2"
+dataName <- "mod3.2.dat"
+compareList <- paste0("mod3.", 1:2)
+###
+source('./R/jjm.output-class.R')
+source('./R/jjm.data-class.R')
+source('./R/jjm.lstOuts-class.R')
+source('./R/jjmTools-auxiliar.R')
+source('./R/jjmTools-main.R')
+source('./R/jjmTools-internal.R')
+########################################
+# READING DATA
+########################################
+# READING OUTPUT DATA
+model = readJJM(outputPath, modelName)
+# READING INPUT DATA
+data  = readJJM(inputPath, modelName, 'data')
+# READING A LIST OF OUTPUT MODELS
+lstModel=readJJM(outputPath, compareList)
+# METADATA OF MODEL
+class(model)
+summary(model)
+summary(data)
+# PLOTTING DATA
+plot(model,data)
+
+#####################################
+# END DEMO
+#####################################
+
 # 
 # 
 # mod1 = readJJM("jjm")
