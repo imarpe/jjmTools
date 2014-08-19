@@ -1,24 +1,11 @@
-# Libraries
-# library(lattice)
-# require(PBSadmb)
-# library(RColorBrewer)
-# library(doBy)
-
+require(jjmTools)
 # Set paths ---------------------------------------------------------------
 
-reposDir    <- "F:/NvTomus InDemonic/test1/"
+reposDir    <- "R:/documentos/software/SPRFMO/jack_mackerel"
 
 # Model names
-modelName <- "mod4.2"
+modelName <- "mod7c"
 compareList <- paste0("mod4.", 1:2)
-
-# source('./R/jjm.output-class.R')
-# source('./R/jjm.data-class.R')
-# source('./R/jjm.lstOuts-class.R')
-# source('./R/jjmTools-auxiliar.R')
-# source('./R/jjmTools-main.R')
-# source('./R/jjmTools-internal.R')
-
 
 # Reading Data ------------------------------------------------------------
 
