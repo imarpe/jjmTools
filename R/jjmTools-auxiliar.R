@@ -159,7 +159,6 @@
 
 .getParameters <- function(patternList, myList) {
   
-#   list1 <- list(SD = FALSE, Sum = NULL, startYear = NULL, legendPos = "topright", xlim = NULL, ylim = NULL)
   list3 <- NULL
   for(i in seq_along(patternList))
     if(names(patternList)[i] %in% names(myList))
@@ -167,4 +166,22 @@
         list3[[i]] <- patternList[[i]]
   
   return(list3)
+}
+
+.getResume <- function(typePlot) {
+  formulaVector <- NULL
+  for(i in names(diagPlots[[typePlot]]))
+  {
+    if(class(diagPlots[[typePlot]][[i]]) == "list")
+    {
+      result <- c(name = i, type = "List of plots")
+    }else
+    {
+      result <- c(name = i, type = "Single plot")
+    }
+    
+    formulaVector <- rbind(formulaVector, result)
+  }
+  
+  return(formulaVector)
 }
