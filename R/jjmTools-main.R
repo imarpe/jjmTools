@@ -1,25 +1,21 @@
 # To define generic classes and methods for the package
 #.readJjmOutput = function(outputPath, modelName, ...)
-readJJM <- function(path, modelName, type="output", ...) {
+readJJM <- function(path, modelName, ...) {
 
-  if(length(modelName) > 1) 
-    type <- "lstOuts"
+  modelName <- tolower(modelName)
   
-  output <- switch(type,
-                   output   = .getJjmOutput(path = path, model = modelName, ...),
-                   data     = .getJjmData(path = path, model = modelName, ...),
-                   lstOuts  = .getJjmOutputS(path = path, listName = modelName),
-                   
-                   stop("Invalid type."))
+  if(length(modelName) > 1)
+    output <- .getJjmOutputS(path = path, listName = modelName) else
+      output <- .getJjmOutput(path = path, model = modelName, ...)
   
   return(output)
 }
 
 
-diagnostics <- function(inputObject, outputObject, what, ...) {
+diagnostics <- function(outputObject, ...) {
   
-  output <- .diagnostics(jjm.out = outputObject$out, jjm.in = inputObject$data,
-                         jjm.ypr = outputObject$YPR, what = what)
+  output <- .diagnostics(jjm.out = outputObject$output, jjm.in = outputObject$data$data,
+                         jjm.ypr = outputObject$output$YPR)
   
   class(output) = c("jjm.diag", class(output))
   return(output)
