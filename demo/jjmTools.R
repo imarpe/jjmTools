@@ -1,88 +1,81 @@
-require(jjmTools)
-# Set paths ---------------------------------------------------------------
 
-reposDir    <- "R:/documentos/software/SPRFMO/jack_mackerel"
+###########################################################################
+# DEMO SCRIPT
+###########################################################################
 
-# Model names
-modelName <- "mod7c"
-compareList <- paste0("mod4.", 1:2)
+# Set parameters ----------------------------------------------------------
 
-# Reading Data ------------------------------------------------------------
+# Path of JJM repository
+reposDir    <- "F:/NvTomus InDemonic/test1/"
 
-# OUTPUT DATA
+# Name of a model
+modelName <- "mod4.2"
+
+# Names of models
+compareList <- paste0("mod4.", 1:4)
+
+
+# Reading -----------------------------------------------------------------
+
+# OUTPUT Object
 model <- readJJM(path = reposDir, modelName = modelName, type = "output")
 
-# INPUT DATA
-data  = readJJM(path = reposDir, modelName = modelName, type = 'data')
+# LIST OF OUTPUT Object
+lstModel <- readJJM(path = reposDir, modelName = compareList, type = "lstOuts")
 
-# LIST OF OUTPUT MODELS
-lstModel=readJJM(path = reposDir, modelName = compareList, type = "lstOuts")
+# DIAG object
+diagPlots <- diagnostics(outputObject = model)
 
 
-# Print data --------------------------------------------------------------
 
-# OUTPUT DATA
+# Print -------------------------------------------------------------------
+
+# OUTPUT object
 print(model)
 
-# INPUT DATA
-print(data)
-
-# LIST OF OUTPUT MODELS
+# LIST OF OUTPUT object
 print(lstModel)
+
+# DIAG object
+print(diagPlots)
 
 
 # Get and print summaries -------------------------------------------------
 
-# OUTPUT DATA (not working, to be tested)
-# sumModel <- summary(model)
-# sumModel
+# OUTPUT object
+sumModel <- summary(model)
+sumModel
 
-# INPUT DATA
-sumData <- summary(data)
-sumData
-
-# LIST OF OUTPUT MODELS
+# LIST OF OUTPUT object
 sumList <- summary(lstModel)
 sumList
 
+# DIAG object
+sumPlots <- summary(diagPlots)
+sumPlots
 
-# Plots -------------------------------------------------------------------
 
-# OUTPUT DATA
-# diagnostics function
+# Get and print plots -----------------------------------------------------
 
-# INPUT DATA
-# diagnostics function
+# OUTPUT object
+# diagnostic function
 
-# LIST OF OUTPUT MODELS
-# compareModels function
+# LIST OF OUTPUT object
+filename <- file.path(reposDir, "testPlot.pdf")
+pdf(file = filename)
 
-# Diagnostics -------------------------------------------------------------
+plot(lstModel, outputFilename, plotType = "pdf", comparisonType = "time",
+     comparisonParams = list(Slot = "TotBiom", SD = TRUE),
+     height = 29.7/2.54, width = 21/2.54, pointsize = 16, bg = "white")
 
-diagnostics(inputObject = data, outputObject = model,
-            what = c("input", "fit", "projections", "ypr"))
-# 
-# 
-# mod1 = readJJM("jjm")
-# mod2 = readJJM("jjm2")
-# datos = readJJM("jjm", type="data")
-# 
-# diag1 = diagnostics(model1)
-# summary(model1, ...) # write all the summaries and tables
-# summary(diag1)
-# plot(model1) # make all the plots
-# plot(model1, what="index") # plot the fit of the indices
-# plot(model1, what="SSB") # plot the SSB
-# models = combineModels(model1, model2, model3, ...) # make an object to compare models
-# plot(models) # make the plots for comparisons
-# 
-# # clases
-# jjm.output # output: print, summary, plot
-#   summary.jjm.output # class for summary: print
-# jjm.data # data: print, summary, plot
-#   summary.jjm.data # class for summary: print 
-# jjm.diag # diagnostics: print, summary?, plot      
-#   summary.jjm.diag # class for summary: print  
-# jjm.multi # combined models: print, summary, plot
-#   summary.jjm.multi # class for summary: print  
-# 
+dev.off()
+shell.exec(file = filename)
+
+# DIAG object (single plot)
+filename <- file.path(reposDir, "testPlot.pdf")
+pdf(file = filename)
+
+plot(diagPlots, what = c("input", "fit", "projections", "ypr"))
+
+dev.off()
+shell.exec(file = filename)
