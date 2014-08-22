@@ -6,5 +6,5 @@ Date: 2014-08-15
 Author: SPRFMO's Scientific Committee
 Maintainer: Ricardo Oliveros-Ramos <roliveros@imarpe.gob.pe>
 Description: More about what it does (maybe more than one line)
-License: What license is it under?
+License: TBD
 Depends: lattice, PBSadmb, RColorBrewer, doBy
