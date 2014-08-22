@@ -1,7 +1,10 @@
 # To define generic classes and methods for the package
 #.readJjmOutput = function(outputPath, modelName, ...)
-readJJM <- function(path, modelName, ...) {
+readJJM <- function(path = NULL, modelName, ...) {
 
+  if(is.null(path))
+    path <- paste0(getwd(), "/../..")
+    
   modelName <- tolower(modelName)
   
   if(length(modelName) > 1)
@@ -22,12 +25,12 @@ diagnostics <- function(outputObject, ...) {
 }
 
 
-compareModels <- function(lstObject, outputFilename, plotType = "pdf", comparisonType = "time",
-                          comparisonParams, ...) {
-  
-  .compareModels(lstObject = lstObject, outputFilename = outputFilename, plotType = plotType,
-                 comparisonType = comparisonType, comparisonParams = comparisonParams, ...)
-  
-  return(invisible())
-}
+# compareModels <- function(lstObject, outputFilename, plotType = "pdf", comparisonType = "time",
+#                           comparisonParams, ...) {
+#   
+#   .compareModels(lstObject = lstObject, outputFilename = outputFilename, plotType = plotType,
+#                  comparisonType = comparisonType, comparisonParams = comparisonParams, ...)
+#   
+#   return(invisible())
+# }
 

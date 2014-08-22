@@ -61,15 +61,15 @@ sumPlots
 # diagnostic function
 
 # LIST OF OUTPUT object
-filename <- file.path(reposDir, "testPlot.pdf")
-pdf(file = filename)
-
-plot(lstModel, outputFilename, plotType = "pdf", comparisonType = "time",
-     comparisonParams = list(Slot = "TotBiom", SD = TRUE),
-     height = 29.7/2.54, width = 21/2.54, pointsize = 16, bg = "white")
-
-dev.off()
-shell.exec(file = filename)
+# filename <- file.path(reposDir, "testPlot.pdf")
+# pdf(file = filename)
+# 
+# plot(lstModel, outputFilename, plotType = "pdf", comparisonType = "time",
+#      comparisonParams = list(Slot = "TotBiom", SD = TRUE),
+#      height = 29.7/2.54, width = 21/2.54, pointsize = 16, bg = "white")
+# 
+# dev.off()
+# shell.exec(file = filename)
 
 # DIAG object (single plot)
 filename <- file.path(reposDir, "testPlot.pdf")
