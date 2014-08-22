@@ -191,7 +191,7 @@
   firstChar <- substr(path, 1, 1)
   
   if(firstChar == "/" | firstChar == "")
-    path <- file.path(getwd(), "/../..")
+    path <- file.path(getwd())
   
   return(path)
 }

@@ -1,7 +1,7 @@
 
 .getJjmOutputS <- function(path, listName){
   
-  path <- file.path(path, "admb/arc/")
+  path <- file.path(path, "arc/")
   compareList <- file.path(path, paste0(listName,"_R.rep"))
   
   lstOuts <- list()
@@ -39,10 +39,8 @@ summary.jjm.lstOuts = function(object,...) {
 
 print.summary.jjm.lstOuts = function(x, ...) {
   
-  x2        <- x
-  class(x2) <- 'jjm.output'
-  
-  print(x2, ...)
+  cat("\nList of models:\n\n")
+  print(x$info$model, ...)
   
   cat("\nLikelihood Table:\n\n")
   print(x$like, ...)

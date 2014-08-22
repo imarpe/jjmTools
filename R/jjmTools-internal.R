@@ -1087,6 +1087,58 @@
   
   fitPlots$summarySheet <- pic
   
+  # Summary sheet 2
+  TotCatch    <- 0
+  for(iFlt in grep("Obs_catch_",names(jjm.out)))
+    TotCatch    <- jjm.out[[iFlt]]+TotCatch
+  summaryData <- rbind(cbind(jjm.out$Yr,jjm.out$TotBiom[,-1],"Total biomass"),
+                       cbind(jjm.out$Yr,cbind(rowMeans(jjm.out$TotF[,-1]),rowMeans(jjm.out$TotF[,-1]),rowMeans(jjm.out$TotF[,-1]),rowMeans(jjm.out$TotF[,-1])),"Fishing mortality"),
+                       cbind(jjm.out$Yr,jjm.out$R[,-1],"Recruitment"),
+                       cbind(jjm.out$Yr,jjm.out$TotBiom_NoFish[,-1],"Unfished biomass"))
+  
+  summaryData <- rbind(cbind(summaryData[,c(1:2,6)],"point"),cbind(summaryData[,c(1,4,6)],"lower"),cbind(summaryData[,c(1,5,6)],"upper"))
+  
+  colnames(summaryData) <- c("year","data","class","estim")
+  summaryData <- data.frame(summaryData,stringsAsFactors=F)
+  summaryData$class <- factor(summaryData$class, ordered = FALSE,
+                              levels = c("Unfished biomass", "Recruitment", "Fishing mortality", "Total biomass"))
+  summaryData$year <- as.integer(summaryData$year); summaryData$data <- as.numeric(summaryData$data)
+  
+  pic <- xyplot(data ~ year | class,data=summaryData,
+                groups=class,
+                main=NA,
+                prepanel=function(...) {list(ylim=range(pretty(c(0,list(...)$y))))},
+                layout=c(1,4),
+                panel=function(x,y){
+                  panel.grid(h=-1, v= -1)
+                  point = 1                       :   length(jjm.out$Yr)
+                  lower = (  length(jjm.out$Yr)+1):(2*length(jjm.out$Yr))
+                  upper = (2*length(jjm.out$Yr)+1):(3*length(jjm.out$Yr))
+                  
+                  if(panel.number()==1){
+                    panel.polygon(c(x[lower],rev(x[upper])),c(y[lower],rev(y[upper])),col="grey")
+                    panel.xyplot(x[point],y[point],lwd=4,lty=1,type="l",col=1)
+                  }
+                  
+                  if(panel.number()==2){
+                    panel.barchart(x[point],y[point],horizontal=FALSE,origin=0,box.width=1,col="grey")
+                    panel.segments(x[lower],y[lower],x[lower],y[upper])
+                  }
+                  
+                  if(panel.number()==3){
+                    panel.xyplot(x[point],y[point],lwd=4,lty=2,type="l",col=1)
+                  }
+                  
+                  if(panel.number()==4){
+                    panel.polygon(c(x[lower],rev(x[upper])),c(y[lower],rev(y[upper])),col="grey")
+                    panel.xyplot(x[point],y[point],lwd=4,lty=1,type="l",col=1)
+                  }
+                },
+                scales=list(alternating=1,y=list(relation="free",rot=0)))
+  
+  fitPlots$summarySheet2 <- pic  
+  
+  
   # 22b Uncertainties of key parameters
   res <- rbind(data.frame(CV=jjm.out$SSB[,3]/jjm.out$SSB[,2],years=jjm.out$SSB[,1],class="SSB"),
                data.frame(CV=jjm.out$TotBiom[,3]/jjm.out$TotBiom[,2],years=jjm.out$TotBiom[,1],class="TSB"),
