@@ -1,7 +1,7 @@
 
 .getJjmOutputS <- function(path, listName){
   
-  path <- file.path(path, "Code/admb/arc/")
+  path <- file.path(path, "admb/arc/")
   compareList <- file.path(path, paste0(listName,"_R.rep"))
   
   lstOuts <- list()

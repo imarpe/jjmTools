@@ -185,3 +185,13 @@
   
   return(formulaVector)
 }
+
+.getPath <- function(path)
+{
+  firstChar <- substr(path, 1, 1)
+  
+  if(firstChar == "/" | firstChar == "")
+    path <- file.path(getwd(), "/../..")
+  
+  return(path)
+}

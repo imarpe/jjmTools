@@ -2,7 +2,7 @@
 .getJjmOutput <- function(path = path, model = model, ...) {
   
   # Define path of input
-  inputPath   <- file.path(path, "Code/admb/")
+  inputPath   <- file.path(path, "admb/")
   
   # Read files .rep and .yld
   output      <- readList(file.path(inputPath, paste("arc/", model, "_R.rep", sep = "")))

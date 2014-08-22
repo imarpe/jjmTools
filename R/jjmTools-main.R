@@ -2,6 +2,8 @@
 #.readJjmOutput = function(outputPath, modelName, ...)
 readJJM <- function(path, modelName, ...) {
     
+  path <- .getPath(path)
+  
   # Set lower case for model name
   modelName <- tolower(modelName)
   
