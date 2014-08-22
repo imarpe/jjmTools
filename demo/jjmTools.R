@@ -72,10 +72,10 @@ sumPlots
 # shell.exec(file = filename)
 
 # DIAG object (single plot)
-filename <- file.path(reposDir, "testPlot.pdf")
-pdf(file = filename)
+# filename <- file.path(reposDir, "testPlot.pdf")
+# pdf(file = filename)
 
 plot(diagPlots, what = c("input", "fit", "projections", "ypr"))
 
-dev.off()
-shell.exec(file = filename)
+# dev.off()
+# shell.exec(file = filename)
