@@ -1,10 +1,10 @@
 Package: jjmTools
 Type: Package
-Title: Package with tools to work with JJM Model
-Version: 1.0
+Title: Graphics and diagnostics tools for SPRFMO's Joint Jack Mackerel model
+Version: 0.1
 Date: 2014-08-15
-Author: Instituto del Mar del Perú
-Maintainer: Who to complain to <yourfault@somewhere.net>
+Author: SPRFMO's Scientific Committee
+Maintainer: Ricardo Oliveros-Ramos <roliveros@imarpe.gob.pe>
 Description: More about what it does (maybe more than one line)
 License: What license is it under?
 Depends: lattice, PBSadmb, RColorBrewer, doBy
