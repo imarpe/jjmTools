@@ -1190,11 +1190,11 @@
   ikey           <- simpleKey(text=c("Observed","Modelled"),
                               points=T,lines=T,columns = 2)
   ikey$lines$col <- c(1,rev(cols)[1])
-  ikey$lines$lwd <- c(2,3)
-  ikey$lines$lty <- c(3,2)
+  ikey$lines$lwd <- c(1,2)
+  ikey$lines$lty <- c(3,1)
   
   ikey$points$pch <- c(19,0)
-  ikey$points$col <- c("darkgrey","white")
+  ikey$points$col <- c("black","white")
   
   pic <- xyplot(Rec~SSB,data=res,groups=class,
                 ylab="Recruitment",xlab="Spawning Stock Biomass",main="Stock Recruitment",
@@ -1203,9 +1203,9 @@
                   panel.grid(h=-1, v= -1)
                   idxobs <- which(res$SSB %in% x & res$class == "observed")
                   idxmod <- which(res$SSB %in% x & res$class == "modelled")
-                  panel.xyplot(x[idxobs],y[idxobs],type="l",lwd=3,col=1,lty=3)
-                  panel.points(x[idxobs],y[idxobs],type="p",cex=0.6,pch=19,col="darkgrey")
-                  panel.xyplot(x[idxmod],y[idxmod],type="l",lwd=5,col=rev(cols)[1],lty=2)
+                  panel.xyplot(x[idxobs],y[idxobs],type="l",lwd=1,lty=3,col="grey80")
+                  panel.points(x[idxobs],y[idxobs],type="p",cex=0.8,pch=19,col=1)
+                  panel.xyplot(x[idxmod],y[idxmod],type="l",lwd=2,col=rev(cols)[1],lty=1)
                 })
   fitPlots$stockRecruitment <- pic
   
