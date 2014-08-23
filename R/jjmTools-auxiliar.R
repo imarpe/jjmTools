@@ -195,3 +195,11 @@
   
   return(path)
 }
+
+.getPath2 <- function(pattern, target)
+{
+  output <- list.files(recursive = TRUE, pattern = pattern)
+  output <- output[grep(x = output, pattern = target)]
+  
+  return(output)
+}

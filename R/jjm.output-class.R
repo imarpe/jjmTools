@@ -4,9 +4,13 @@
   # Define path of input
   inputPath   <- path
   
+  # Set files .rep and .yld
+  output  <- .getPath2(pattern = "_R.rep", target = model)
+  ypr     <- .getPath2(pattern = ".yld", target = model)
+  
   # Read files .rep and .yld
-  output      <- readList(file.path(inputPath, paste("arc/", model, "_R.rep", sep = "")))
-  ypr         <- .readYPR(file.path(inputPath, paste( "arc/", modelName,".yld", sep = "")))
+  output      <- readList(file.path(inputPath, output))
+  ypr         <- .readYPR(file.path(inputPath, ypr))
   
   # Extract asociated .dat file
   dataName    <- scan(file = file.path(inputPath, paste0(model, ".ctl")), what = character(), sep = "\n", quiet = TRUE)
