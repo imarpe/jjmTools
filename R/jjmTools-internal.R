@@ -50,18 +50,36 @@
                                                       scales = list(alternating = 3))
   
   # 2: Weight at age in the survey
-  inputPlots$weightAge <- .input_weightAgeFUN(Nsurveys, jjm.out, ages)
+  inputPlots$weightAge <- .input_weightAgeFUN(Nsurveys, jjm.out, ages,
+                                              type = "l", lwd = 1,
+                                              xlab = "Years", ylab = "Weight", main = "Weight at age in the survey",
+                                              auto.key = list(space = "right", points = FALSE, lines = TRUE, type = "b"),
+                                              scales = list(alternating = 3))
   
   
   # 3: Weight by cohort in the fleet  
-  inputPlots$weightByCohortFleet <- .input_weightByCohortFleetFUN(NFleets, jjm.out, ages)
+  inputPlots$weightByCohortFleet <- .input_weightByCohortFleetFUN(Nfleets, jjm.out, ages,
+                                                                  type = "b", lwd = 1, pch = 19, cex = 0.6,
+                                                                  xlab = "Age", ylab = "Weight",
+                                                                  main = "Weight at age by cohort in the fleet",
+                                                                  auto.key = list(space = "right", points = FALSE,
+                                                                                  lines = TRUE, type = "b"), 
+                                                                  scales = list(alternating = 3))
   
   # 4: Weight by cohort in the survey  
-  inputPlots$weightByCohortSurvey <- .input_weightByCohortSurveyFUN(Nsurveys, jjm.out, ages)
+  inputPlots$weightByCohortSurvey <- .input_weightByCohortSurveyFUN(Nsurveys, jjm.out, ages,
+                                                                    type = "l", lwd = 1, pch = 19, cex = 0.6,
+                                                                    xlab = "Age", ylab = "Weight",
+                                                                    main = "Weight at age by cohort in the survey",
+                                                                    auto.key = list(space = "right", points = FALSE,
+                                                                                    lines = TRUE, type = "b"),
+                                                                    scales = list(alternating = 3))
   
   # 5: Age composition of the catch
   if(.an(ageFleets)[1] != 0){
-    inputPlots$ageFleets1 <- .input_ageFleetsFUN(jjm.in, ageFleets)    
+    inputPlots$ageFleets1 <- .input_ageFleetsFUN(jjm.in, ageFleets,
+                                                 main = "Age composition in fleets", 
+                                                 as.table = TRUE, ylab = "Proportion at age")    
     
     cols <- rev(heat.colors(11))
     inputPlots$ageFleets2 <- .input_ageFleets2FUN(jjm.in, ageFleets, cols)    
@@ -116,7 +134,7 @@
   
   # 12b: Proportions catch by length modelled and observed
   if(.an(lgtFleets)[1] != 0){    
-    fitPlots$residualsCatchAtLengthByFleet <- .fit_residualsCatchAtLengthByFleetFUN(lgtFleets, jjm.out, lengths)
+    fitPlots$residualsCatchAtLengthByFleet <- .fit_residualsCatchAtLengthByFleetFUN(lgtFleets, jjm.out, lengths, Nfleets)
   }
   
   # 13a: Fitted age by year by fleet
@@ -359,7 +377,8 @@
     }
   }
   
-  cols$Fwtatage <- array(NA, dim = c(nY, nA, nF), dimnames = list(years = Ys[1]:Ys[2], age = As[1]:As[2], paste("fishery",1:nF,sep="")))
+  cols$Fwtatage <- array(NA, dim = c(nY, nA, nF),
+                         dimnames = list(years = Ys[1]:Ys[2], age = As[1]:As[2], paste("fishery",1:nF,sep="")))
   for(iFs in 1:nF){
     cols$Fwtatage[,,iFs] <- matrix(na.omit(.an(unlist(res1[counter:(counter + nY - 1)]))),
                                    ncol = nA, nrow = nY, byrow = TRUE)

@@ -150,16 +150,12 @@
   colnames(tot) <- c("year","data","age","survey"); res <- tot
   
   pic <- xyplot(data~year|survey, data = res, groups = age,
-                type = "l", lwd = 1,
-                xlab = "Years", ylab = "Weight", main = "Weight at age in the survey",
-                auto.key = list(space = "right", points = FALSE, lines = TRUE, type = "b"),
-                par.settings = list(superpose.symbol = list(pch = as.character(ages), cex = 1)),
-                scales = list(alternating = 3))
+                par.settings = list(superpose.symbol = list(pch = as.character(ages), cex = 1)), ...)
   
   return(pic)
 }
 
-.input_weightByCohortFleetFUN <- function(Nfleets, jjm.out, ages)
+.input_weightByCohortFleetFUN <- function(Nfleets, jjm.out, ages, ...)
 {
   for(iFleet in 1:Nfleets){
     res <- .createDataFrame(jjm.out[[paste("wt_fsh_", iFleet, sep = "")]][,-1], jjm.out$Yr, ages)
@@ -174,21 +170,17 @@
   res$cohort <- res$year - res$age
   yrs <- sort(rev(jjm.out$Yr)[1:13])
   
-  pic <- xyplot(data~age|fleet,data=subset(res,cohort%in%yrs),groups=cohort,
-                type="b",lwd=1,pch=19,cex=0.6,
-                xlab="Age",ylab="Weight",main="Weight at age by cohort in the fleet",
-                auto.key=list(space="right",points=FALSE,lines=TRUE,type="b"),
-                par.settings=list(superpose.symbol=list(pch=as.character(ages),cex=1)),
-                panel=function(...){
-                  panel.grid(h=-1, v= -1)
+  pic <- xyplot(data ~ age|fleet, data = subset(res, cohort%in%yrs), groups = cohort,
+                par.settings = list(superpose.symbol = list(pch = .ac(ages), cex = 1)),
+                panel = function(...){
+                  panel.grid(h = -1, v = -1)
                   panel.xyplot(...)
-                },
-                scales=list(alternating=3))
+                }, ...)
   
   return(pic)
 }
 
-.input_weightByCohortSurveyFUN <- function(Nsurveys, jjm.out, ages)
+.input_weightByCohortSurveyFUN <- function(Nsurveys, jjm.out, ages, ...)
 {
   for(iSurvey in 1:Nsurveys){
     res <- .createDataFrame(get("jjm.out")[[paste("wt_ind_",iSurvey,sep="")]][,-1],jjm.out$Yr,ages)
@@ -201,22 +193,17 @@
   yrs <- sort(rev(jjm.out$Yr)[1:13])
   
   
-  pic <- xyplot(data~age|survey,data=subset(res,cohort%in%yrs),groups=cohort,
-                type="l",lwd=1,pch=19,cex=0.6,
-                xlab="Age",ylab="Weight",main="Weight at age by cohort in the survey",
-                auto.key=list(space="right",points=FALSE,lines=TRUE,type="b"),
-                par.settings=list(superpose.symbol=list(pch=as.character(ages),cex=1)),
-                
-                panel=function(...){
-                  panel.grid(h=-1, v= -1)
+  pic <- xyplot(data ~ age|survey, data = subset(res, cohort %in% yrs), groups = cohort,
+                par.settings = list(superpose.symbol = list(pch = as.character(ages), cex = 1)),                
+                panel = function(...){
+                  panel.grid(h = -1, v = -1)
                   panel.xyplot(...)
-                },
-                scales=list(alternating=3))
+                }, ...)
   
   return(pic)
 }
 
-.input_ageFleetsFUN <- function(jjm.in, ageFleets)
+.input_ageFleetsFUN <- function(jjm.in, ageFleets, ...)
 {
   for(iFleet in .an(ageFleets)){
     res <- .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
@@ -242,7 +229,7 @@
                   panel = function(...){
                     panel.grid(h = -1, v = -1)
                     panel.barchart(...)
-                  }, main = "Age composition in fleets", as.table = TRUE, ylab = "Proportion at age")
+                  }, ...)
   
   return(pic)
 }
@@ -630,7 +617,7 @@
   return(pic)
 }
 
-.fit_residualsCatchAtLengthByFleetFUN <- function(lgtFleets, jjm.out, lengths)
+.fit_residualsCatchAtLengthByFleetFUN <- function(lgtFleets, jjm.out, lengths, Nfleets)
 {
   for(iFleet in .an(lgtFleets)){
     obs <- .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1], 
