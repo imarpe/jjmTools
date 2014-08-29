@@ -6,10 +6,10 @@
 # Set parameters ----------------------------------------------------------
 
 # Path of JJM repository
-reposDir    <- "F:/NvTomus InDemonic/test1/"
+reposDir    <- ""
 
 # Name of a model
-modelName <- "mod4.2"
+modelName <- "mod2.6"
 
 # Names of models
 compareList <- paste0("mod4.", 1:4)

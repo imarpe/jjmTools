@@ -518,7 +518,7 @@
   return(cols)
 }
 
-.LikeTable = function(lstOuts){
+.LikeTable <- function(lstOuts){
   if(class(lstOuts)[1] == 'jjm.output'){
     Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
@@ -533,7 +533,7 @@
   return(tab)
 }
 
-.Fut_SSB_SD = function(lstOuts){
+.Fut_SSB_SD <- function(lstOuts){
   if(class(lstOuts)[1] == 'jjm.output') {
     Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
@@ -565,7 +565,7 @@
   return(fut)
 }
 
-.SSB_SD = function(lstOuts){
+.SSB_SD <- function(lstOuts){
   if(class(lstOuts)[1] == 'jjm.output') {
     Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
@@ -586,7 +586,7 @@
   return(SSB_SD)
 }
 
-.Puntual_SSB_SD = function(lstOuts,year){
+.Puntual_SSB_SD <- function(lstOuts,year){
   if(class(lstOuts)[1] == 'jjm.output') {
     Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
@@ -608,7 +608,7 @@
 .compareModels <- function(lstObject, comparisonType = "time", comparisonParams, ...) {
   
   # Prepare model names
-  modelNames <- names(lstModel$data)
+  modelNames <- names(lstObject$data)
   
   # Get plots
   if(comparisonType == "time")
