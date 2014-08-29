@@ -5,8 +5,8 @@
   inputPath   <- path
   
   # Set files .rep and .yld
-  output  <- .getPath2(pattern = "_R.rep", target = model)
-  ypr     <- .getPath2(pattern = ".yld", target = model)
+  output  <- .getPath2(pattern = "_R.rep", target = model, path = path)
+  ypr     <- .getPath2(pattern = ".yld", target = model, path = path)
   
   # Read files .rep and .yld
   output      <- readList(file.path(inputPath, output))

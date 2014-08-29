@@ -1,7 +1,7 @@
 
 .getJjmOutputS <- function(path, listName){
   
-  compareList <- sapply(listName, .getPath2, pattern = "_R.rep")
+  compareList <- sapply(listName, .getPath2, pattern = "_R.rep", path = path)
   
   lstOuts <- list()
   for(i in seq_along(compareList))

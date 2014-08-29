@@ -230,14 +230,14 @@
   firstChar <- substr(path, 1, 1)
   
   if(firstChar == "/" | firstChar == "")
-    path <- file.path(getwd())
+    path <- getwd()
   
   return(path)
 }
 
-.getPath2 <- function(pattern, target)
+.getPath2 <- function(path, pattern, target)
 {
-  output <- list.files(recursive = TRUE, pattern = pattern)
+  output <- list.files(path = path, recursive = TRUE, pattern = pattern)
   output <- output[grep(x = output, pattern = target)]
   
   return(output)
