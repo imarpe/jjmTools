@@ -6,7 +6,7 @@
 # Set parameters ----------------------------------------------------------
 
 # Path of JJM repository
-reposDir    <- ""
+reposDir    <- "F:/NvTomus InDemonic/ADMB/Trabajos 2014/summaryPlots"
 
 # Name of a model
 modelName <- "mod2.6"

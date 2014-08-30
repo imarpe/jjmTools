@@ -1,22 +1,62 @@
 ---
 title: "jjmTools"
-author: "IMARPE"
+author: "SPRFMO's Scientific Committee"
 date: "Thursday, August 28, 2014"
 output: html_document
 ---
+Paquete con herramientas para el análisis y obtención de resultados a partir de las salidas del Joint Jack Mackerel Model (JJM). Este paquete cuenta en la actualidad con dos funciones:
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+`readJJM`: Toma una ruta (la ruta de la carpeta **admb** dentro de la carpeta repositorio) y el nombre de un modelo o lista de modelos a evaluar. Devuelve un objeto de clase **jjm.output** (para un modelo único) o **jjm.lstOuts** (para una lista de modelos)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+`diagnostics`: Toma un objeto de tipo **jjm.output** y genera gráficos a partir de los datos que este contenga. Internamente la función requiere de la existencia de los archivos de datos del modelo (.dat), de configuración (.ctl), de salidas para R (_R.rep) y de rendimiento (.yld). Devuelve una lista de gráficos de clase jjm.diag.
 
+Por otro lado, y dado que se obtienen objetos de clases jjm.output, jjm.lstOuts y jjm.diag, el paquete contempla la definición de los métodos correspondientes para las funciones `print`, `summary` y `plot`.
+
+El script de demostración *jjmTools.R* (dentro de la carpeta "demo") puede ser copiado y ejecutado directamente desde dentro de la carpeta **admb** (en el repositorio)
+
+A continuación, se detallarán las funciones y salidas de las funciones de **jjmTools**:
+Se inicia con la definición de parámetros:
+
+**1.** Directorio raíz de JJM, definido en un objeto (en el ejemplo `reposDir`). La función admite rutas relativas (respecto al directorio de trabajo en el que uno se encuentra) y absolutas (ruta completa del directorio raíz).
+
+**2.** Nombre del modelo o lista de modelos a leer definidos en objetos (`modelName` y `compareList`, respectivamente).
 ```{r}
-summary(cars)
+# Definir parámetros
+# Path of JJM repository
+reposDir    <- ""
+
+# Name of a model
+modelName <- "mod4.2"
+
+# Names of models
+compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
 ```
 
-You can also embed plots, for example:
+A continuación, se procederá a leer el modelo o lista de modelos indicados anteriormente:
 
-```{r, echo=FALSE}
-plot(cars)
+```{r, echo = FALSE}
+require(jjmTools)
+
+# OUTPUT Object
+model <- readJJM(path = "", modelName = "mod4.2", type = "output")
+
+# LIST OF OUTPUT Object
+lstModel <- readJJM(path = "", modelName = c("mod4.1", "mod4.2", "mod4.3", "mod4.4"), type = "lstOuts")
+
+# DIAG object
+diagPlots <- diagnostics(outputObject = model)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Seguidamente, se procederá a realizar un `print` de los modelos leídos. Para ello basta con escribir en consola el nombre del objeto o ejecutar la función `print(Nombre_del_modelo)`.
+
+```{r, echo = FALSE}
+# OUTPUT object
+print(readJJM(path = "", modelName = "mod4.2", type = "output"))
+
+# LIST OF OUTPUT object
+print(lstModel)
+
+# DIAG object
+print(diagPlots)
+```
+
