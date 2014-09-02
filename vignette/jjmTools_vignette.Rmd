@@ -33,30 +33,77 @@ compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
 ```
 
 A continuación, se procederá a leer el modelo o lista de modelos indicados anteriormente:
+`model <- readJJM(modelName)`
+`lstModel <- readJJM(compareList)`
 
-```{r, echo = FALSE}
+Una vez generados los objetos para un modelo simple (jjm.output) y una lista de modelos (lstOuts), se generará un objeto con los gráficos de diagnóstico (solo disponible para modelo simple) de la siguiente manera:
+
+`diagPlots <- diagnostics(outputObject = model)`
+
+A continuación, puede usarse la función `print` para los objetos creados, con lo que se obtendrá:
+`print(model)`
+
+````{r, echo = FALSE}
 require(jjmTools)
+modelName <- "mod4.2"
+model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
+print(model)
+````
 
-# OUTPUT Object
-model <- readJJM(path = "", modelName = "mod4.2", type = "output")
+`print(lstModel)`
 
-# LIST OF OUTPUT Object
-lstModel <- readJJM(path = "", modelName = c("mod4.1", "mod4.2", "mod4.3", "mod4.4"), type = "lstOuts")
-
-# DIAG object
-diagPlots <- diagnostics(outputObject = model)
-```
-
-Seguidamente, se procederá a realizar un `print` de los modelos leídos. Para ello basta con escribir en consola el nombre del objeto o ejecutar la función `print(Nombre_del_modelo)`.
-
-```{r, echo = FALSE}
-# OUTPUT object
-print(readJJM(path = "", modelName = "mod4.2", type = "output"))
-
-# LIST OF OUTPUT object
+````{r, echo = FALSE}
+require(jjmTools)
+compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
+lstModel <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", compareList)
 print(lstModel)
+````
 
-# DIAG object
+`print(diagPlots)`
+
+````{r, echo = FALSE}
+require(jjmTools)
+modelName <- "mod4.2"
+model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
+diagPlots <- diagnostics(outputObject = model)
 print(diagPlots)
-```
+````
 
+A continuación, puede usarse la función `summary` para los objetos creados, con lo que se obtendrá:
+`summary(model)`
+
+````{r, echo = FALSE}
+require(jjmTools)
+modelName <- "mod4.2"
+model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
+summary(model)
+````
+
+`summary(lstModel)`
+
+````{r, echo = FALSE}
+require(jjmTools)
+compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
+lstModel <- readJJM(compareList)
+summary(lstModel)
+````
+
+`summary(diagPlots)`
+
+````{r, echo = FALSE}
+modelName <- "mod4.2"
+model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
+diagPlots <- diagnostics(outputObject = model)
+summary(diagPlots)
+````
+
+A continuación, puede usarse la función `plot` para los objetos creados, con lo que se obtendrá:
+`plot(diagPlots$fit$summarySheet2)`
+
+````{r, echo = FALSE}
+require(jjmTools)
+modelName <- "mod4.2"
+model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
+diagPlots <- diagnostics(outputObject = model)
+plot(diagPlots$fit$summarySheet2)
+````

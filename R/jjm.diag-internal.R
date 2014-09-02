@@ -262,7 +262,7 @@
   return(pic)
 }
 
-.input_ageFleetsPlotsFUN <- function(jjm.in, ages, cols)
+.input_ageFleetsPlotsFUN <- function(jjm.in, ages, cols, ageFleets)
 {
   for(iFleet in .an(ageFleets)){
     res <- .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
@@ -586,7 +586,7 @@
   return(pic)
 }
 
-.fit_residualsCatchAtAgeByFleetFUN <- function(ageFleets, jjm.out)
+.fit_residualsCatchAtAgeByFleetFUN <- function(ageFleets, jjm.out, ages)
 {
   for(iFleet in .an(ageFleets)){
     obs <- .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
@@ -654,7 +654,7 @@
   return(pic)
 }
 
-.fit_ageFitsCatchFUN <- function(ageFleets, jjm.out)
+.fit_ageFitsCatchFUN <- function(ageFleets, jjm.out, ages)
 {
   for(iFleet in .an(ageFleets)){
     obs <- .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
@@ -899,7 +899,7 @@
   return(pic)
 }
 
-.fit_ageFitsSurveyFUN <- function(ageSurveys, jjm.out)
+.fit_ageFitsSurveyFUN <- function(ageSurveys, jjm.out, ages, ageFleets)
 {
   for(iSurvey in .an(ageSurveys)){
     obs <- .createDataFrame(jjm.out[[paste("pobs_ind_", iSurvey, sep = "")]][,-1],

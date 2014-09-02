@@ -85,7 +85,7 @@
     inputPlots$ageFleets2 <- .input_ageFleets2FUN(jjm.in, ageFleets, cols, ages)    
     
     cols       <- rainbow(length(ages))
-    inputPlots$ageFleetsPlots <- .input_ageFleetsPlotsFUN(jjm.in, ages, cols)
+    inputPlots$ageFleetsPlots <- .input_ageFleetsPlotsFUN(jjm.in, ages, cols, ageFleets)
   }
   
   # 6: Age composition of the survey
@@ -129,7 +129,7 @@
   
   # 12a: Proportions catch by age modelled and observed
   if(.an(ageFleets)[1] != 0){        
-    fitPlots$residualsCatchAtAgeByFleet <- .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out)
+    fitPlots$residualsCatchAtAgeByFleet <- .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages)
   }
   
   # 12b: Proportions catch by length modelled and observed
@@ -140,7 +140,7 @@
   # 13a: Fitted age by year by fleet
   
   if(.an(ageFleets)[1] != 0){
-    fitPlots$ageFitsCatch <- .fit_ageFitsCatchFUN(ageFleets, jjm.out)
+    fitPlots$ageFitsCatch <- .fit_ageFitsCatchFUN(ageFleets, jjm.out, ages)
   }
   
   # 13b: Fitted length by year by fleet
@@ -161,7 +161,7 @@
   
   # 15b: Fitted age by year by survey
   if(.an(ageSurveys)[1] != 0){
-    fitPlots$ageFitsSurvey <- .fit_ageFitsSurveyFUN(ageSurveys, jjm.out)
+    fitPlots$ageFitsSurvey <- .fit_ageFitsSurveyFUN(ageSurveys, jjm.out, ages, ageFleets)
   }
   
   # 16: Log residuals in survey
