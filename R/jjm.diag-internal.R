@@ -203,7 +203,7 @@
   return(pic)
 }
 
-.input_ageFleetsFUN <- function(jjm.in, ageFleets, ...)
+.input_ageFleetsFUN <- function(jjm.in, ageFleets, ages, ...)
 {
   for(iFleet in .an(ageFleets)){
     res <- .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
@@ -234,7 +234,7 @@
   return(pic)
 }
 
-.input_ageFleets2FUN <- function(jjm.in, ageFleets, cols)
+.input_ageFleets2FUN <- function(jjm.in, ageFleets, cols, ages)
 {
   for(iFleet in .an(ageFleets)){
     res <- .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
@@ -333,7 +333,7 @@
   return(pic)
 }
 
-.input_ageCompositionSurvey2FUN <- function(jjm.in, cols)
+.input_ageCompositionSurvey2FUN <- function(jjm.in, cols, ages)
 {
   for(iSurvey in which(jjm.in$Inumageyears > 0)){
     res <- .createDataFrame(sweep(jjm.in$Ipropage[,,iSurvey], 1,

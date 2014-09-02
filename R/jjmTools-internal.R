@@ -77,12 +77,12 @@
   
   # 5: Age composition of the catch
   if(.an(ageFleets)[1] != 0){
-    inputPlots$ageFleets1 <- .input_ageFleetsFUN(jjm.in, ageFleets,
+    inputPlots$ageFleets1 <- .input_ageFleetsFUN(jjm.in, ageFleets, ages,
                                                  main = "Age composition in fleets", 
                                                  as.table = TRUE, ylab = "Proportion at age")    
     
     cols <- rev(heat.colors(11))
-    inputPlots$ageFleets2 <- .input_ageFleets2FUN(jjm.in, ageFleets, cols)    
+    inputPlots$ageFleets2 <- .input_ageFleets2FUN(jjm.in, ageFleets, cols, ages)    
     
     cols       <- rainbow(length(ages))
     inputPlots$ageFleetsPlots <- .input_ageFleetsPlotsFUN(jjm.in, ages, cols)
@@ -93,7 +93,7 @@
     inputPlots$ageCompositionSurvey1 <- .input_ageCompositionSurvey1FUN(jjm.in, ages)
     
     cols  <- rev(heat.colors(11))
-    inputPlots$ageCompositionSurvey2 <- .input_ageCompositionSurvey2FUN(jjm.in, cols)
+    inputPlots$ageCompositionSurvey2 <- .input_ageCompositionSurvey2FUN(jjm.in, cols, ages)
   }
   
   # 7: Weight in the population
