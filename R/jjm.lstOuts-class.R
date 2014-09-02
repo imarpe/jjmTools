@@ -53,9 +53,21 @@ print.summary.jjm.lstOuts = function(x, ...) {
   return(invisible(x))
 }
 
-plot.lstOuts <- function(lstObject, comparisonType = "time", comparisonParams, ...)
-{
-  .compareModels(lstObject = lstObject, comparisonType = comparisonType, comparisonParams = comparisonParams, ...)
-  
-  return(invisible())
+plot.lstOuts <- function(lstObject,comparisonType = "time",Slot=NULL, SD=FALSE, Sum=NULL, startYear=NULL, legendPos="topright",
+                         YrInd=FALSE, Apply=mean,...){
+  lstOuts=lstObject$data  
+  if(comparisonType == "time")
+  {if(is.null(Slot)) Slot="SSB"
+   .compareTime(lstOuts, Slot, SD, Sum,startYear,legendPos,...)
+  }else if(comparisonType == "matrix")
+  {if(is.null(Slot)) Slot="TotF"
+   .compareMatrix(lstOuts,Slot,Sum,YrInd,Apply,startYear,legendPos,...)
+  }else stop("Incorrect value for 'comparisonType'.")  
 }
+
+# plot.lstOuts <- function(lstObject, comparisonType = "time", comparisonParams, ...)
+# {
+#   .compareModels(lstObject = lstObject, comparisonType = comparisonType, comparisonParams = comparisonParams, ...)
+#   
+#   return(invisible())
+# }
