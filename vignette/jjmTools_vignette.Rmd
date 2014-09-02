@@ -46,17 +46,17 @@ A continuación, puede usarse la función `print` para los objetos creados, con 
 ````{r, echo = FALSE}
 require(jjmTools)
 modelName <- "mod4.2"
-model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
+model <- readJJM(path = "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
 print(model)
 ````
 
 `print(lstModel)`
 
 ````{r, echo = FALSE}
-require(jjmTools)
-compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
-lstModel <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", compareList)
-print(lstModel)
+# require(jjmTools)
+# compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
+# lstModel <- readJJM(path = "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", compareList)
+# print(lstModel)
 ````
 
 `print(diagPlots)`
@@ -82,10 +82,10 @@ summary(model)
 `summary(lstModel)`
 
 ````{r, echo = FALSE}
-require(jjmTools)
-compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
-lstModel <- readJJM(compareList)
-summary(lstModel)
+# require(jjmTools)
+# compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
+# lstModel <- readJJM(compareList)
+# summary(lstModel)
 ````
 
 `summary(diagPlots)`
