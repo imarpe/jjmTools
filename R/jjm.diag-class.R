@@ -14,7 +14,7 @@ summary.jjm.diag = function(object,...) {
   
   namesPlots <- names(object$info)[-1]
   
-  output <- lapply(namesPlots, .getResume)
+  output <- lapply(namesPlots, .getResume, object = object)
   
   names(output) <- namesPlots
   

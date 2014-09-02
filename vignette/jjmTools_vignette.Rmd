@@ -17,9 +17,19 @@ El script de demostración *jjmTools.R* (dentro de la carpeta "demo") puede ser 
 A continuación, se detallarán las funciones y salidas de las funciones de **jjmTools**:
 Se inicia con la definición de parámetros:
 
-**1.** Directorio raíz de JJM, definido en un objeto (en el ejemplo `reposDir`). La función admite rutas relativas (respecto al directorio de trabajo en el que uno se encuentra) y absolutas (ruta completa del directorio raíz).
+**1.** Cargar el paquete usando el comando `require`. jjmTools tiene como paquetes dependientes a *lattice*, *PBSadmb* y *PBSmodelling*, por lo que es necesario instalarlos previamente para evitar posibles mensajes de error. Para cargar jjmTools basta con usar el siguiente comando:
 
-**2.** Nombre del modelo o lista de modelos a leer definidos en objetos (`modelName` y `compareList`, respectivamente).
+`require(jjmTools)`
+
+Si las dependencias han sido instaladas previamente, se mostrarán los siguientes resultados:
+
+````{r}
+require(jjmTools)
+````
+
+**2.** Directorio raíz de JJM, definido en un objeto (en el ejemplo `reposDir`). La función admite rutas relativas (respecto al directorio de trabajo en el que uno se encuentra) y absolutas (ruta completa del directorio raíz).
+
+**3.** Nombre del modelo o lista de modelos a leer definidos en objetos (`modelName` y `compareList`, respectivamente).
 ```{r}
 # Definir parámetros
 # Path of JJM repository
@@ -32,78 +42,58 @@ modelName <- "mod4.2"
 compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
 ```
 
-A continuación, se procederá a leer el modelo o lista de modelos indicados anteriormente:
+**4.** A continuación, se procederá a leer el modelo o lista de modelos indicados anteriormente:
 `model <- readJJM(modelName)`
 `lstModel <- readJJM(compareList)`
 
-Una vez generados los objetos para un modelo simple (jjm.output) y una lista de modelos (lstOuts), se generará un objeto con los gráficos de diagnóstico (solo disponible para modelo simple) de la siguiente manera:
+**5.** Una vez generados los objetos para un modelo simple (jjm.output) y una lista de modelos (lstOuts), se generará un objeto con los gráficos de diagnóstico (solo disponible para modelo simple) de la siguiente manera:
 
 `diagPlots <- diagnostics(outputObject = model)`
 
-A continuación, puede usarse la función `print` para los objetos creados, con lo que se obtendrá:
+**6.** A continuación, puede usarse la función `print` para los objetos creados, con lo que se obtendrá:
+
 `print(model)`
 
 ````{r, echo = FALSE}
-require(jjmTools)
-modelName <- "mod4.2"
-model <- readJJM(path = "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
-print(model)
+print(.model)
 ````
 
 `print(lstModel)`
 
 ````{r, echo = FALSE}
-# require(jjmTools)
-# compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
-# lstModel <- readJJM(path = "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", compareList)
-# print(lstModel)
+print(.lstModel)
 ````
 
 `print(diagPlots)`
 
 ````{r, echo = FALSE}
-require(jjmTools)
-modelName <- "mod4.2"
-model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
-diagPlots <- diagnostics(outputObject = model)
-print(diagPlots)
+print(.diagPlots)
 ````
 
-A continuación, puede usarse la función `summary` para los objetos creados, con lo que se obtendrá:
+**7.** A continuación, puede usarse la función `summary` para los objetos creados, con lo que se obtendrá:
+
 `summary(model)`
 
 ````{r, echo = FALSE}
-require(jjmTools)
-modelName <- "mod4.2"
-model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
-summary(model)
+summary(.model)
 ````
 
 `summary(lstModel)`
 
 ````{r, echo = FALSE}
-# require(jjmTools)
-# compareList <- c("mod4.1", "mod4.2", "mod4.3", "mod4.4")
-# lstModel <- readJJM(compareList)
-# summary(lstModel)
+summary(.lstModel)
 ````
 
 `summary(diagPlots)`
 
 ````{r, echo = FALSE}
-modelName <- "mod4.2"
-model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
-diagPlots <- diagnostics(outputObject = model)
-summary(diagPlots)
+summary(.diagPlots)
 ````
 
-A continuación, puede usarse la función `plot` para los objetos creados, con lo que se obtendrá:
+**8.** A continuación, puede usarse la función `plot` para los objetos creados. Para el ejemplo, se ploteará uno de los gráficos dentro del grupo de `fit`:
+
 `plot(diagPlots$fit$summarySheet2)`
 
 ````{r, echo = FALSE}
-require(jjmTools)
-modelName <- "mod4.2"
-model <- readJJM(path =  "F:\\NvTomus InDemonic\\ADMB\\JJM\\Code\\admb", modelName)
-diagPlots <- diagnostics(outputObject = model)
-plot(diagPlots$fit$summarySheet2)
+plot(.diagPlots$fit$summarySheet2)
 ````

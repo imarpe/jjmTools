@@ -1618,7 +1618,7 @@
   return(pic)
 }
 
-.projections_ssbPredictionFUN <- function(jjm.out)
+.projections_catchPredictionFUN <- function(jjm.out)
 {
   Nfutscen  <- length(grep("SSB_fut_", names(jjm.out)))
   scenarios <- c("F2012 SQ", "F2012 0.75x", "F2012 0.5x", "F2012 0.25x", "F2012 0x")[1:Nfutscen]

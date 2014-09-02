@@ -237,10 +237,10 @@
   projectionsPlots <- list()
   
   # 25: SSB projections
-  projectionsPlots$catchPrediction <- .projections_ssbPredictionFUN(jjm.out)
+  projectionsPlots$ssbPrediction <- .projections_ssbPredictionFUN(jjm.out)
   
   # 26: Catch projections    
-  projectionsPlots$catchPrediction <- .projections_ssbPredictionFUN(jjm.out)
+  projectionsPlots$catchPrediction <- .projections_catchPredictionFUN(jjm.out)
   
   
   # Plots of yield per recruit and yield biomass
