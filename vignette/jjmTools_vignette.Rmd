@@ -6,7 +6,7 @@ output: html_document
 ---
 Paquete con herramientas para el análisis y obtención de resultados a partir de las salidas del Joint Jack Mackerel Model (JJM). Este paquete cuenta en la actualidad con dos funciones:
 
-`readJJM`: Toma una ruta (la ruta de la carpeta **admb** dentro de la carpeta repositorio) y el nombre de un modelo o lista de modelos a evaluar. Devuelve un objeto de clase **jjm.output** (para un modelo único) o **jjm.lstOuts** (para una lista de modelos)
+`readJJM`: Tomaa una ruta (la ruta de la carpeta **admb** dentro de la carpeta repositorio) y el nombre de un modelo o lista de modelos a evaluar. Devuelve un objeto de clase **jjm.output** (para un modelo único) o **jjm.lstOuts** (para una lista de modelos)
 
 `diagnostics`: Toma un objeto de tipo **jjm.output** y genera gráficos a partir de los datos que este contenga. Internamente la función requiere de la existencia de los archivos de datos del modelo (.dat), de configuración (.ctl), de salidas para R (_R.rep) y de rendimiento (.yld). Devuelve una lista de gráficos de clase jjm.diag.
 
