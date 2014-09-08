@@ -1,7 +1,8 @@
-#' Function to read models and list if models and generate results
+#' @title Read a model or list of models
+#' @description Function to read models and list if models and generate results
 #' @param modelName String with the name of model that will be readed or run.
 #' @param path Directory where the 'admb' folder is located.
-#' @param ... 
+#' @param ... Extra arguments
 #' @examples
 #' readJJM(modelName = "mod2.4")
 #' readJJM(modelName = paste0("mod2.", 1:4))
@@ -20,7 +21,13 @@ readJJM <- function(modelName, path = "", ...) {
   return(output)
 }
 
-#' Function to generate plots from results of readJJM function
+#' @title Generate Assessment plots from single model
+#' @description Function to generate plots from results of readJJM function
+#' @param outputObject Object ob class outputs.
+#' @param ... Extra arguments
+#' @examples
+#' model <- readJJM(modelName = "mod2.4")
+#' diagnostics(outputObject = model)
 diagnostics <- function(outputObject, ...) {
   
   # Take an output object and get diagnostic plots extracting outputs, data and YPR
@@ -32,7 +39,13 @@ diagnostics <- function(outputObject, ...) {
   return(output)
 }
 
-#' Function to run a model (o list of models) of JJM and generate inputs files
+#' @title Run a model
+#' @description Function to run a model (o list of models) of JJM and generate inputs files
+#' @param modelName String with the name of model that will be readed or run.
+#' @param path Directory where the 'admb' folder is located.
+#' @param ... Arguments passed from \code{system} function.
+#' @examples
+#' model <- runJJM(modelName = "mod2.4")
 runJJM <- function(modelName, path = "", wait = TRUE, ...)
 {
   path <- .getPath(path)
