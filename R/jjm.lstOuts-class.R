@@ -54,13 +54,14 @@ print.summary.jjm.lstOuts = function(x, ...) {
 }
 
 plot.lstOuts <- function(lstObject, comparisonType = "time", Slot = NULL, SD = FALSE, Sum = NULL, startYear = NULL,
-                         legendPos = "topright", YrInd = FALSE, Apply = mean, ...){
+                         legendPos = "topright", YrInd = FALSE, Apply = "mean", ...){
   if(comparisonType == "time")
   {
     if(is.null(Slot))
       Slot <- "TotBiom"
     
-   .compareTime(lstObject, Slot, SD, Sum, startYear, legendPos, ...)
+   .compareTime(lstObject, Slot = Slot, SD = SD, Sum = Sum, startYear = startYear,
+                legendPos = legendPos, ...)
   }else if(comparisonType == "matrix")
   {
     if(is.null(Slot)) 

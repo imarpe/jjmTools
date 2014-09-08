@@ -1,4 +1,3 @@
-
 ###########################################################################
 # DEMO SCRIPT
 ###########################################################################
@@ -6,22 +5,30 @@
 # Set parameters ----------------------------------------------------------
 
 # Path of JJM repository
-reposDir    <- "F:/NvTomus InDemonic/ADMB/Trabajos 2014/summaryPlots"
+reposDir    <- ""
 
 # Name of a model
-modelName <- "mod2.6"
+modelName <- "mod2.0"
 
 # Names of models
-compareList <- paste0("mod4.", 1:4)
+compareList <- paste0("mod2.", 1:4)
 
+
+# Run models --------------------------------------------------------------
+
+# Run single model
+runJJM(modelName = modelName, path = reposDir)
+
+# Run a list of models
+runJJM(modelName = compareList, path = reposDir, show.output.on.console = FALSE)
 
 # Reading -----------------------------------------------------------------
 
 # OUTPUT Object
-model <- readJJM(path = reposDir, modelName = modelName, type = "output")
+model <- readJJM(modelName = modelName, path = reposDir, type = "output")
 
 # LIST OF OUTPUT Object
-lstModel <- readJJM(path = reposDir, modelName = compareList, type = "lstOuts")
+lstModel <- readJJM(modelName = compareList, path = reposDir, type = "lstOuts")
 
 # DIAG object
 diagPlots <- diagnostics(outputObject = model)

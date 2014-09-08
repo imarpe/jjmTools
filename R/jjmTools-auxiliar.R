@@ -62,7 +62,7 @@
   box()
 }
 
-.compareMatrix <- function(lstOuts, Slot = 'TotF', Sum = NULL, YrInd = FALSE, Apply = mean, startYear = NULL,
+.compareMatrix <- function(lstOuts, Slot = 'TotF', Sum = NULL, YrInd = FALSE, Apply = "mean", startYear = NULL,
                            legendPos = "topright", ...){
   
   lst     <- list(...)
@@ -77,7 +77,7 @@
     }
   }
   
-  for(i in 1:nD) dat[[i]] <- cbind(dat[[i]][,1],apply(dat[[i]][,-1],1,Apply))
+  for(i in 1:nD) dat[[i]] <- cbind(dat[[i]][,1],apply(dat[[i]][,-1],1, get(Apply)))
   
   if(is.null(startYear)){xrange <- range(unlist(lapply(dat,function(x){x[,1]})),na.rm=T)
   } else { xrange <- c(startYear,range(unlist(lapply(dat,function(x){x[,1]})),na.rm=T)[2])}

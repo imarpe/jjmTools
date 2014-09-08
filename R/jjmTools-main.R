@@ -1,7 +1,7 @@
 # To define generic classes and methods for the package
 #.readJjmOutput = function(outputPath, modelName, ...)
-readJJM <- function(path, modelName, ...) {
-    
+readJJM <- function(modelName, path = "", ...) {
+  
   path <- .getPath(path)
   
   # Set lower case for model name
@@ -27,13 +27,24 @@ diagnostics <- function(outputObject, ...) {
   return(output)
 }
 
-
-# compareModels <- function(lstObject, outputFilename, plotType = "pdf", comparisonType = "time",
-#                           comparisonParams, ...) {
-#   
-#   .compareModels(lstObject = lstObject, outputFilename = outputFilename, plotType = plotType,
-#                  comparisonType = comparisonType, comparisonParams = comparisonParams, ...)
-#   
-#   return(invisible())
-# }
-
+runJJM <- function(modelName, path = "", wait = TRUE, ...)
+{
+  path <- .getPath(path)
+  
+  # Set working directory in /admb directory to run model
+  oldWD <- getwd()
+  setwd(path)
+  
+  # Set lower case for model name and filter repeated names
+  modelName <- tolower(modelName)
+  modelName <- unique(modelName)
+  
+  # Run models
+  for(i in modelName)
+    system(paste("run", i), wait = wait, ...)
+  
+  # Back to previous working directory
+  setwd(oldWD)
+  
+  return(invisible())
+}
