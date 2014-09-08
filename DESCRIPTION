@@ -7,5 +7,9 @@ Author: SPRFMO's Scientific Committee
 Maintainer: Ricardo Oliveros-Ramos <roliveros@imarpe.gob.pe>
 Description: More about what it does (maybe more than one line)
 License: TBD
-Depends: lattice, PBSadmb, RColorBrewer, doBy
+Depends:
+    lattice,
+    PBSadmb,
+    RColorBrewer,
+    doBy
 LazyData: true

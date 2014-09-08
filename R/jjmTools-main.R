@@ -1,5 +1,4 @@
-# To define generic classes and methods for the package
-#.readJjmOutput = function(outputPath, modelName, ...)
+#' Function to read models and list if models and generate results
 readJJM <- function(modelName, path = "", ...) {
   
   path <- .getPath(path)
@@ -15,7 +14,7 @@ readJJM <- function(modelName, path = "", ...) {
   return(output)
 }
 
-
+#' Function to generate plots from results of readJJM function
 diagnostics <- function(outputObject, ...) {
   
   # Take an output object and get diagnostic plots extracting outputs, data and YPR
@@ -27,6 +26,7 @@ diagnostics <- function(outputObject, ...) {
   return(output)
 }
 
+#' Function to run a model (o list of models) of JJM and generate inputs files
 runJJM <- function(modelName, path = "", wait = TRUE, ...)
 {
   path <- .getPath(path)
