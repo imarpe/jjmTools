@@ -1,4 +1,10 @@
 #' Function to read models and list if models and generate results
+#' @param modelName String with the name of model that will be readed or run.
+#' @param path Directory where the 'admb' folder is located.
+#' @param ... 
+#' @examples
+#' readJJM(modelName = "mod2.4")
+#' readJJM(modelName = paste0("mod2.", 1:4))
 readJJM <- function(modelName, path = "", ...) {
   
   path <- .getPath(path)
@@ -8,7 +14,7 @@ readJJM <- function(modelName, path = "", ...) {
   
   # Acording to the length of modelname (number of models), decide the way to process
   if(length(modelName) > 1)
-    output <- .getJjmOutputS(path = path, listName = modelName) else
+    output <- .getJjmOutputS(path = path, listName = modelName, ...) else
       output <- .getJjmOutput(path = path, model = modelName, ...)
   
   return(output)
