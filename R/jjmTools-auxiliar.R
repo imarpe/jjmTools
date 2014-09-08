@@ -117,11 +117,11 @@
   return(list3)
 }
 
-.getResume <- function(typePlot, object) {
+.getResume <- function(typePlot) {
   formulaVector <- NULL
-  for(i in names(object[[typePlot]]))
+  for(i in names(diagPlots[[typePlot]]))
   {
-    if(class(object[[typePlot]][[i]]) == "list")
+    if(class(diagPlots[[typePlot]][[i]]) == "list")
     {
       result <- c(name = i, type = "List of plots")
     }else
