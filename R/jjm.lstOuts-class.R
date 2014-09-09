@@ -5,7 +5,7 @@
   
   lstOuts <- list()
   for(i in seq_along(compareList))
-    lstOuts[[i]] <- readList(compareList[i])
+    lstOuts[[i]] <- readList(file.path(path, compareList[i]))
   
   # Assign names to each model in lstOuts
   names(lstOuts) <- listName

@@ -649,3 +649,7 @@
   
   return(invisible())
 }
+
+.combineModels <- function(...){
+  return(deparse(substitute(list(...))))
+}

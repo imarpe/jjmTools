@@ -5,7 +5,7 @@
 # Set parameters ----------------------------------------------------------
 
 # Path of JJM repository
-reposDir    <- ""
+reposDir    <- "../JJM/Code/admb/"
 
 # Name of a model
 modelName <- "mod2.0"
@@ -13,22 +13,21 @@ modelName <- "mod2.0"
 # Names of models
 compareList <- paste0("mod2.", 1:4)
 
-
 # Run models --------------------------------------------------------------
 
 # Run single model
 runJJM(modelName = modelName, path = reposDir)
 
 # Run a list of models
-runJJM(modelName = compareList, path = reposDir, show.output.on.console = FALSE)
+runJJM(modelName = compareList, path = reposDir)
 
 # Reading -----------------------------------------------------------------
 
 # OUTPUT Object
-model <- readJJM(modelName = modelName, path = reposDir, type = "output")
+model <- readJJM(modelName = modelName, path = reposDir)
 
 # LIST OF OUTPUT Object
-lstModel <- readJJM(modelName = compareList, path = reposDir, type = "lstOuts")
+lstModel <- readJJM(modelName = compareList, path = reposDir)
 
 # DIAG object
 diagPlots <- diagnostics(outputObject = model)

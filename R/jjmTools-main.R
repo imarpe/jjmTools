@@ -67,3 +67,16 @@ runJJM <- function(modelName, path = "", wait = TRUE, ...)
   
   return(invisible())
 }
+
+#' @title Combine outputs
+#' @description This function takes model objects (class \code{outputs}) of JJM and generate an object 
+#' with combined models.
+#' @param ... One or more output objects, to be combined to list of models.
+#' @examples
+#' model <- runJJM(modelName = "mod2.4")
+combineModels <- function(...)
+{
+  
+  
+  return(invisible())
+}

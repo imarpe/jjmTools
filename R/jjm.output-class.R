@@ -27,7 +27,8 @@
                       indexModel = output$Index_names)
   
   # Group in a list
-  output <- list(output = list(info = info.output, output = output, YPR = ypr),
+  output <- list(info = list(model = model),
+                 output = list(info = info.output, output = output, YPR = ypr),
                  data = list(info = info.data, data = data))
   
   # Define jjm.output class
