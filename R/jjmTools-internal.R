@@ -651,5 +651,29 @@
 }
 
 .combineModels <- function(...){
-  return(deparse(substitute(list(...))))
+  modelList <- "list(mod1, mod2, mod3)"
+  # modelList <- deparse(substitute(list(...)))
+  modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
+  modelList <- tolower(unlist(strsplit(x = modelList, split = ", ")))
+  
+  List_of_models <- list()
+  for(i in modelList)
+    List_of_models[[i]] <- get(i)
+  names(List_of_models) <- modelList
+  
+  Combined_models <- list()
+  for(i in modelList)
+    List_of_models[[i]] <- get(i)
+  names(List_of_models) <- modelList
+  
+  lstOuts <- list()
+  for(i in modelList)
+    lstOuts[[i]] <- get(i)$output$output
+  
+  names(lstOuts) <- listName
+  info <- list(model = listName)
+  output <- list(data = lstOuts, info = info)
+  
+  class(output) <- c("jjm.lstOuts", class(output))
+  return(output)
 }
