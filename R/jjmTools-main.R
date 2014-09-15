@@ -10,13 +10,10 @@ readJJM <- function(modelName, path = "", ...) {
   
   path <- .getPath(path)
   
-  # Set lower case for model name
-  modelName <- tolower(modelName)
+  output <- .getJjmOutput(path = path, model = modelName, ...)      
   
-  # Acording to the length of modelname (number of models), decide the way to process
   if(length(modelName) > 1)
-    output <- .getJjmOutputS(path = path, listName = modelName, ...) else
-      output <- .getJjmOutput(path = path, model = modelName, ...)
+    warning("The condition has length > 1 and only the first element will be used")
   
   return(output)
 }
@@ -76,7 +73,7 @@ runJJM <- function(modelName, path = "", wait = TRUE, ...)
 #' model <- runJJM(modelName = "mod2.4")
 combineModels <- function(...)
 {
+  output <- .combineModels(...)
   
-  
-  return(invisible())
+  return(output)
 }

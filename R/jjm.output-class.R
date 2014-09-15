@@ -14,6 +14,7 @@
   
   # Extract asociated .dat file
   dataName    <- scan(file = file.path(inputPath, paste0(model, ".ctl")), what = character(), sep = "\n", quiet = TRUE)
+  modelName   <- gsub(x = dataName[2], pattern = " ", replacement = "")
   dataName    <- gsub(x = dataName[1], pattern = " ", replacement = "")
   
   # Read .dat file
@@ -23,11 +24,11 @@
   iFilename   <- file.path(inputPath, dataName)
   info.data   <- list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
                       age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]))
-  info.output <- list(model = model, fisheryNames = output$Fshry_names, modelYears = output$Yr,
+  info.output <- list(model = modelName, fisheryNames = output$Fshry_names, modelYears = output$Yr,
                       indexModel = output$Index_names)
   
   # Group in a list
-  output <- list(info = list(model = model),
+  output <- list(info = list(model = modelName),
                  output = list(info = info.output, output = output, YPR = ypr),
                  data = list(info = info.data, data = data))
   

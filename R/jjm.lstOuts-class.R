@@ -1,3 +1,32 @@
+.combineModels <- function(...){
+#   modelList <- "list(mod1, mod2, mod3, mod4)"
+  modelList <- deparse(substitute(list(...)))
+  modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
+  modelList <- unlist(strsplit(x = modelList, split = ", "))
+  
+  # Remove repeated models from modelList 
+  modIndex <- NULL
+  for(i in modelList)
+    modIndex <- c(modIndex, get(i)$info$model)
+  
+  modIndex <- !duplicated(modIndex)
+  modelList <- modelList[modIndex]
+    
+  # Models
+  models <- list()
+  for(i in modelList)
+    models[[i]] <- get(i)[c("output", "data")]
+  names(models) <- modelList
+  
+  # Combined results
+  # Combine plots
+  combined <- list()
+    
+  output <- list(info = modelList, data = models, combined = combined)
+  
+  class(output) <- c("jjm.lstOuts", class(output))
+  return(output)
+}
 
 .getJjmOutputS <- function(path, listName){
   
@@ -18,12 +47,17 @@
 
 print.jjm.lstOuts <- function(x, ...) {
   cat("\nOutput list from:\n\n")
-  print(x$info$model, ...)
+  print(x$info, ...)
   
   return(invisible())
 }
 
 summary.jjm.lstOuts = function(object,...) {
+  
+  object2 <- list()
+  for(i in seq_along(object$info))
+    object2[[i]] <- object$data[[i]]$output$output
+  
   
   output <- list()
   
