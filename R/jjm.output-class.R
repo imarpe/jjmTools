@@ -1,5 +1,5 @@
 
-.getJjmOutput <- function(path = path, model = model, ...) {
+.getJjmOutput <- function(path, model, ...) {
   
   # Define path of input
   inputPath   <- path
@@ -17,12 +17,12 @@
   dataName    <- gsub(x = dataName[1], pattern = " ", replacement = "")
   
   # Read .dat file
-  data        <- .read.dat(iPath = inputPath, iFilename = dataName)
+  data        <- .read.dat(filename = file.path(inputPath, dataName))
   
   # Generate extra info
   iFilename   <- file.path(inputPath, dataName)
-  info.data   <- list(file = iFilename, variables = length(names(output)), year=c(output$years[1], output$years[2]),
-                      age = c(output$ages[1], output$ages[2]), length = c(output$lengths[1], output$lengths[2]))
+  info.data   <- list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
+                      age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]))
   info.output <- list(model = model, fisheryNames = output$Fshry_names, modelYears = output$Yr,
                       indexModel = output$Index_names)
   

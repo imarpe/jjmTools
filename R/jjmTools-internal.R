@@ -260,9 +260,9 @@
 }
 
 # Code to read in final data ----------------------------------------------
-.read.dat <- function(iFilename,iPath){
+.read.dat <- function(filename){
   ###-Read in the raw datafile-###
-  res1      <- scan(file = file.path(iPath, iFilename), what = 'numeric', quiet = TRUE, sep = "\n",
+  res1      <- scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
                     comment.char = "#", allowEscapes = TRUE)
   res1      <- strsplit(res1, "\t")
   
