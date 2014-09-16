@@ -77,3 +77,10 @@ combineModels <- function(...)
   
   return(output)
 }
+
+integrateModels <- function(...)
+{
+  output <- .integrateModels(...)
+  
+  return(output)
+}

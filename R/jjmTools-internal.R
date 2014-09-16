@@ -523,23 +523,23 @@
     Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
   }else {
-    Name <- lstOuts$info$model
-    lstOuts <- lstOuts$data
+    Name <- lstOuts$info
+    lstOuts <- lstOuts$combined$outputs
   }
   
   names(lstOuts) <- Name
-  tab <- cbind(lstOuts[[1]]$Like_Comp_names, do.call(cbind, lapply(lstOuts, function(x){round(x[["Like_Comp"]], 2)})))
-  #if(save==TRUE) write.csv(tab,file=file.path(inputPath,"LikelihoodTable2013.csv"),row.names=F)
+  tab <- cbind(lstOuts[[1]]$Like_Comp_names, do.call(cbind, lapply(lstOuts, function(x){round(x$Like_Comp, 2)})))
+
   return(tab)
 }
 
 .Fut_SSB_SD <- function(lstOuts){
   if(class(lstOuts)[1] == 'jjm.output') {
-    Name <- lstOuts$output$info$model
+    Name <- lstOuts$output$info
     lstOuts <- list(lstOuts$output$output)
   }else {
-    Name <- lstOuts$info$model
-    lstOuts <- lstOuts$data
+    Name <- lstOuts$info
+    lstOuts <- lstOuts$combined$output
   }
   
   names(lstOuts) <- Name
@@ -547,14 +547,9 @@
                                                                           function(y){return(y[,1:3])}))}))
   fut <- as.data.frame(fut, stringsAsFactors = FALSE)
   colnames(fut) <- c("year", "SSB", "SD")
-  #   fut$modelscenario <- paste(rep(names(lstOuts),each=nrow(lstOuts[[1]]$SSB_fut_1) *
-  #                                    length(grep("SSB_fut_",names(lstOuts[[1]])))),
-  #                              paste("Scen",
-  #                                    rep(1:length(grep("SSB_fut_",names(lstOuts[[1]]))),each=nrow(lstOuts[[1]]$SSB_fut_1)),
-  #                                    sep="_"),
-  #                              sep="_")
+
   fut$modelscenario <- paste(rep(names(lstOuts),
-                                 lapply(lstOuts, function(x) {nrow(x$SSB_fut_1)*length(grep("SSB_fut_",names(x)))})),
+                                 lapply(lstOuts, function(x) {nrow(x$SSB_fut_1)*length(grep("SSB_fut_", names(x)))})),
                              paste("Scen",
                                    as.vector(do.call(c, lapply(lstOuts, 
                                                                function(x){rep(1:length(grep("SSB_fut_", names(x))),
@@ -570,8 +565,8 @@
     Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
   }else {
-    Name <- lstOuts$info$model
-    lstOuts <- lstOuts$data
+    Name <- lstOuts$info
+    lstOuts <- lstOuts$combined$output
   }
   
   names(lstOuts) <- Name
@@ -591,8 +586,9 @@
     Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
   }else {
-    Name <- lstOuts$info$model
-    lstOuts <- lstOuts$data}
+    Name <- lstOuts$info
+    lstOuts <- lstOuts$combined$output
+  }
   
   names(lstOuts) <- Name
   if(year > lstOuts[[1]]$SSB[nrow(lstOuts[[1]]$SSB), 1])
@@ -603,6 +599,27 @@
   colnames(ass) <- c("year", "SSB", "SD")
   # if(length(lstOuts)>1){ass$modelscenario <- names(lstOuts)}
   return(ass)
+}
+
+.integrateModels <- function(...)
+{
+  modelList <- deparse(substitute(list(...)))
+  modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
+  modelList <- unlist(strsplit(x = modelList, split = ", "))
+  
+  # Remove repeated models from modelList 
+  modIndex <- NULL
+  for(i in modelList)
+    modIndex <- c(modIndex, get(i)$info$model)
+  
+  modelNames <- modIndex[!duplicated(modIndex)]
+  modelList <- modelList[!duplicated(modIndex)]
+  
+  output <- list()
+  
+  class(output) <- c("jjm.output")
+  
+  return(output)
 }
 
 .compareModels <- function(lstObject, comparisonType = "time", comparisonParams, ...) {

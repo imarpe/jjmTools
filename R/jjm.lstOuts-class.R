@@ -1,5 +1,4 @@
 .combineModels <- function(...){
-#   modelList <- "list(mod1, mod2, mod3, mod4)"
   modelList <- deparse(substitute(list(...)))
   modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
   modelList <- unlist(strsplit(x = modelList, split = ", "))
@@ -9,37 +8,34 @@
   for(i in modelList)
     modIndex <- c(modIndex, get(i)$info$model)
   
-  modIndex <- !duplicated(modIndex)
-  modelList <- modelList[modIndex]
+  modelNames <- modIndex[!duplicated(modIndex)]
+  modelList <- modelList[!duplicated(modIndex)]
+  
     
   # Models
   models <- list()
   for(i in modelList)
     models[[i]] <- get(i)[c("output", "data")]
-  names(models) <- modelList
+  names(models) <- modelNames
   
   # Combined results
   # Combine plots
   combined <- list()
+  
+  allOutputs <- list()
+  allYPR <- list()
+  allData <- list()
+  for(i in modelList)
+  {
+    allOutputs[[i]] <- get(i)$output$output
+    allYPR[[i]]     <- get(i)$output$YPR
+    allData[[i]]    <- get(i)$data$data  
+  }
+  names(allOutputs) <- names(allYPR) <- names(allData) <- modelNames
+  
+  combined <- list(outputs = allOutputs, YPR = allYPR, data = allData)
     
-  output <- list(info = modelList, data = models, combined = combined)
-  
-  class(output) <- c("jjm.lstOuts", class(output))
-  return(output)
-}
-
-.getJjmOutputS <- function(path, listName){
-  
-  compareList <- sapply(listName, .getPath2, pattern = "_R.rep", path = path)
-  
-  lstOuts <- list()
-  for(i in seq_along(compareList))
-    lstOuts[[i]] <- readList(file.path(path, compareList[i]))
-  
-  # Assign names to each model in lstOuts
-  names(lstOuts) <- listName
-  info <- list(model = listName)
-  output <- list(data = lstOuts, info = info)
+  output <- list(info = modelNames, data = models, combined = combined)
   
   class(output) <- c("jjm.lstOuts", class(output))
   return(output)
@@ -53,12 +49,7 @@ print.jjm.lstOuts <- function(x, ...) {
 }
 
 summary.jjm.lstOuts = function(object,...) {
-  
-  object2 <- list()
-  for(i in seq_along(object$info))
-    object2[[i]] <- object$data[[i]]$output$output
-  
-  
+    
   output <- list()
   
   output$info <- object$info
@@ -73,7 +64,7 @@ summary.jjm.lstOuts = function(object,...) {
 print.summary.jjm.lstOuts = function(x, ...) {
   
   cat("\nList of models:\n\n")
-  print(x$info$model, ...)
+  print(x$info, ...)
   
   cat("\nLikelihood Table:\n\n")
   print(x$like, ...)

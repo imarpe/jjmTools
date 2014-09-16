@@ -33,7 +33,7 @@
                  data = list(info = info.data, data = data))
   
   # Define jjm.output class
-  class(output) <- c("jjm.output", class(output))
+  class(output) <- c("jjm.output")
   
   return(output)
 }
