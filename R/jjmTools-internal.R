@@ -535,7 +535,7 @@
 
 .Fut_SSB_SD <- function(lstOuts){
   if(class(lstOuts)[1] == 'jjm.output') {
-    Name <- lstOuts$output$info
+    Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
   }else {
     Name <- lstOuts$info

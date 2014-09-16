@@ -27,12 +27,18 @@ runJJM(modelName = compareList, path = reposDir)
 model <- readJJM(modelName = modelName, path = reposDir)
 
 # LIST OF OUTPUT Object
-lstModel <- readJJM(modelName = compareList, path = reposDir)
+for(i in seq_along(compareList[1:3]))
+  assign(paste0("mod", i), readJJM(modelName = compareList[i], path = reposDir))
+
+mod4 <- mod2
 
 # DIAG object
 diagPlots <- diagnostics(outputObject = model)
 
 
+# Combine models ----------------------------------------------------------
+
+mod1234 <- combineModels(mod1, mod2, mod3, mod4)
 
 # Print -------------------------------------------------------------------
 
@@ -40,7 +46,7 @@ diagPlots <- diagnostics(outputObject = model)
 print(model)
 
 # LIST OF OUTPUT object
-print(lstModel)
+print(mod1234)
 
 # DIAG object
 print(diagPlots)
@@ -53,7 +59,7 @@ sumModel <- summary(model)
 sumModel
 
 # LIST OF OUTPUT object
-sumList <- summary(lstModel)
+sumList <- summary(mod1234)
 sumList
 
 # DIAG object

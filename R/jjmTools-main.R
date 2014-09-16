@@ -70,7 +70,11 @@ runJJM <- function(modelName, path = "", wait = TRUE, ...)
 #' with combined models.
 #' @param ... One or more output objects, to be combined to list of models.
 #' @examples
-#' model <- runJJM(modelName = "mod2.4")
+#' mod1 <- runJJM(modelName = "mod2.1")
+#' mod2 <- runJJM(modelName = "mod2.2")
+#' mod3 <- runJJM(modelName = "mod2.3")
+#' 
+#' mod_123 <- runJJM(mod1, mod2, mod3)
 combineModels <- function(...)
 {
   output <- .combineModels(...)
@@ -78,9 +82,15 @@ combineModels <- function(...)
   return(output)
 }
 
-integrateModels <- function(...)
+#' @title combineStocks
+#' @description This function takes model objects (class \code{outputs}) of JJM and generate an object 
+#' with combined models.
+#' @param ... One or more output objects, to be combined to list of models.
+#' @examples
+#' model <- runJJM(modelName = "mod2.4")
+combineStocks <- function(...)
 {
-  output <- .integrateModels(...)
+  output <- .combineStocks(...)
   
   return(output)
 }
