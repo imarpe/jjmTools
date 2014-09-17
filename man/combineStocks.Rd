@@ -7,12 +7,18 @@ combineStocks(...)
 }
 \arguments{
 \item{...}{One or more output objects, to be combined to list of models.}
+
+\item{model}{Name for new model. If \code{NULL} (default) a temporal name will be used.}
 }
 \description{
-This function takes model objects (class \code{outputs}) of JJM and generate an object
-with combined models.
+This function takes model objects (class \code{outputs}) of JJM and generate a model
+with SD and mean combined.
 }
 \examples{
-model <- runJJM(modelName = "mod2.4")
+mod1 <- runJJM(modelName = "mod2.1")
+mod2 <- runJJM(modelName = "mod2.2")
+mod3 <- runJJM(modelName = "mod2.3")
+
+combinedMod_123 <- combineStocks(mod1, mod2, mod3, model = "mod_123")
 }
 

@@ -74,7 +74,7 @@ runJJM <- function(modelName, path = "", wait = TRUE, ...)
 #' mod2 <- runJJM(modelName = "mod2.2")
 #' mod3 <- runJJM(modelName = "mod2.3")
 #' 
-#' mod_123 <- runJJM(mod1, mod2, mod3)
+#' mod_123 <- combineModels(mod1, mod2, mod3)
 combineModels <- function(...)
 {
   output <- .combineModels(...)
@@ -83,14 +83,19 @@ combineModels <- function(...)
 }
 
 #' @title combineStocks
-#' @description This function takes model objects (class \code{outputs}) of JJM and generate an object 
-#' with combined models.
+#' @description This function takes model objects (class \code{outputs}) of JJM and generate a model
+#' with SD and mean combined.
 #' @param ... One or more output objects, to be combined to list of models.
+#' @param model Name for new model. If \code{NULL} (default) a temporal name will be used.
 #' @examples
-#' model <- runJJM(modelName = "mod2.4")
-combineStocks <- function(...)
+#' mod1 <- runJJM(modelName = "mod2.1")
+#' mod2 <- runJJM(modelName = "mod2.2")
+#' mod3 <- runJJM(modelName = "mod2.3")
+#' 
+#' combinedMod_123 <- combineStocks(mod1, mod2, mod3, model = "mod_123")
+combineStocks <- function(..., model = NULL)
 {
-  output <- .combineStocks(...)
+  output <- .combineStocks(..., model = model)
   
   return(output)
 }

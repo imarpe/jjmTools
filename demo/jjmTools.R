@@ -13,6 +13,7 @@ modelName <- "mod2.0"
 # Names of models
 compareList <- paste0("mod2.", 0:6)
 
+
 # Run models --------------------------------------------------------------
 
 # Run single model
@@ -20,6 +21,7 @@ runJJM(modelName = modelName, path = reposDir)
 
 # Run a list of models
 runJJM(modelName = compareList, path = reposDir)
+
 
 # Reading -----------------------------------------------------------------
 
@@ -39,6 +41,12 @@ diagPlots <- diagnostics(outputObject = model)
 # Combine models ----------------------------------------------------------
 
 mod1234 <- combineModels(mod1, mod2, mod3, mod4)
+
+
+# Integrating models ------------------------------------------------------
+
+mod12 <- combineStocks(mod1, mod2, model = "giancarlo")
+
 
 # Print -------------------------------------------------------------------
 
@@ -69,25 +77,4 @@ sumPlots
 
 # Get and print plots -----------------------------------------------------
 
-# OUTPUT object
-# diagnostic function
-
-# LIST OF OUTPUT object
-# filename <- file.path(reposDir, "testPlot.pdf")
-# pdf(file = filename)
-# 
-# plot(lstModel, outputFilename, plotType = "pdf", comparisonType = "time",
-#      comparisonParams = list(Slot = "TotBiom", SD = TRUE),
-#      height = 29.7/2.54, width = 21/2.54, pointsize = 16, bg = "white")
-# 
-# dev.off()
-# shell.exec(file = filename)
-
-# DIAG object (single plot)
-# filename <- file.path(reposDir, "testPlot.pdf")
-# pdf(file = filename)
-
-plot(diagPlots, what = c("input", "fit", "projections", "ypr"))
-
-# dev.off()
-# shell.exec(file = filename)
+plot(diagPlots$fit$summarySheet2)
