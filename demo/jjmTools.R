@@ -11,7 +11,7 @@ reposDir    <- "../JJM/Code/admb/"
 modelName <- "mod2.0"
 
 # Names of models
-compareList <- paste0("mod2.", 0:6)
+compareList <- paste0("mod2.", 1:3)
 
 
 # Run models --------------------------------------------------------------

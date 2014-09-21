@@ -8,6 +8,14 @@
   output  <- .getPath2(pattern = "_R.rep", target = model, path = path)
   ypr     <- .getPath2(pattern = ".yld", target = model, path = path)
   
+  # Verify if files exist
+  necesaryFiles <- c(paste0(model, ".ctl"), output, ypr)
+  necesaryFiles <- file.path(inputPath, necesaryFiles)
+  
+  for(i in necesaryFiles)
+    if(!file.exists(i))
+      stop(paste0("File", i, " doesn't exist, please check it."))
+  
   # Read files .rep and .yld
   output      <- readList(file.path(inputPath, output))
   ypr         <- .readYPR(file.path(inputPath, ypr))

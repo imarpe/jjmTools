@@ -700,27 +700,6 @@
   return(ass)
 }
 
-.integrateModels <- function(...)
-{
-  modelList <- deparse(substitute(list(...)))
-  modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
-  modelList <- unlist(strsplit(x = modelList, split = ", "))
-  
-  # Remove repeated models from modelList 
-  modIndex <- NULL
-  for(i in modelList)
-    modIndex <- c(modIndex, get(i)$info$model)
-  
-  modelNames <- modIndex[!duplicated(modIndex)]
-  modelList <- modelList[!duplicated(modIndex)]
-  
-  output <- list()
-  
-  class(output) <- c("jjm.output")
-  
-  return(output)
-}
-
 .compareModels <- function(lstObject, comparisonType = "time", comparisonParams, ...) {
   
   # Prepare model names
@@ -772,129 +751,145 @@
   modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
   modelList <- unlist(strsplit(x = modelList, split = ", "))
   
-  # Models in a list called 'list.model'
-  list.model = list()
+  # Models in a list called 'allModels'
+  allModels <- list()
   for(i in 1:length(modelList)){
-    list.model[[i]] = get(modelList[i])$output$output
+    allModels[[i]] <- get(modelList[i])$output$output
   }
   
-  # Analysis to Slots1 ----------------------------------
+  ###### Analysis to Slots1
   
-  nModels         = length(list.model)
+  nModels <- length(allModels)
   
   # Slots 1
-  Slots1 = c("SSB","R","TotBiom")
+  Slots1 <- c("SSB","R","TotBiom")
   
   # Correction of SSB, R, TotBiom matrices:
-  for(j in 1:length(Slots1)){
-    nFilas = numeric(length(list.model))
-    for(i in 1:length(list.model)){
-      nFilas[i] = nrow(list.model[[i]][[which(names(list.model[[i]]) == Slots1[j])]])
+  for(j in seq_along(Slots1)){
+    nFilas <- numeric(length(allModels))
+    for(i in seq_along(allModels)){
+      nFilas[i] <- nrow(allModels[[i]][[Slots1[j]]])
     }
-    MinF = which(nFilas == min(nFilas))[1]
-    for(i in 1:length(list.model)){
-      FYear = list.model[[MinF]][[which(names(list.model[[i]]) == Slots1[j])]][1,1]
-      list.model[[i]][[which(names(list.model[[i]]) == Slots1[j])]] = 
-        list.model[[i]][[which(names(list.model[[i]]) == Slots1[j])]][which(list.model[[i]][[which(names(list.model[[i]]) == Slots1[j])]][,1] == FYear):nrow(list.model[[i]][[which(names(list.model[[i]]) == Slots1[j])]]), ]
+    
+    minF <- which.min(nFilas)[1]
+    for(i in seq_along(allModels)){
+      index <- which(names(allModels[[i]]) == Slots1[j])
+      FYear <- allModels[[minF]][[index]][1, 1]
+            
+      temp <- allModels[[i]]
+      temp <- temp[[Slots1[j]]][which(temp[[Slots1[j]]][,1] == FYear):nrow(temp[[Slots1[j]]]),]
+      
+      allModels[[i]][[Slots1[j]]] <- temp
     }
   }
   
   # Empty matrix
-  output1 = list(matrix(0, ncol = 5, nrow = nrow(list.model[[1]]$SSB)),
-                 matrix(0, ncol = 5, nrow = nrow(list.model[[1]]$R)),
-                 matrix(0, ncol = 5, nrow = nrow(list.model[[1]]$TotBiom)))
+  output1 <- list(matrix(0, ncol = 5, nrow = nrow(allModels[[1]]$SSB)),
+                  matrix(0, ncol = 5, nrow = nrow(allModels[[1]]$R)),
+                  matrix(0, ncol = 5, nrow = nrow(allModels[[1]]$TotBiom)))
   
   # Analysis
   for(j in 1:length(Slots1)){
-    output1[[j]][,1] = list.model[[1]][[which(names(list.model[[1]]) == Slots1[j])]][,1]
-    for(i in 1:nModels){
-      output1[[j]][,2] = rowSums(cbind(output1[[j]][,2], list.model[[i]][[which(names(list.model[[i]]) == Slots1[j])]][,2]))
-      output1[[j]][,3] = rowSums(cbind(output1[[j]][,3], (list.model[[i]][[which(names(list.model[[i]]) == Slots1[j])]][,3])^2))
+    output1[[j]][,1] <- allModels[[1]][[Slots1[j]]][,1]
+    for(i in seq(nModels)){
+      output1[[j]][,2] <- rowSums(cbind(output1[[j]][,2], allModels[[i]][[Slots1[j]]][,2]))
+      output1[[j]][,3] <- rowSums(cbind(output1[[j]][,3], (allModels[[i]][[Slots1[j]]][,3])^2))
     }
-    output1[[j]][,3] = sqrt(output1[[j]][,3])
-    for(i in 1:nModels){
-      output1[[j]][,4] = output1[[j]][,2] - 1.96*output1[[j]][,3]
-      output1[[j]][,5] = output1[[j]][,2] + 1.96*output1[[j]][,3]
+    
+    output1[[j]][,3] <- sqrt(output1[[j]][,3])
+    for(i in seq(nModels)){
+      output1[[j]][,4] <- output1[[j]][,2] - 1.96*output1[[j]][,3]
+      output1[[j]][,5] <- output1[[j]][,2] + 1.96*output1[[j]][,3]
     }
   }
   # Name to the list 
-  names(output1) = Slots1
+  names(output1) <- Slots1
   
   
-  # Analysis to Slots2 ----------------------------------
+  ###### Analysis to Slots2
   
   # Take in account if all models have the same number of scenarios
-  nScenarios = numeric(length(list.model))
-  for(i in 1:length(list.model)){
-    nScenarios[i] = length(grep("Catch_fut_",names(list.model[[i]])))
+  nScenarios <- numeric(length(allModels))
+  for(i in seq_along(allModels)){
+    nScenarios[i] <- length(grep("Catch_fut_", names(allModels[[i]])))
   }
   
   # if same number of scenarios so:
   if(length(unique(nScenarios)) == 1){
-    # Se crean los Slots2
-    Slots2 = c(paste0("Catch_fut_",1:unique(nScenarios)), 
-               paste0("SSB_fut_",1:unique(nScenarios)))
+    # Create Slots2
+    Slots2 <- c(paste0("Catch_fut_", seq(unique(nScenarios))), 
+                paste0("SSB_fut_", seq(unique(nScenarios))))
     
-    
-    LastYear = max(output1[[3]][,1])
-    NYearP = nrow(list.model[[1]]$Catch_fut_1)
-    YearsProy = (LastYear+1):(LastYear+NYearP)
-    nYearsProy = length(YearsProy)
+    LastYear    <- max(output1[[3]][,1])
+    NYearP      <- nrow(allModels[[1]]$Catch_fut_1)
+    YearsProy   <- seq(from = (LastYear + 1), to = (LastYear + NYearP))
+    nYearsProy  <- length(YearsProy)
     
     # Empty matrix
-    output2 = matrix(0, ncol = 2, nrow = nYearsProy)
-    output2 = replicate(length(Slots2), output2, simplify=F)
+    output2 <- matrix(0, ncol = 2, nrow = nYearsProy)
+    output2 <- replicate(length(Slots2), output2, simplify = FALSE)
     
     # Analysis (only sum)
-    for(j in 1:length(Slots2)){
-      output2[[j]][,1] = YearsProy # por el momento se pone de frente
-      for(i in 1:nModels){
-        output2[[j]][,2] = rowSums(cbind(output2[[j]][,2], list.model[[i]][[which(names(list.model[[i]]) == Slots2[j])]][,2]))
+    for(j in seq_along(Slots2)){
+      output2[[j]][,1] <- YearsProy # por el momento se pone de frente
+      
+      for(i in seq(nModels)){
+        output2[[j]][,2] <- rowSums(cbind(output2[[j]][,2],
+                                          allModels[[i]][[Slots2[j]]][,2]))
       }
     }
-    # name to the list
-    names(output2) = Slots2
-  }
-  
-  # if not same number of scenarios so:
-  if(length(unique(nScenarios)) != 1){
     
-    LastYear = max(output1[[3]][,1])
-    NYearP = nrow(list.model[[1]]$Catch_fut_1)
-    YearsProy = (LastYear+1):(LastYear+NYearP)
-    nYearsProy = length(YearsProy)
+    # name to the list
+    names(output2) <- Slots2
+  } else {
+    LastYear    <- max(output1[[3]][,1])
+    NYearP      <- nrow(allModels[[1]]$Catch_fut_1) 
+    YearsProy   <- seq(from = (LastYear+1), to = (LastYear+NYearP))
+    nYearsProy  <- length(YearsProy)
     
     # the outcome is a NA's matrix
-    output2 = replicate(length(Slots2), NA, simplify=F)
+    output2 <- replicate(length(Slots2), NA, simplify = FALSE)
   }
   
   # 'output1' is the outcome of analysis in Slots1
   # 'output2' is the outcome of analysis in Slots2
   
   
-  # Total Result ----------------------------------------------------
+  ###### Total Result
   # Merge both list (output1 and output2)
-  output.merge = c(output1, output2)
+  outputMerge <- c(output1, output2)
   
   # Length of the final list (para escribir el _R.rep)
-  nNames = length(names(list.model[[1]]))
+  nNames <- length(names(allModels[[1]]))
   
   # names to the final list
-  outcome = replicate(nNames, NA, simplify=F)
-  names(outcome) = names(list.model[[1]])
+  outcome <- replicate(nNames, NA, simplify = FALSE)
+  names(outcome) <- names(allModels[[1]])
   
   #  Merge final list with output.merge
-  for(i in 1:length(names(output.merge))){
-    outcome[[which(names(output.merge)[i] == names(outcome))]] = output.merge[[i]]
+  for(i in seq_along(names(outputMerge))){
+    index <- which(names(outputMerge)[i] == names(outcome))
+    outcome[[index]] <- outputMerge[[i]]
   }
+  
+  #Find the directory
+  posLoc <- max(gregexpr("/", get(modelList[1])$data$info$file)[[1]])
+  fileLocation <- substr(x = get(modelList[1])$data$info$file, start = 1, stop = posLoc)
   
   # Final Result
   if(is.null(model)) 
-    writeList(outcome, paste0(reposDir, "arc/Combine_R.rep"), format = "P") else 
-      writeList(outcome, paste0(reposDir, "arc/", model,"_R.rep"), format = "P")
+    writeList(outcome, file.path(fileLocation, "arc/Combine_R.rep"), format = "P") else 
+      writeList(outcome, file.path(fileLocation, "arc", paste0(model,"_R.rep")), format = "P")
   
-  output <- list(output = list(info = NULL, output = outcome, YPR = NULL),
-                 data = list(info = NULL, data = NULL))
+  infoData <- list(file       = modelList,
+                   variables  = sum(!is.na(outcome)),
+                   year       = c(outcome$TotBiom[1, 1], outcome$TotBiom[nrow(outcome$TotBiom), 1]),
+                   age        = NULL, 
+                   length     = NULL)
+  
+  output <- list(info   = list(model = NULL),
+                 output = list(info = NULL, output = outcome, YPR = NULL),
+                 data   = list(info = infoData, data = NULL))
   
   class(output) = c("jjm.output")
   
