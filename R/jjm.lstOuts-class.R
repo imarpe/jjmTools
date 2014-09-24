@@ -3,14 +3,23 @@
   modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
   modelList <- unlist(strsplit(x = modelList, split = ", "))
   
-  # Remove repeated models from modelList 
-  modIndex <- NULL
+  # Verify if the models are jjm.outputs objects
   for(i in modelList)
-    modIndex <- c(modIndex, get(i)$info$model)
+    if(class(i) != "jjm.outputs")
+      stop("Objects must be of class 'jjm.outputs'.")
+
+  # Remove repeated models from modelList 
+  listModels <- NULL
+  for(i in modelList)
+    for(j in modelList)
+      if(i != j & identical(get(i), get(j)))
+        listModels <- c(listModels, i)
   
-  modelNames <- modIndex[!duplicated(modIndex)]
-  modelList <- modelList[!duplicated(modIndex)]
+  modelList <- c(modelList[!(modelList %in% listModels)], listModels[seq(length(listModels)/2)])
   
+  modelNames <- NULL
+  for(i in modelList)
+    modelNames <- c(modelNames, get(i)$info$model)  
     
   # Models
   models <- list()

@@ -78,10 +78,6 @@ summary.jjm.output = function(object, ...) {
 
 print.summary.jjm.output <- function(x, ...) {
   
-  #  x2        <- x
-  #  class(x2) <- 'jjm.output'
-  
-  #  print(x2, ...)
   cat("\nModel:\n\n")
   print(x$info$model, ...)
   
