@@ -14,7 +14,7 @@
   
   for(i in necesaryFiles)
     if(!file.exists(i))
-      stop(paste0("File", i, " doesn't exist, please check it."))
+      stop(paste0("File", i, " doesn't exist, please check the name or the path."))
   
   # Read files .rep and .yld
   output      <- readList(file.path(inputPath, output))
