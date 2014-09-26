@@ -46,7 +46,6 @@
   return(output)
 }
 
-
 print.jjm.output <- function(x, ...) {
   
   cat("jjm.data from ", sQuote(x$data$info$file), "\n", sep = "")
