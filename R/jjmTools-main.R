@@ -36,7 +36,7 @@ diagnostics <- function(outputObject, ...) {
   return(output)
 }
 
-#' @title Run a model
+#' @title Run a JJM model
 #' @description Function to run a model (o list of models) of JJM and generate inputs files
 #' @param modelName String with the name of model that will be readed or run.
 #' @param path Directory where the 'admb' folder is located.
@@ -62,6 +62,10 @@ runJJM <- function(modelName, path = "", wait = TRUE, ...)
   # Back to previous working directory
   setwd(oldWD)
   
+  return(invisible())
+}
+
+.runJJM = function(model, wait, ...) {
   return(invisible())
 }
 
