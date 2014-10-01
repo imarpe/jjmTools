@@ -679,9 +679,23 @@
 .getPath <- function(path)
 {
   firstChar <- substr(path, 1, 1)
-  
-  if(firstChar == "/" | firstChar == "" | firstChar == ".")
-    path <- file.path(getwd(), path)
+  firstSecondChar <- substr(path, 1, 2)
+  if(firstSecondChar != "..")
+  {
+    if(firstChar == "/" | firstChar == "" | firstChar == ".")
+      path <- file.path(getwd(), path)
+  }
+  else
+  {
+    firstDir <- unlist(strsplit(getwd(), split = .Platform$file.sep)[[1]])
+    secondDir <- unlist(strsplit(path, split = .Platform$file.sep)[[1]])
+    m <- gregexpr(pattern = paste("..",.Platform$file.sep,sep=""), text = path, fixed = TRUE)
+    n <- length(unlist(regmatches(path, m)[[1]]))
+    firstDir <- rev(rev(firstDir)[-(1:n)])
+    secondDir <- regmatches(path, m, invert = TRUE)[[1]][-(1:n)]
+    path <- paste(firstDir, sep=.Platform$file.sep, collapse = '/')
+    path <- file.path(path, secondDir)
+  }
   
   return(path)
 }
