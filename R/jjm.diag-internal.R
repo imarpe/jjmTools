@@ -1284,22 +1284,24 @@
   ageFitsSurvey <- list()
   for(iSurvey in c(jjm.out$Index_names)[.an(ageFleets)]){
     tmpres <- subset(res, survey == iSurvey)
-    pic <- xyplot(data ~ age | factor(year), data = tmpres,
-                  groups = class,
-                  main = paste("Age fits", iSurvey),
-                  key = ikey,
-                  as.table = TRUE,
-                  panel = function(x, y){
-                    idx     <- mapply(seq, from = seq(1, length(y), length(ages)),
-                                      to = seq(from = 1, to = length(y), by = length(ages)) + (length(ages) - 1))
-                    first   <- c(idx[,seq(from = 1, to = dim(idx)[2], by = 3)])
-                    second  <- c(idx[,seq(from = 2, to = dim(idx)[2], by = 3)])
-                    yr      <- names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
-                    colidx  <- tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
-                    panel.barchart(x[first], y[first], horizontal = FALSE, origin = 0, box.width = 1, col = cols[colidx])
-                    panel.points(x[second], y[second], pch = 19, col = 1, cex = 0.5)
-                  }, ...)
     
+    if(nrow(tmpres) > 0)
+      pic <- xyplot(data ~ age | factor(year), data = tmpres,
+                    groups = class,
+                    main = paste("Age fits", iSurvey),
+                    key = ikey,
+                    as.table = TRUE,
+                    panel = function(x, y){
+                      idx     <- mapply(seq, from = seq(1, length(y), length(ages)),
+                                        to = seq(from = 1, to = length(y), by = length(ages)) + (length(ages) - 1))
+                      first   <- c(idx[,seq(from = 1, to = dim(idx)[2], by = 3)])
+                      second  <- c(idx[,seq(from = 2, to = dim(idx)[2], by = 3)])
+                      yr      <- names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
+                      colidx  <- tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
+                      panel.barchart(x[first], y[first], horizontal = FALSE, origin = 0, box.width = 1, col = cols[colidx])
+                      panel.points(x[second], y[second], pch = 19, col = 1, cex = 0.5)
+                    }, ...) else NULL
+        
     ageFitsSurvey[[iSurvey]] <- pic
   }
   

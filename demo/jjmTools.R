@@ -8,7 +8,7 @@ require(jjmTools)
 
 # Path of JJM repository
 
-reposDir =  "../admb/"
+reposDir =  "../JJM/Code/admb/"
 
 # Name of a model
 modelName = "mod0.0"
