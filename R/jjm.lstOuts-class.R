@@ -4,8 +4,8 @@
   modelList <- unlist(strsplit(x = modelList, split = ", "))
   
   # Verify if the models are jjm.outputs objects
-  for(i in modelList)
-    if(class(get(i)) != "jjm.output")
+  for(i in list(...))
+    if(class(i) != "jjm.output")
       stop("Objects must be of class 'jjm.output'.")
 
   # Remove repeated models from modelList 
