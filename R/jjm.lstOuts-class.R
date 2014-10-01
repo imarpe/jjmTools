@@ -5,7 +5,7 @@
   
   # Verify if the models are jjm.outputs objects
   for(i in modelList)
-    if(class(i) != "jjm.outputs")
+    if(class(i) != "jjm.output")
       stop("Objects must be of class 'jjm.outputs'.")
 
   # Remove repeated models from modelList 
