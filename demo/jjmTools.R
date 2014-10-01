@@ -22,7 +22,8 @@ compareList <- paste0("mod0.", 1:3)
 runJJM(modelName = modelName, path = reposDir)
 
 # Run a list of models
-runJJM(modelName = compareList, path = reposDir)
+for(i in seq_along(compareList))
+  assign(paste0("mod", i), runJJM(modelName = compareList[i], path = reposDir))
 
 
 # Reading -----------------------------------------------------------------
