@@ -1,18 +1,20 @@
-###########################################################################
-# DEMO SCRIPT
-###########################################################################
+# ------------------------------------------------------------------------
+# Demo script ------------------------------------------------------------
+# ------------------------------------------------------------------------
+
+require(jjmTools)
 
 # Set parameters ----------------------------------------------------------
 
 # Path of JJM repository
-reposDir    <- "../JJM/Code/admb/"
+
+reposDir =  "../admb/"
 
 # Name of a model
-modelName <- "mod2.0"
+modelName = "mod0.0"
 
 # Names of models
-compareList <- paste0("mod2.", 1:3)
-
+compareList <- paste0("mod0.", 1:3)
 
 # Run models --------------------------------------------------------------
 
@@ -29,13 +31,15 @@ runJJM(modelName = compareList, path = reposDir)
 model <- readJJM(modelName = modelName, path = reposDir)
 
 # LIST OF OUTPUT Object
-for(i in seq_along(compareList[1:3]))
-  assign(paste0("mod", i), readJJM(modelName = compareList[i], path = reposDir))
 
-mod4 <- mod2
+mod1 = readJJM(modelName = compareList[1], path = reposDir)
+mod2 = readJJM(modelName = compareList[2], path = reposDir)
+mod3 = readJJM(modelName = compareList[3], path = reposDir)
+
+mod4 = mod2
 
 # DIAG object
-diagPlots <- diagnostics(outputObject = model)
+diagPlots = diagnostics(outputObject = model)
 
 
 # Combine models ----------------------------------------------------------
