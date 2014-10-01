@@ -271,7 +271,8 @@
   }
   
   names(lstOuts) <- Name
-  tab <- cbind(lstOuts[[1]]$Like_Comp_names, do.call(cbind, lapply(lstOuts, function(x){round(x$Like_Comp, 2)})))
+  tab <- do.call(cbind, lapply(lstOuts, function(x){round(x$Like_Comp, 2)}))
+  row.names(tab) <- lstOuts[[1]]$Like_Comp_names
 
   return(tab)
 }

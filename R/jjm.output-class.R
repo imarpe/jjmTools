@@ -77,17 +77,13 @@ summary.jjm.output = function(object, ...) {
 
 print.summary.jjm.output <- function(x, ...) {
   
-  cat("\nModel:\n\n")
-  print(x$info$model, ...)
+  cat("\nModel:\n", x$info$model, "\n\n")
   
-  cat("\nFishyNames:\n\n")
-  print(x$info$fishyNames, ...)
+  cat("\nFishyNames:\n", paste(x$info$fisheryNames, collapse = ", "), "\n\n")
   
-  cat("\nYears:\n\n")
-  print(x$info$modelYears, ...)
+  cat("\nYears:\n", paste(range(x$info$modelYears), collapse = "-"), "\n\n")
   
-  cat("\nIndex Model:\n\n")
-  print(x$info$indexModel, ...)
+  cat("\nModel's indices:\n", paste(x$info$indexModel, collapse = ", "), "\n\n")
   
   cat("\nLikelihood Table:\n\n")
   print(x$like, ...)

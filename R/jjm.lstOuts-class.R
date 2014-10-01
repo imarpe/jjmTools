@@ -1,30 +1,28 @@
 .combineModels <- function(...){
-  modelList <- deparse(substitute(list(...)))
-  modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
-  modelList <- unlist(strsplit(x = modelList, split = ", "))
+  modelList <- list(...)
   
   # Verify if the models are jjm.outputs objects
-  for(i in list(...))
+  for(i in modelList)
     if(class(i) != "jjm.output")
       stop("Objects must be of class 'jjm.output'.")
 
   # Remove repeated models from modelList 
-  listModels <- NULL
-  for(i in modelList)
-    for(j in modelList)
-      if(i != j & identical(get(i), get(j)))
-        listModels <- c(listModels, i)
+  modelList2 <- modelList
+  for(i in seq_along(modelList[-length(modelList)]))
+    for(j in seq(from = i + 1, to = length(modelList)))
+      if(identical(modelList[[i]], modelList[[j]]))
+        modelList2[[j]] <- NULL
   
-  modelList <- c(modelList[!(modelList %in% listModels)], listModels[seq(length(listModels)/2)])
+  modelList <- modelList2; rm("modelList2")
   
   modelNames <- NULL
   for(i in modelList)
-    modelNames <- c(modelNames, get(i)$info$model)  
+    modelNames <- c(modelNames, i$info$model)  
     
   # Models
   models <- list()
-  for(i in modelList)
-    models[[i]] <- get(i)[c("output", "data")]
+  for(i in seq_along(modelList))
+    models[[i]] <- modelList[[i]][c("output", "data")]
   names(models) <- modelNames
   
   # Combined results
@@ -34,11 +32,11 @@
   allOutputs <- list()
   allYPR <- list()
   allData <- list()
-  for(i in modelList)
+  for(i in seq_along(modelList))
   {
-    allOutputs[[i]] <- get(i)$output$output
-    allYPR[[i]]     <- get(i)$output$YPR
-    allData[[i]]    <- get(i)$data$data  
+    allOutputs[[i]] <- modelList[[i]]$output$output
+    allYPR[[i]]     <- modelList[[i]]$output$YPR
+    allData[[i]]    <- modelList[[i]]$data$data  
   }
   names(allOutputs) <- names(allYPR) <- names(allData) <- modelNames
   
@@ -72,13 +70,13 @@ summary.jjm.lstOuts = function(object,...) {
 
 print.summary.jjm.lstOuts = function(x, ...) {
   
-  cat("\nList of models:\n\n")
+  cat("\nList of models:\n")
   print(x$info, ...)
   
-  cat("\nLikelihood Table:\n\n")
+  cat("\nLikelihood Table:\n")
   print(x$like, ...)
   
-  cat("\nFuture SSB and SD:\n\n")
+  cat("\nFuture SSB and SD:\n")
   print(x$fut, ...)
   
   cat("\nSSB and SD:\n\n")
