@@ -638,6 +638,7 @@
   ageFleetsPlots <- list()
   for(iFleet in unique(res$fleet)){
     tmpres <- subset(res, fleet == iFleet)
+    tmpres$data[tmpres$age == 1] <- 0
     
     pic <- xyplot(data ~ age | as.factor(year), data = tmpres,
                   main = paste("Age composition in fleets", iFleet),
