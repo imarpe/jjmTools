@@ -3,7 +3,7 @@
 \alias{combineStocks}
 \title{combineStocks}
 \usage{
-combineStocks(...)
+combineStocks(..., model = NULL)
 }
 \arguments{
 \item{...}{One or more output objects, to be combined to list of models.}

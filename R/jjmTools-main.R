@@ -1,3 +1,25 @@
+# jjmTools package Rd file ------------------------------------------------
+#' Tools to process and get results from Joint Jack Mackerel (JJM) model outputs.
+#' 
+#' Graphics and diagnostics tools for SPRFMO's Joint Jack Mackerel model.
+#' 
+#' \tabular{ll}{ Package: \tab jjmTools\cr Type: \tab Package\cr Version: \tab
+#' 1.0\cr Date: \tab 2014-08-15\cr License: \tab TBD\cr }
+#' 
+#' @name jjmTools-package
+#' @aliases jjmTools-package jjmTools
+#' @docType package
+#' @author Ricardo Oliveros-Ramos, Wencheng Lau-Medrano, Giancarlo Moron and
+#' Niels Hintzen
+#' @seealso Joint Jack Mackerel Repository
+#' \code{\link{https://github.com/SPRFMO/jack_mackerel}}
+#' @keywords jjmTools
+#' 
+#' 
+NULL
+
+# readJJM function --------------------------------------------------------
+
 #' @title Read a model or list of models
 #' @description Function to read models and list if models and generate results
 #' @param modelName String with the name of model that will be readed or run.
