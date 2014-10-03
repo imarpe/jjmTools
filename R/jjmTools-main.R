@@ -57,7 +57,7 @@ runJJM <- function(modelName, path = "", wait = TRUE, ...)
   
   # Run models
   for(i in modelName)
-    system(paste("run", i), wait = wait, ...)
+    system(paste("./run", i), wait = wait, ...)
   
   # Back to previous working directory
   setwd(oldWD)
