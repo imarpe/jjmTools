@@ -84,6 +84,7 @@
   return(out)}
 
 .readYPR <- function(fileName){
+  if(!file.exists(fileName)) return(invisible(NULL))
   jjm.ypr            <- read.table(fileName, sep = " ", skip = 4, header = TRUE, fill = TRUE)
   jjm.ypr[1,]        <- jjm.ypr[1, c(1, 8, 2, 3, 4, 5, 6, 7)]
   colnames(jjm.ypr)  <- c("F", "X", "SSB", "Yld", "Recruit", "SPR", "B", "X2")

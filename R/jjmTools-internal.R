@@ -804,7 +804,7 @@
 
 
 .compareTime <-  function(lstOuts, Slot = "TotBiom", SD = TRUE, Sum = NULL, startYear = NULL, legendPos = "topright",
-                          ylim = NULL, yFactor = 1e-3, main = NA, ylab = Slot,
+                          xlim=NULL, ylim = NULL, yFactor = 1e-3, main = NA, ylab = Slot,
                           linesCol = NULL, lwd = 1, lty = 1, ...){
   
   dat <- lapply(lstOuts$combined$outputs, function(x){return(x[[Slot]])})
@@ -817,10 +817,13 @@
   if(is.null(startYear)){
     xrange <- range(unlist(lapply(dat, function(x){x[,1]})), na.rm = TRUE)
   }else {
-    xrange <- c(startYear, range(unlist(lapply(dat, function(x){x[,1]})), na.rm = TRUE)[2])
+    xrange <- c(startYear, range(unlist(lapply(dat, function(x) x[,1] )), na.rm = TRUE)[2])
   }
   
-  dat <- lapply(dat, function(x){idx <- which(x[,1] %in% xrange[1]:xrange[2]); return(x[idx,])})
+  if(is.null(xlim)) xlim = xrange
+  
+  dat <- lapply(dat, function(x) { idx <- which(x[,1] %in% xrange[1]:xrange[2]); 
+                                   return(x[idx,]) } )
   
   if(is.null(ylim)) 
     ylim <- range(pretty(range(unlist(lapply(dat, function(x) yFactor*x[,4:5] )), na.rm = TRUE)))
@@ -836,7 +839,7 @@
   par(mar = mar, xaxs = "i")
   
   plot(x = dat[[1]][,1], y = dat[[1]][,2]*yFactor, col = linesCol[1], type = "l", main = main,
-       ylim = ylim, xlim = xrange, axes = FALSE, lwd = lwd, lty = lty, 
+       ylim = ylim, xlim = xlim, axes = FALSE, lwd = lwd, lty = lty, 
        ylab = ylab, xlab="", ...)
   
   axis(1)
