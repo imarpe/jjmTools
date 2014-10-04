@@ -735,3 +735,45 @@
   return(invisible(NULL))
 }
 
+
+.runJJM = function(model, output, useGuess, guess, iprint, wait, ...) {
+  
+  cat("\nRunning model", model, "|", 
+      as.character(Sys.time()), "\n")
+  
+  if(!file.exists(output)) dir.create(output)
+  
+  if(is.null(guess)) guess = file.path(output, sprintf("%s.par", model))
+  if(!file.exists(guess)) {
+    useGuess = FALSE
+    msg = paste("File", guess, "does not exist, ignoring initial guess.")
+    warning(msg)
+  }
+  
+  jjm = if(isTRUE(useGuess)) {
+    sprintf("jjm -nox -ind %s.ctl -ainp %s -iprint %d", 
+            model, guess, iprint)
+  } else {
+    sprintf("jjm -nox -ind %s.ctl -iprint %d", model, iprint)
+  }
+  
+  start   = proc.time()  
+  system(jjm, wait = TRUE, ...)
+  elapsed = proc.time() - start
+  
+  cat("\n\tModel run finished. Time elapsed =", elapsed[3],"s.")
+  cat("\n\tCopying output files...")
+  
+  # copy outputs to 'output' folder
+  file.copy(from="jjm.par",   to=.to(".par",   output, model))
+  file.copy(from="jjm.rep",   to=.to(".rep",   output, model))
+  file.copy(from="jjm.std",   to=.to(".std",   output, model))
+  file.copy(from="jjm.cor",   to=.to(".cor",   output, model))
+  file.copy(from="fprof.yld", to=.to(".yld",   output, model))
+  file.copy(from="for_r.rep", to=.to("_R.rep", output, model))
+  
+  .cleanad() # clean admb files
+  
+  cat("\n\n")
+  return(invisible())
+}
