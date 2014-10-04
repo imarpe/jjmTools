@@ -84,7 +84,12 @@
   return(out)}
 
 .readYPR <- function(fileName){
-  if(!file.exists(fileName)) return(invisible(NULL))
+  if(!file.exists(fileName)) {
+    x = rep(NA, 501)
+    jjm.ypr = data.frame(F=x, SSB=x, Yld=x, Recruit=x, SPR=x, B=x)
+    return(jjm.ypr)
+  }
+  
   jjm.ypr            <- read.table(fileName, sep = " ", skip = 4, header = TRUE, fill = TRUE)
   jjm.ypr[1,]        <- jjm.ypr[1, c(1, 8, 2, 3, 4, 5, 6, 7)]
   colnames(jjm.ypr)  <- c("F", "X", "SSB", "Yld", "Recruit", "SPR", "B", "X2")
@@ -1986,6 +1991,7 @@
 
 .ypr_yieldSsbPerRecruitFUN <- function(jjm.ypr, ...)
 {
+  if(is.null(jjm.ypr)) return(invisible(NULL))
   res <- rbind(data.frame(cbind(jjm.ypr$F, jjm.ypr$SSB), class = "SSB"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$Yld), class = "Yield"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$Recruit), class = "Recruit"),

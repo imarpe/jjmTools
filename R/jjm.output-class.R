@@ -33,8 +33,8 @@
   iFilename   <- file.path(inputPath, dataName)
   info.data   <- list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
                       age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]))
-  info.output <- list(model = modelName, fisheryNames = output$Fshry_names, modelYears = output$Yr,
-                      indexModel = output$Index_names)
+  info.output <- list(model = modelName, fisheryNames = outputs$Fshry_names, modelYears = outputs$Yr,
+                      indexModel = outputs$Index_names)
   
   # Group in a list
   output <- list(info = list(model = modelName),

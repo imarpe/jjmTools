@@ -38,7 +38,10 @@
     allYPR[[i]]     <- modelList[[i]]$output$YPR
     allData[[i]]    <- modelList[[i]]$data$data  
   }
-  names(allOutputs) <- names(allYPR) <- names(allData) <- modelNames
+  # correct the naming
+  names(allOutputs) = modelNames
+  names(allYPR)     = modelNames
+  names(allData)    = modelNames
   
   combined <- list(outputs = allOutputs, YPR = allYPR, data = allData)
     
