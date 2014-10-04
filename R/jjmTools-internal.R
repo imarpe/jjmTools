@@ -496,8 +496,8 @@
   return(output)
 }
 
-.compareTime <-  function(lstOuts, Slot = "TotBiom", SD = FALSE, Sum = NULL, startYear = NULL, legendPos = "topright",
-                          ylim = NULL, yFactor = 1, main = NA, ylab = Slot,
+.compareTime <-  function(lstOuts, Slot = "TotBiom", SD = TRUE, Sum = NULL, startYear = NULL, legendPos = "topright",
+                          ylim = NULL, yFactor = 1e-3, main = NA, ylab = Slot,
                           linesCol = NULL, lwd = 1, lty = 1, ...){
   
   dat <- lapply(lstOuts$combined$outputs, function(x){return(x[[Slot]])})
@@ -516,20 +516,21 @@
   dat <- lapply(dat, function(x){idx <- which(x[,1] %in% xrange[1]:xrange[2]); return(x[idx,])})
   
   if(is.null(ylim)) 
-    ylim <- range(pretty(range(unlist(lapply(dat, function(x){x[,4:5]})), na.rm = TRUE)))
+    ylim <- range(pretty(range(unlist(lapply(dat, function(x) yFactor*x[,4:5] )), na.rm = TRUE)))
   
   if(is.null(linesCol))
     linesCol <- rainbow(nD) else
       linesCol <- rep(linesCol, length.out = nD)
   
   if(is.na(main))
-    mar <- c(2, 4, 0.1, 0.1) else
-      mar <- c(2, 4, 2, 0.1)
+    mar <- c(3, 5, 2, 3) else
+      mar <- c(3, 5, 4, 3)
   
   par(mar = mar, xaxs = "i")
   
   plot(x = dat[[1]][,1], y = dat[[1]][,2]*yFactor, col = linesCol[1], type = "l", main = main,
-       ylim = ylim, xlim = xrange, axes = FALSE, lwd = lwd, lty = lty, ylab = ylab, ...)
+       ylim = ylim, xlim = xrange, axes = FALSE, lwd = lwd, lty = lty, 
+       ylab = ylab, xlab="", ...)
   
   axis(1)
   axis(2, las=2)
@@ -549,7 +550,7 @@
     for(i in 1:nD){
       polygon(x = c(dat[[i]][,1], rev(dat[[i]][,1])),
               y = c(dat[[i]][,4], rev(dat[[i]][,5]))*yFactor,
-              col = adjustcolor(linesCol[i], alpha.f = 0.1), border = 0)
+              col = adjustcolor(linesCol[i], alpha.f = 0.2), border = 0)
     }
   }
   

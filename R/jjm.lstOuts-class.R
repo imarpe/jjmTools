@@ -85,8 +85,9 @@ print.summary.jjm.lstOuts = function(x, ...) {
   return(invisible(x))
 }
 
-plot.jjm.lstOuts <- function(lstObject, comparisonType = "time", Slot = NULL, SD = FALSE, Sum = NULL, startYear = NULL,
-                         legendPos = "topright", YrInd = FALSE, Apply = "mean", ...){
+plot.jjm.lstOuts <- function(lstObject, comparisonType = "time", Slot = NULL, SD = TRUE, 
+                             Sum = NULL, startYear = NULL, legendPos = "topright", 
+                             YrInd = FALSE, Apply = "mean", ...){
   if(comparisonType == "time")
   {
     if(is.null(Slot))
@@ -101,7 +102,7 @@ plot.jjm.lstOuts <- function(lstObject, comparisonType = "time", Slot = NULL, SD
     
    .compareMatrix(lstObject , Slot = Slot, Sum = Sum, YrInd = YrInd, Apply = Apply, 
                   startYear = startYear, legendPos = legendPos, ...)
-  }else
+  } else
     stop("Incorrect value for 'comparisonType'.")
   
   return(invisible())
