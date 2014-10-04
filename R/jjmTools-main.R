@@ -122,37 +122,13 @@ combineModels <- function(...)
 #' mod2 <- runJJM(modelName = "mod2.2")
 #' mod3 <- runJJM(modelName = "mod2.3")
 #' 
-#' combinedMod_123 <- combineStocks(mod1, mod2, mod3)
+#' combinedMod_123 <- combineStocks(mod1, mod2, mod3, modelName = NULL)
 
 
-combineStocks = function(...){
+combineStocks = function(..., modelName = NULL){
   
-  listModels = .prepareCombine(...)
+  output = .resultCombined(..., modelName = modelName)
   
-  finalList1 = list(
-    SSB     = .combineSSB(models = listModels$allModels),
-    R       = .combineR(models = listModels$allModels),
-    TotBiom = .combineTotBiom(models = listModels$allModels),
-    N       = .combineN(models = listModels$allModels))
+  return(output)
   
-  finalList = c(
-    finalList1,
-    .combineCatchFut(models = listModels$allModels),
-    .combineSSBFut(models = listModels$allModels)
-  )
-  
-  return(finalList)
-  
-}
-
-
-writeCombinedStocks = function(combinedModel, modelName = NULL){
-  
-  # Final Result
-  if(is.null(modelName)) 
-    writeList(combinedModel, file.path("arc","Combine_R.rep"), format = "P") 
-  else 
-    writeList(combinedModel, file.path("arc", paste0(modelName, "_R.rep")), format = "P")
-  
-  return(invisible())
 }
