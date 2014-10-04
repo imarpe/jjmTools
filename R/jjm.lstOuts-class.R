@@ -99,7 +99,7 @@ plot.jjm.lstOuts <- function(lstObject, comparisonType = "time", Slot = NULL, SD
     if(is.null(Slot)) 
       Slot <- "TotF"
     
-   .compareMatrix(lstObject$data , Slot = Slot, Sum = Sum, YrInd = YrInd, Apply = Apply, 
+   .compareMatrix(lstObject , Slot = Slot, Sum = Sum, YrInd = YrInd, Apply = Apply, 
                   startYear = startYear, legendPos = legendPos, ...)
   }else
     stop("Incorrect value for 'comparisonType'.")
