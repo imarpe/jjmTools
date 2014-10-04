@@ -107,3 +107,9 @@ plot.jjm.lstOuts <- function(lstObject, comparisonType = "time", Slot = NULL, SD
   
   return(invisible())
 }
+
+logLik.jjm.lstOuts = function(object, ...) {
+  lik = summary(object)$lik
+  return(lik)
+}
+

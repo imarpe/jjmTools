@@ -1,27 +1,28 @@
 
-.getJjmOutput <- function(path, model, ...) {
+.getJjmOutput <- function(path, output, model, ...) {
   
   # Define path of input
   inputPath   <- path
   
   # Set files .rep and .yld
-  output  <- .getPath3(pattern = "_R.rep", target = model, path = path)
-  ypr     <- .getPath3(pattern = ".yld", target = model, path = path)
+  outputs = file.path(output, paste0(model, "_R.rep")) 
+  ypr     = file.path(output, paste0(model, ".yld"))
   
   # Verify if files exist
-  necesaryFiles <- c(paste0(model, ".ctl"), output, ypr)
-  necesaryFiles <- file.path(inputPath, necesaryFiles)
+  necesaryFiles = c(paste0(model, ".ctl"), outputs)
+  necesaryFiles = file.path(inputPath, necesaryFiles)
   
-  for(i in necesaryFiles)
-    if(!file.exists(i))
-      stop(paste0("File", i, " doesn't exist, please check the name or the path."))
+  for(ifile in necesaryFiles)
+    if(!file.exists(ifile))
+      stop(paste0("File", ifile, " doesn't exist, please check the name or the path."))
   
   # Read files .rep and .yld
-  output      <- readList(file.path(inputPath, output))
-  ypr         <- .readYPR(file.path(inputPath, ypr))
+  outputs = readList(file.path(inputPath, outputs))
+  ypr     = .readYPR(file.path(inputPath, ypr))
   
   # Extract asociated .dat file
-  dataName    <- scan(file = file.path(inputPath, paste0(model, ".ctl")), what = character(), sep = "\n", quiet = TRUE)
+  dataName    <- scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 2, 
+                      what = character(), sep = "\n", quiet = TRUE)
   modelName   <- gsub(x = dataName[2], pattern = " ", replacement = "")
   dataName    <- gsub(x = dataName[1], pattern = " ", replacement = "")
   
@@ -37,7 +38,7 @@
   
   # Group in a list
   output <- list(info = list(model = modelName),
-                 output = list(info = info.output, output = output, YPR = ypr),
+                 output = list(info = info.output, output = outputs, YPR = ypr),
                  data = list(info = info.data, data = data))
   
   # Define jjm.output class
