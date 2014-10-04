@@ -52,7 +52,11 @@ mod1234 = combineModels(mod1, mod2, mod3, mod4)
 
 # Integrating models ------------------------------------------------------
 
-mod12 = combineStocks(mod1, mod2, model = "mod2s_12")
+mod123 = combineStocks(mod1, mod2, mod3)
+
+# Write new model ------------------------------------------------------
+
+writeCombinedStocks(combinedModel = mod123)
 
 
 # Print -------------------------------------------------------------------
@@ -88,6 +92,5 @@ plot(diagPlots, what = "input")
 plot(diagPlots, what = "fit")
 plot(diagPlots, what = "projections")
 plot(diagPlots, what = "ypr")
-
 
 

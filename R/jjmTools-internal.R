@@ -42,19 +42,19 @@
   cols$Fnames       <- list()
   cols$Fnames       <- strsplit(unlist(res1[counter]), "%")[[1]]; counter <- counter + 1
   cols$Fcaton       <- matrix(NA, ncol = nF, nrow = nY,
-                            dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
+                              dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   cols$Fcaton[]     <- matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))),
-                            ncol = nF, nrow = nY); counter <- counter + nF
+                              ncol = nF, nrow = nY); counter <- counter + nF
   cols$Fcatonerr    <- matrix(NA, ncol = nF, nrow = nY, dimnames = list(years = Ys[1]:Ys[2],
-                                                                     paste("fishery", 1:nF, sep = "")))
+                                                                        paste("fishery", 1:nF, sep = "")))
   cols$Fcatonerr[]  <- matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))), 
-                             ncol = nF, nrow = nY); counter <- counter + nF
+                              ncol = nF, nrow = nY); counter <- counter + nF
   cols$FnumyearsA   <- matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
   cols$FnumyearsA[] <- na.omit(.an(unlist(res1[counter:(counter+nF-1)]))); counter <- counter + nF
   cols$FnumyearsL   <- matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
   cols$FnumyearsL[] <- na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))); counter <- counter + nF
   cols$Fageyears    <- matrix(NA, ncol = nF, nrow = nY,
-                           dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
+                              dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   
   for(iFs in 1:nF){
     if(cols$FnumyearsA[iFs] > 0){
@@ -273,7 +273,7 @@
   names(lstOuts) <- Name
   tab <- do.call(cbind, lapply(lstOuts, function(x){round(x$Like_Comp, 2)}))
   row.names(tab) <- lstOuts[[1]]$Like_Comp_names
-
+  
   return(tab)
 }
 
@@ -291,7 +291,7 @@
                                                                           function(y){return(y[,1:3])}))}))
   fut <- as.data.frame(fut, stringsAsFactors = FALSE)
   colnames(fut) <- c("year", "SSB", "SD")
-
+  
   fut$modelscenario <- paste(rep(names(lstOuts),
                                  lapply(lstOuts, function(x) {nrow(x$SSB_fut_1)*length(grep("SSB_fut_", names(x)))})),
                              paste("Scen",
@@ -497,7 +497,7 @@
 }
 
 .compareTime <-  function(lstOuts, Slot = "TotBiom", SD = FALSE, Sum = NULL, startYear = NULL, legendPos = "topright",
-                          ylim = NULL, grid = TRUE, yFactor = 1, main = NA, ylab = Slot,
+                          ylim = NULL, yFactor = 1, main = NA, ylab = Slot,
                           linesCol = NULL, lwd = 1, lty = 1, ...){
   
   dat <- lapply(lstOuts$combined$outputs, function(x){return(x[[Slot]])})
@@ -531,7 +531,6 @@
   plot(x = dat[[1]][,1], y = dat[[1]][,2]*yFactor, col = linesCol[1], type = "l", main = main,
        ylim = ylim, xlim = xrange, axes = FALSE, lwd = lwd, lty = lty, ylab = ylab, ...)
   
-  if(grid) grid()
   axis(1)
   axis(2, las=2)
   
@@ -561,46 +560,71 @@
 }
 
 .compareMatrix <- function(lstOuts, Slot = 'TotF', Sum = NULL, YrInd = FALSE, Apply = "mean", startYear = NULL,
-                           legendPos = "topright", ...){
+                           legendPos = "topright", lwd = 1, lty = 1, xlab = NULL, ylab = NULL, 
+                           linesCol = NULL, ...){
   
-  lst     <- list(...)
+  lst <- list(...)
   
-  dat     <- lapply(lstOuts$combined$outputs,function(x){return(x[[Slot]])})
-  nms     <- names(dat); if(!is.null(Sum)){nms <- c(nms,paste(Sum[1],"+",Sum[2],sep=""))}
+  dat <- lapply(lstOuts$combined$outputs, function(x) x[[Slot]])
+  nms <- names(dat)
   
-  nD      <- length(dat)
+  if(!is.null(Sum)){
+    nms <- c(nms,paste(Sum[1], "+", Sum[2], sep = ""))
+  }
+  
+  nD <- length(dat)
   if(!YrInd){
-    for(i in 1:nD){
-      dat[[i]] = cbind(lstOuts$combined$outputs[[i]]$Yr,dat[[i]])
+    for(i in seq(nD)){
+      dat[[i]] <- cbind(lstOuts$combined$outputs[[i]]$Yr, dat[[i]])
     }
   }
   
-  for(i in 1:nD) dat[[i]] <- cbind(dat[[i]][,1],apply(dat[[i]][,-1],1, get(Apply)))
+  for(i in 1:nD) 
+    dat[[i]] <- cbind(dat[[i]][,1],apply(dat[[i]][,-1],1, get(Apply)))
   
-  if(is.null(startYear)){xrange <- range(unlist(lapply(dat,function(x){x[,1]})),na.rm=T)
-  } else { xrange <- c(startYear,range(unlist(lapply(dat,function(x){x[,1]})),na.rm=T)[2])}
+  if(is.null(startYear)){
+    xrange <- range(unlist(lapply(dat, function(x) x[,1])), na.rm = TRUE)
+  } else{ 
+    xrange <- c(startYear, range(unlist(lapply(dat, function(x) x[,1])), na.rm = TRUE)[2])}
   
-  dat     <- lapply(dat,function(x){idx <- which(x[,1] %in% xrange[1]:xrange[2]); return(x[idx,])})
+  dat <- lapply(dat, function(x){idx <- which(x[,1] %in% xrange[1]:xrange[2]); return(x[idx,])})
   
-  yrange=range(pretty(range(unlist(lapply(dat,function(x){x[,2]})),na.rm=T)))
-  if(is.null(lst$ylim)==F) yrange <- lst$ylim
-  if(is.null(lst$xlim)==F) xrange <- lst$xlim
+  yrange <- range(pretty(range(unlist(lapply(dat,function(x){x[,2]})), na.rm = TRUE)))
+  
+  if(!is.null(lst$ylim)) 
+    yrange <- lst$ylim
+  
+  if(!is.null(lst$xlim)) 
+    xrange <- lst$xlim
+  
+  if(is.null(xlab))
+    xlab <- "Years"
+  
+  if(is.null(ylab))
+    xlab <- Slot
+  
+  if(is.null(linesCol))
+    linesCol <- rainbow(nD) else
+      linesCol <- rep(linesCol, length.out = nD)
+  
   if(!is.null(Sum)){
-    idx1  <- which(nms==Sum[1])
-    idx2  <- which(nms==Sum[2])
-    datsum<- colSums(rbind(dat[[idx1]][,2],dat[[idx2]][,2]))
-    yrange=range(pretty(range(c(unlist(lapply(dat,function(x){x[,2]})),datsum))))
+    idx1 <- which(nms == Sum[1])
+    idx2 <- which(nms == Sum[2])
+    datsum <- colSums(rbind(dat[[idx1]][,2], dat[[idx2]][,2]))
+    yrange <- range(pretty(range(c(unlist(lapply(dat, function(x) x[,2])), datsum))))
   }
-  plot(x=dat[[1]][,1],y=dat[[1]][,2],type="l",lwd=2,xlab="Years",ylab=Slot,
-       xlim=xrange,ylim=yrange,axes=T)
   
-  grid(); box()
-  for(i in 1:nD)
-    lines(x=dat[[i]][,1],y=dat[[i]][,2],col=i,lwd=2)
-  if(!is.null(Sum)){
-    lines(x=dat[[idx1]][,1],y=datsum,col=nD+1,lwd=2)}
+  plot(x = dat[[1]][,1], y = dat[[1]][,2], type = "l", lwd = lwd, lty = lty, 
+       xlab = xlab, ylab = ylab, xlim = xrange, ylim = yrange, col = linesCol[1], ...)
   
-  legend(legendPos,legend=c(nms),col=1:length(nms),lwd=2,lty=1,box.lty=0,bty="n")
+  for(i in seq(2, nD))
+    lines(x = dat[[i]][,1], y = dat[[i]][,2], col = linesCol[i], lwd = lwd, lty = lty)
+  
+  if(!is.null(Sum))
+    lines(x = dat[[idx1]][,1], y = datsum, col = nD + 1, lwd = lwd, lty = lty)
+  
+  legend(legendPos,legend = nms, col = seq_along(nms), lwd = lwd, lty = lty, 
+         box.lty = 0, bty = "n")
   box()
   
   return(invisible())
