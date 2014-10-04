@@ -1035,7 +1035,7 @@
 .checkModels = function(models) {
   models = tolower(models)
   models = unique(models)
-  check = file.exists(models)
+  check = file.exists(paste0(models, ".ctl"))
   if(any(!check)) {
     noCtl = models[!check]
     msg = paste("Ignoring non existing models:", 
