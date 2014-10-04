@@ -94,7 +94,7 @@ plot.jjm.lstOuts <- function(lstObject, comparisonType = "time", Slot = NULL, SD
     
    .compareTime(lstObject, Slot = Slot, SD = SD, Sum = Sum, startYear = startYear,
                 legendPos = legendPos, ...)
-  }else if(comparisonType == "matrix")
+  } else if(comparisonType == "matrix")
   {
     if(is.null(Slot)) 
       Slot <- "TotF"

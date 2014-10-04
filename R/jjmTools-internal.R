@@ -666,3 +666,47 @@
   
   return(output)
 }
+
+
+.cleanad = function() {
+  cat("\n\tCleaning ADMB files...\n")
+  file.remove(dir(pattern="tmp_admb"))
+  file.remove(dir(pattern="varssave*"))
+  file.remove(dir(pattern="cmpdiff*"))
+  file.remove(dir(pattern="gradfil2*"))
+  file.remove(dir(pattern="variance*"))
+  file.remove(dir(pattern="~$"))
+  file.remove(dir(pattern="\\.0.$"))
+  file.remove(dir(pattern="\\.[r,p,b][0-9]"))
+  
+  exts = c("tmp", "dep", "log", "obj", ".o", "htp", "hes", "cov", 
+           "rpt", "cor", "eva", "td2", "tds","tr2")
+  
+  for(ext in exts) {
+    pat = sprintf("\\.%s$", ext)
+    file.remove(dir(pattern=pat))
+  }
+}
+
+
+.to = function(ext, output, model) {
+  fmt = paste0("%s", ext)
+  out = file.path(output, sprintf(fmt, model))
+  return(out)
+}
+
+.runJJM2 = function(model, wait, ...) {
+  system(paste("./run", model), wait = wait, ...)
+  return(invisible())
+}
+
+.checkModels = function(models) {
+  models = tolower(models)
+  models = unique(models)
+  return(models)
+}
+
+.checkGuess = function(models, guess) {
+  return(invisible(NULL))
+}
+

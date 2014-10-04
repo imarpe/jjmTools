@@ -28,7 +28,7 @@ NULL
 #' @examples
 #' readJJM(modelName = "mod2.4")
 #' readJJM(modelName = paste0("mod2.", 1:4))
-readJJM <- function(modelName, path = "", ...) {
+readJJM <- function(model, path = "", modelName=model, ...) {
   
   path <- .getPath(path)
   
@@ -39,6 +39,83 @@ readJJM <- function(modelName, path = "", ...) {
   
   return(output)
 }
+
+
+# Run JJM model -----------------------------------------------------------
+
+
+#' @title Run a JJM model
+#' @description Function to run one or several JJM models
+#' @param models String with the name of the models to be run.
+#' @param path Directory where the 'admb' folder is located.
+#' @param ... Arguments passed from \code{system} function.
+#' @examples
+#' model = runJJM(models = "mod2.4")
+runJJM = function(models, path = "", output="arc", useGuess=FALSE, 
+                  guess=NULL, iprint=100, wait = TRUE, ...)
+{
+  path = .getPath(path)
+  # Set working directory in /admb directory to run model
+  oldwd = getwd()
+  setwd(path)
+  on.exit(setwd(oldwd))
+  
+  models = .checkModels(models)
+  guess  = .checkGuess(models, guess) # to be updated
+  
+  # Set lower case for model name and filter repeated names
+  
+  # Run models
+  for(model in models)
+    .runJJM(model=model, output=output, useGuess=useGuess, 
+            guess=guess, iprint=iprint, wait=wait, ...)  
+  
+  return(invisible())
+}
+
+.runJJM = function(model, output, useGuess, guess, iprint, wait, ...) {
+  
+  cat("\nRunning model", model, "|", 
+      as.character(Sys.time()), "\n")
+  
+  if(!file.exists(output)) dir.create(output)
+  
+  if(is.null(guess)) guess = file.path(output, sprintf("%s.par", model))
+  if(!file.exists(guess)) {
+    useGuess = FALSE
+    msg = paste("File", guess, "does not exist, ignoring initial guess.")
+    warning(msg)
+  }
+  
+  jjm = if(isTRUE(useGuess)) {
+    sprintf("jjm -nox -ind %s.ctl -ainp %s -iprint %d", 
+            model, guess, iprint)
+  } else {
+    sprintf("jjm -nox -ind %s.ctl -iprint %d", model, iprint)
+  }
+  
+  start   = proc.time()  
+  system(jjm, wait = TRUE, ...)
+  elapsed = proc.time() - start
+  
+  cat("\n\tModel run finished. Time elapsed =", elapsed[3],"s.")
+  cat("\n\tCopying output files...")
+    
+  # copy outputs to 'output' folder
+  file.copy(from="jjm.par",   to=.to(".par",   output, model))
+  file.copy(from="jjm.rep",   to=.to(".rep",   output, model))
+  file.copy(from="jjm.std",   to=.to(".std",   output, model))
+  file.copy(from="jjm.cor",   to=.to(".cor",   output, model))
+  file.copy(from="fprof.yld", to=.to(".yld",   output, model))
+  file.copy(from="for_r.rep", to=.to("_R.rep", output, model))
+  
+  .cleanad() # clean admb files
+  
+  cat("\n\n")
+  return(invisible())
+}
+
+# Diagnostics -------------------------------------------------------------
 
 #' @title Generate Assessment plots from single model
 #' @description Function to generate plots from results of readJJM function
@@ -58,38 +135,8 @@ diagnostics <- function(outputObject, ...) {
   return(output)
 }
 
-#' @title Run a JJM model
-#' @description Function to run a model (o list of models) of JJM and generate inputs files
-#' @param modelName String with the name of model that will be readed or run.
-#' @param path Directory where the 'admb' folder is located.
-#' @param ... Arguments passed from \code{system} function.
-#' @examples
-#' model <- runJJM(modelName = "mod2.4")
-runJJM <- function(modelName, path = "", wait = TRUE, ...)
-{
-  path <- .getPath(path)
-  
-  # Set working directory in /admb directory to run model
-  oldWD <- getwd()
-  setwd(path)
-  
-  # Set lower case for model name and filter repeated names
-  modelName <- tolower(modelName)
-  modelName <- unique(modelName)
-  
-  # Run models
-  for(i in modelName)
-    system(paste("./run", i), wait = wait, ...)
-  
-  # Back to previous working directory
-  setwd(oldWD)
-  
-  return(invisible())
-}
 
-# .runJJM = function(model, wait, ...) {
-#   return(invisible())
-# }
+# Combine models ----------------------------------------------------------
 
 #' @title Combine outputs
 #' @description This function takes model objects (class \code{outputs}) of JJM and generate an object 
@@ -108,6 +155,7 @@ combineModels <- function(...)
   return(output)
 }
 
+# Combine stocks ----------------------------------------------------------
 #' @title combineStocks
 #' @description This function takes model objects (class \code{outputs}) of JJM and generate a model
 #' with SD and mean combined.
