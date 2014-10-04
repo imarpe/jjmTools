@@ -42,19 +42,19 @@
   cols$Fnames       <- list()
   cols$Fnames       <- strsplit(unlist(res1[counter]), "%")[[1]]; counter <- counter + 1
   cols$Fcaton       <- matrix(NA, ncol = nF, nrow = nY,
-                            dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
+                              dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   cols$Fcaton[]     <- matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))),
-                            ncol = nF, nrow = nY); counter <- counter + nF
+                              ncol = nF, nrow = nY); counter <- counter + nF
   cols$Fcatonerr    <- matrix(NA, ncol = nF, nrow = nY, dimnames = list(years = Ys[1]:Ys[2],
-                                                                     paste("fishery", 1:nF, sep = "")))
+                                                                        paste("fishery", 1:nF, sep = "")))
   cols$Fcatonerr[]  <- matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))), 
-                             ncol = nF, nrow = nY); counter <- counter + nF
+                              ncol = nF, nrow = nY); counter <- counter + nF
   cols$FnumyearsA   <- matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
   cols$FnumyearsA[] <- na.omit(.an(unlist(res1[counter:(counter+nF-1)]))); counter <- counter + nF
   cols$FnumyearsL   <- matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
   cols$FnumyearsL[] <- na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))); counter <- counter + nF
   cols$Fageyears    <- matrix(NA, ncol = nF, nrow = nY,
-                           dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
+                              dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   
   for(iFs in 1:nF){
     if(cols$FnumyearsA[iFs] > 0){
@@ -273,7 +273,7 @@
   names(lstOuts) <- Name
   tab <- do.call(cbind, lapply(lstOuts, function(x){round(x$Like_Comp, 2)}))
   row.names(tab) <- lstOuts[[1]]$Like_Comp_names
-
+  
   return(tab)
 }
 
@@ -291,7 +291,7 @@
                                                                           function(y){return(y[,1:3])}))}))
   fut <- as.data.frame(fut, stringsAsFactors = FALSE)
   colnames(fut) <- c("year", "SSB", "SD")
-
+  
   fut$modelscenario <- paste(rep(names(lstOuts),
                                  lapply(lstOuts, function(x) {nrow(x$SSB_fut_1)*length(grep("SSB_fut_", names(x)))})),
                              paste("Scen",
@@ -345,162 +345,57 @@
   return(ass)
 }
 
-.combineStocks <- function(... , model){
+
+.compareModels <- function(lstObject, comparisonType = "time", comparisonParams, ...) {
   
-  modelList <- deparse(substitute(list(...)))
-  modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
-  modelList <- unlist(strsplit(x = modelList, split = ", "))
+  # Prepare model names
+  modelNames <- names(lstObject$data)
   
-  # Models in a list called 'allModels'
-  allModels <- list()
-  for(i in 1:length(modelList)){
-    allModels[[i]] <- get(modelList[i])$output$output
-  }
-  
-  ###### Analysis to Slots1
-  
-  nModels <- length(allModels)
-  
-  # Slots 1
-  Slots1 <- c("SSB","R","TotBiom")
-  
-  # Correction of SSB, R, TotBiom matrices:
-  for(j in seq_along(Slots1)){
-    nFilas <- numeric(length(allModels))
-    for(i in seq_along(allModels)){
-      nFilas[i] <- nrow(allModels[[i]][[Slots1[j]]])
-    }
+  # Get plots
+  if(comparisonType == "time")
+  {
+    comparisonParams <- .getParameters(pattern = list(SD = FALSE, Sum = NULL, startYear = NULL, legendPos = "topright",
+                                                      xlim = NULL, ylim = NULL),
+                                       myList = comparisonParams)
     
-    minF <- which.min(nFilas)[1]
-    for(i in seq_along(allModels)){
-      index <- which(names(allModels[[i]]) == Slots1[j])
-      FYear <- allModels[[minF]][[index]][1, 1]
-      
-      temp <- allModels[[i]]
-      temp <- temp[[Slots1[j]]][which(temp[[Slots1[j]]][,1] == FYear):nrow(temp[[Slots1[j]]]),]
-      
-      allModels[[i]][[Slots1[j]]] <- temp
-    }
-  }
-  
-  # Empty matrix
-  output1 <- list(matrix(0, ncol = 5, nrow = nrow(allModels[[1]]$SSB)),
-                  matrix(0, ncol = 5, nrow = nrow(allModels[[1]]$R)),
-                  matrix(0, ncol = 5, nrow = nrow(allModels[[1]]$TotBiom)))
-  
-  # Analysis
-  for(j in 1:length(Slots1)){
-    output1[[j]][,1] <- allModels[[1]][[Slots1[j]]][,1]
-    for(i in seq(nModels)){
-      output1[[j]][,2] <- rowSums(cbind(output1[[j]][,2], allModels[[i]][[Slots1[j]]][,2]))
-      output1[[j]][,3] <- rowSums(cbind(output1[[j]][,3], (allModels[[i]][[Slots1[j]]][,3])^2))
-    }
+    .compareTime(lstOuts = lstOuts, Slot = comparisonParams$Slot, SD = comparisonParams$SD,
+                 Sum = comparisonParams$Sum, startYear = comparisonParams$startYear,
+                 legendPos = comparisonParams$legendPos, xlim = comparisonParams$xlim,
+                 ylim = comparisonParams$ylim)
+  }else if(comparisonType == "matrix")
+  {
+    comparisonParams <- .getParameters(pattern = list(SD = FALSE, Sum = NULL, YrInd = NULL, Apply = mean,
+                                                      startYear = NULL, legendPos = "topright",
+                                                      xlim = NULL, ylim = NULL),
+                                       myList = comparisonParams)
     
-    output1[[j]][,3] <- sqrt(output1[[j]][,3])
-    for(i in seq(nModels)){
-      output1[[j]][,4] <- output1[[j]][,2] - 1.96*output1[[j]][,3]
-      output1[[j]][,5] <- output1[[j]][,2] + 1.96*output1[[j]][,3]
-    }
-  }
-  # Name to the list 
-  names(output1) <- Slots1
-  
-  
-  ###### Analysis to Slots2
-  
-  # Take in account if all models have the same number of scenarios
-  nScenarios <- numeric(length(allModels))
-  for(i in seq_along(allModels)){
-    nScenarios[i] <- length(grep("Catch_fut_", names(allModels[[i]])))
-  }
-  
-  # if same number of scenarios so:
-  if(length(unique(nScenarios)) == 1){
-    # Create Slots2
-    Slots2 <- c(paste0("Catch_fut_", seq(unique(nScenarios))), 
-                paste0("SSB_fut_", seq(unique(nScenarios))))
+    .compareMatrix(lstOuts = lstOuts, Slot = comparisonParams$Slot, SD = comparisonParams$SD,
+                   Sum = comparisonParams$Sum, YrInd = comparisonParams$YrInd,
+                   Apply = comparisonParams$Apply, startYear = comparisonParams$startYear,
+                   legendPos = comparisonParams$legendPos, xlim = comparisonParams$xlim,
+                   ylim = comparisonParams$ylim)
+  }else if(comparisonType == "times")
+  {
+    comparisonParams <- .getParameters(pattern = list(SD = FALSE, Sum = NULL, YrInd = NULL, Apply = mean,
+                                                      startYear = NULL, legendPos = "topright",
+                                                      xlim = NULL, ylim = NULL),
+                                       myList = comparisonParams)
     
-    LastYear    <- max(output1[[3]][,1])
-    NYearP      <- nrow(allModels[[1]]$Catch_fut_1)
-    YearsProy   <- seq(from = (LastYear + 1), to = (LastYear + NYearP))
-    nYearsProy  <- length(YearsProy)
-    
-    # Empty matrix
-    output2 <- matrix(0, ncol = 2, nrow = nYearsProy)
-    output2 <- replicate(length(Slots2), output2, simplify = FALSE)
-    
-    # Analysis (only sum)
-    for(j in seq_along(Slots2)){
-      output2[[j]][,1] <- YearsProy # por el momento se pone de frente
-      
-      for(i in seq(nModels)){
-        output2[[j]][,2] <- rowSums(cbind(output2[[j]][,2],
-                                          allModels[[i]][[Slots2[j]]][,2]))
-      }
-    }
-    
-    # name to the list
-    names(output2) <- Slots2
-  } else {
-    LastYear    <- max(output1[[3]][,1])
-    NYearP      <- nrow(allModels[[1]]$Catch_fut_1) 
-    YearsProy   <- seq(from = (LastYear+1), to = (LastYear+NYearP))
-    nYearsProy  <- length(YearsProy)
-    
-    # the outcome is a NA's matrix
-    output2 <- replicate(length(Slots2), NA, simplify = FALSE)
-  }
+    .compareTimes(lstOuts = lstOuts, Slots = comparisonParams$Slot, SD = comparisonParams$SD,
+                  Sum = comparisonParams$Sum, YrInd = comparisonParams$YrInd,
+                  Apply = comparisonParams$Apply, startYear = comparisonParams$startYear,
+                  legendPos = comparisonParams$legendPos, xlim = comparisonParams$xlim,
+                  ylim = comparisonParams$ylim)
+  }else stop("Incorrect value for 'comparisonType'.")
   
-  # 'output1' is the outcome of analysis in Slots1
-  # 'output2' is the outcome of analysis in Slots2
-  
-  
-  ###### Total Result
-  # Merge both list (output1 and output2)
-  outputMerge <- c(output1, output2)
-  
-  # Length of the final list (para escribir el _R.rep)
-  nNames <- length(names(allModels[[1]]))
-  
-  # names to the final list
-  outcome <- replicate(nNames, NA, simplify = FALSE)
-  names(outcome) <- names(allModels[[1]])
-  
-  #  Merge final list with output.merge
-  for(i in seq_along(names(outputMerge))){
-    index <- which(names(outputMerge)[i] == names(outcome))
-    outcome[[index]] <- outputMerge[[i]]
-  }
-  
-  #Find the directory
-  posLoc <- max(gregexpr("/", get(modelList[1])$data$info$file)[[1]])
-  fileLocation <- substr(x = get(modelList[1])$data$info$file, start = 1, stop = posLoc)
-  
-  # Final Result
-  if(is.null(model)) 
-    writeList(outcome, file.path(fileLocation, "arc/Combine_R.rep"), format = "P") else 
-      writeList(outcome, file.path(fileLocation, "arc", paste0(model,"_R.rep")), format = "P")
-  
-  infoData <- list(file       = modelList,
-                   variables  = sum(!is.na(outcome)),
-                   year       = c(outcome$TotBiom[1, 1], outcome$TotBiom[nrow(outcome$TotBiom), 1]),
-                   age        = NULL, 
-                   length     = NULL)
-  
-  output <- list(info   = list(model = NULL),
-                 output = list(info = NULL, output = outcome, YPR = NULL),
-                 data   = list(info = infoData, data = NULL))
-  
-  class(output) = c("jjm.output")
-  
-  return(output)
+  return(invisible())
 }
 
 .compareTime <-  function(lstOuts, Slot = "TotBiom", SD = FALSE, Sum = NULL, startYear = NULL, legendPos = "topright",
                           ylim = NULL, grid = TRUE, yFactor = 1, main = NA, ylab = Slot,
                           linesCol = NULL, lwd = 1, lty = 1, ...){
   
-  dat <- lapply(lstOuts$combined$outputs, function(x){return(x[[Slot]])})
+  dat <- lapply(lstOuts$data, function(x){return(x[[Slot]])})
   nms <- names(dat)
   
   if(!is.null(Sum)){
@@ -536,7 +431,7 @@
   axis(2, las=2)
   
   for(i in 2:nD)
-    lines(x = dat[[i]][,1], y = dat[[i]][,2]*yFactor, col = linesCol[i], lwd = lwd, lty = lty)
+    lines(x = dat[[1]][,1], y = dat[[i]][,2]*yFactor, col = linesCol[i], lwd = lwd, lty = lty)
   
   if(!is.null(Sum)){
     idx1    <- which(nms == Sum[1])
@@ -556,8 +451,6 @@
   
   legend(legendPos, legend = nms, col = linesCol, lwd = lwd, lty = lty, box.col = NA)
   box()
-  
-  return(invisible())
 }
 
 .compareMatrix <- function(lstOuts, Slot = 'TotF', Sum = NULL, YrInd = FALSE, Apply = "mean", startYear = NULL,
@@ -565,13 +458,13 @@
   
   lst     <- list(...)
   
-  dat     <- lapply(lstOuts$combined$outputs,function(x){return(x[[Slot]])})
+  dat     <- lapply(lstOuts,function(x){return(x[[Slot]])})
   nms     <- names(dat); if(!is.null(Sum)){nms <- c(nms,paste(Sum[1],"+",Sum[2],sep=""))}
   
   nD      <- length(dat)
   if(!YrInd){
     for(i in 1:nD){
-      dat[[i]] = cbind(lstOuts$combined$outputs[[i]]$Yr,dat[[i]])
+      dat[[i]] = cbind(lstOuts[[i]]$Yr,dat[[i]])
     }
   }
   
@@ -602,8 +495,6 @@
   
   legend(legendPos,legend=c(nms),col=1:length(nms),lwd=2,lty=1,box.lty=0,bty="n")
   box()
-  
-  return(invisible())
 }
 
 .getParameters <- function(patternList, myList) {
@@ -663,6 +554,405 @@
 {
   output <- list.files(path = path, recursive = TRUE, pattern = pattern)
   output <- output[grep(x = output, pattern = target)]
+  
+  return(output)
+}
+
+
+
+
+
+.prepareCombine = function(...){
+  
+  modelList <- deparse(substitute(list(...)))
+  modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
+  modelList <- unlist(strsplit(x = modelList, split = ", "))
+  
+  # Models in a list called 'allModels'
+  allModels <- list()
+  for(i in 1:length(modelList)){
+    allModels[[i]] <- get(modelList[i])$output$output
+  }
+  
+  result = list(
+    modelList = modelList,
+    allModels = allModels
+  )
+  
+  return(result)
+  
+}
+
+
+.combineSSB = function(models) {
+  
+  nModels <- length(models)
+  
+  # Correction of SSB, R, TotBiom matrices:
+  nFilas <- numeric(length(models))
+  for(i in seq_along(models)){
+    nFilas[i] <- nrow(models[[i]]$SSB)
+  }
+  
+  
+  minF <- which.min(nFilas)[1]
+  for(i in seq_along(models)){
+    index <- which(names(models[[i]]) == "SSB")
+    FYear <- models[[minF]][[index]][1, 1]
+    
+    temp <- models[[i]]
+    temp <- temp$SSB[which(temp$SSB[,1] == FYear):nrow(temp$SSB),]
+    
+    models[[i]]$SSB <- temp
+  }
+  
+  for(i in seq_along(models)){
+    index <- which(names(models[[i]]) == "SSB")
+    FYear <- models[[minF]][[index]][nrow(models[[minF]][[index]]), 1]
+    
+    temp <- models[[i]]
+    temp <- temp$SSB[1:which(temp$SSB[,1] == FYear),]
+    
+    models[[i]]$SSB <- temp
+  }
+  
+  
+  # Empty matrix
+  output <- matrix(0, ncol = 5, nrow = nrow(models[[1]]$SSB))
+  
+  # Analysis
+  output[,1] <- models[[1]]$SSB[,1]
+  for(i in seq(nModels)){
+    output[,2] <- rowSums(cbind(output[,2], models[[i]]$SSB[,2]))
+    output[,3] <- rowSums(cbind(output[,3], (models[[i]]$SSB[,3])^2))
+  }
+  
+  output[,3] <- sqrt(output[,3])
+  
+  for(i in seq(nModels)){
+    output[,4] <- output[,2] - 1.96*output[,3]
+    output[,5] <- output[,2] + 1.96*output[,3]
+  }
+  
+  
+  return(output)
+  
+}
+
+
+.combineR = function(models) {
+  
+  nModels <- length(models)
+  
+  # Correction of SSB, R, TotBiom matrices:
+  nFilas <- numeric(length(models))
+  for(i in seq_along(models)){
+    nFilas[i] <- nrow(models[[i]]$R)
+  }
+  
+  
+  minF <- which.min(nFilas)[1]
+  for(i in seq_along(models)){
+    index <- which(names(models[[i]]) == "R")
+    FYear <- models[[minF]][[index]][1, 1]
+    
+    temp <- models[[i]]
+    temp <- temp$R[which(temp$R[,1] == FYear):nrow(temp$R),]
+    
+    models[[i]]$R <- temp
+  }
+  
+  for(i in seq_along(models)){
+    index <- which(names(models[[i]]) == "R")
+    FYear <- models[[minF]][[index]][nrow(models[[minF]]$R), 1]
+    
+    temp <- models[[i]]
+    temp <- temp$R[1:which(temp$R[,1] == FYear),]
+    
+    models[[i]]$R <- temp
+  }
+  
+  
+  # Empty matrix
+  output <- matrix(0, ncol = 5, nrow = nrow(models[[1]]$R))
+  
+  # Analysis
+  output[,1] <- models[[1]]$R[,1]
+  for(i in seq(nModels)){
+    output[,2] <- rowSums(cbind(output[,2], models[[i]]$R[,2]))
+    output[,3] <- rowSums(cbind(output[,3], (models[[i]]$R[,3])^2))
+  }
+  
+  output[,3] <- sqrt(output[,3])
+  
+  for(i in seq(nModels)){
+    output[,4] <- output[,2] - 1.96*output[,3]
+    output[,5] <- output[,2] + 1.96*output[,3]
+  }
+  
+  
+  return(output)
+  
+}
+
+
+.combineTotBiom = function(models) {
+  
+  nModels <- length(models)
+  
+  # Correction of SSB, R, TotBiom matrices:
+  nFilas <- numeric(length(models))
+  for(i in seq_along(models)){
+    nFilas[i] <- nrow(models[[i]]$TotBiom)
+  }
+  
+  
+  minF <- which.min(nFilas)[1]
+  for(i in seq_along(models)){
+    index <- which(names(models[[i]]) == "TotBiom")
+    FYear <- models[[minF]][[index]][1, 1]
+    
+    temp <- models[[i]]
+    temp <- temp$TotBiom[which(temp$TotBiom[,1] == FYear):nrow(temp$TotBiom),]
+    
+    models[[i]]$TotBiom <- temp
+  }
+  
+  for(i in seq_along(models)){
+    index <- which(names(models[[i]]) == "TotBiom")
+    FYear <- models[[minF]][[index]][nrow(models[[minF]]$TotBiom), 1]
+    
+    temp <- models[[i]]
+    temp <- temp$TotBiom[1:which(temp$TotBiom[,1] == FYear),]
+    
+    models[[i]]$TotBiom <- temp
+  }
+  
+  # Empty matrix
+  output <- matrix(0, ncol = 5, nrow = nrow(models[[1]]$TotBiom))
+  
+  # Analysis
+  output[,1] <- models[[1]]$TotBiom[,1]
+  for(i in seq(nModels)){
+    output[,2] <- rowSums(cbind(output[,2], models[[i]]$TotBiom[,2]))
+    output[,3] <- rowSums(cbind(output[,3], (models[[i]]$TotBiom[,3])^2))
+  }
+  
+  output[,3] <- sqrt(output[,3])
+  
+  for(i in seq(nModels)){
+    output[,4] <- output[,2] - 1.96*output[,3]
+    output[,5] <- output[,2] + 1.96*output[,3]
+  }
+  
+  
+  return(output)
+  
+}
+
+
+
+.combineN = function(models) {
+  
+  nModels <- length(models)
+  
+  # Correction of SSB, R, TotBiom matrices:
+  nFilas <- numeric(length(models))
+  for(i in seq_along(models)){
+    nFilas[i] <- nrow(models[[i]]$N)
+  }
+  
+  
+  minF <- which.min(nFilas)[1]
+  for(i in seq_along(models)){
+    index <- which(names(models[[i]]) == "N")
+    FYear <- models[[minF]][[index]][1, 1]
+    
+    temp <- models[[i]]
+    temp <- temp$N[which(temp$N[,1] == FYear):nrow(temp$N),]
+    
+    models[[i]]$N <- temp
+  }
+  
+  for(i in seq_along(models)){
+    index <- which(names(models[[i]]) == "N")
+    FYear <- models[[minF]][[index]][nrow(models[[minF]]$N), 1]
+    
+    temp <- models[[i]]
+    temp <- temp$N[1:which(temp$N[,1] == FYear),]
+    
+    models[[i]]$N <- temp
+  }
+  
+  
+  # Take in account if all models have the same number of age
+  nAges <- numeric(length(models))
+  for(i in seq_along(models)){
+    nAges[i] <- ncol(models[[i]]$N)
+  }
+  
+  
+  if(length(unique(nAges)) == 1){
+    
+    # Empty matrix
+    output <- matrix(0, ncol = ncol(models[[1]]$N), nrow = nrow(models[[1]]$N))
+    
+    # Analysis
+    output[,1] <- models[[1]]$N[,1]
+    
+    for(i in seq(nModels)){
+      output[, 2:ncol(output)] <- output[, 2:ncol(output)] + models[[i]]$N[, 2:ncol(output)]
+    }
+    
+    
+  } else {
+    
+    output <- NULL
+  }
+  
+  return(output)
+  
+}
+
+
+
+.combineCatchFut = function(models){
+  
+  nModels <- length(models)
+  
+  # Take in account if all models have the same number of scenarios
+  nScenarios <- numeric(length(models))
+  for(i in seq_along(models)){
+    nScenarios[i] <- length(grep("Catch_fut_", names(models[[i]])))
+  }
+  
+  # Create Slots2
+  Slots2 <- c(paste0("Catch_fut_", seq(unique(nScenarios))))
+  
+  
+  if(length(unique(nScenarios)) == 1){
+    
+    #Match the same years projection
+    fYears = numeric(nModels)
+    for(i in seq(nModels)){
+      fYears[i] = models[[i]]$Catch_fut_1[1,1]
+    }
+    
+    lYears = numeric(nModels)
+    for(i in seq(nModels)){
+      lYears[i] = models[[i]]$Catch_fut_1[nrow(models[[i]]$Catch_fut_1),1]
+    }
+    
+    maxF = max(fYears)
+    minL = min(lYears)
+    
+    for(i in seq(nModels)){
+      for(j in Slots2){
+        index = which(names(models[[i]]) == j)
+        models[[i]][[index]] = models[[i]][[index]][which(models[[i]][[index]][,1] == maxF):which(models[[i]][[index]][,1] == minL), ]
+      }
+    }
+    
+    
+    LastYear    <- min(models[[1]]$Catch_fut_1[,1]) - 1
+    NYearP      <- nrow(models[[1]]$Catch_fut_1)
+    YearsProy   <- seq(from = (LastYear + 1), to = (LastYear + NYearP))
+    nYearsProy  <- length(YearsProy)
+    
+    # Empty matrix
+    output <- matrix(0, ncol = 2, nrow = nYearsProy)
+    output <- replicate(length(Slots2), output, simplify = FALSE)
+    
+    # Analysis (only sum)
+    for(j in seq_along(Slots2)){
+      output[[j]][,1] <- YearsProy # por el momento se pone de frente
+      
+      for(i in seq(nModels)){
+        output[[j]][,2] <- rowSums(cbind(output[[j]][,2],
+                                         models[[i]][[Slots2[j]]][,2]))
+      }
+    }
+    
+    # name to the list
+    names(output) <- Slots2
+    
+  } else {
+    
+    # the outcome is a NA's matrix
+    output <- replicate(length(Slots2), NA, simplify = FALSE)
+    names(output) <- Slots2
+    
+  }
+  
+  return(output)
+}
+
+
+.combineSSBFut = function(models){
+  
+  nModels <- length(models)
+  
+  # Take in account if all models have the same number of scenarios
+  nScenarios <- numeric(length(models))
+  for(i in seq_along(models)){
+    nScenarios[i] <- length(grep("SSB_fut_", names(models[[i]])))
+  }
+  
+  # Create Slots2
+  Slots2 <- c(paste0("SSB_fut_", seq(unique(nScenarios))))
+  
+  
+  if(length(unique(nScenarios)) == 1){
+    
+    fYears = numeric(nModels)
+    for(i in seq(nModels)){
+      fYears[i] = models[[i]]$SSB_fut_1[1,1]
+    }
+    
+    lYears = numeric(nModels)
+    for(i in seq(nModels)){
+      lYears[i] = models[[i]]$SSB_fut_1[nrow(models[[i]]$SSB_fut_1),1]
+    }
+    
+    maxF = max(fYears)
+    minL = min(lYears)
+    
+    for(i in seq(nModels)){
+      for(j in Slots2){
+        index = which(names(models[[i]]) == j)
+        models[[i]][[index]] = models[[i]][[index]][which(models[[i]][[index]][,1] == maxF):which(models[[i]][[index]][,1] == minL), ]
+      }
+    }
+    
+    LastYear    <- min(models[[1]]$SSB_fut_1[,1]) - 1
+    NYearP      <- nrow(models[[1]]$SSB_fut_1)
+    YearsProy   <- seq(from = (LastYear + 1), to = (LastYear + NYearP))
+    nYearsProy  <- length(YearsProy)
+    
+    # Empty matrix
+    output <- matrix(0, ncol = 2, nrow = nYearsProy)
+    output <- replicate(length(Slots2), output, simplify = FALSE)
+    
+    # Analysis (only sum)
+    for(j in seq_along(Slots2)){
+      output[[j]][,1] <- YearsProy # por el momento se pone de frente
+      
+      for(i in seq(nModels)){
+        output[[j]][,2] <- rowSums(cbind(output[[j]][,2],
+                                         models[[i]][[Slots2[j]]][,2]))
+      }
+    }
+    
+    # name to the list
+    names(output) <- Slots2
+    
+  } else {
+    
+    # the outcome is a NA's matrix
+    output <- replicate(length(Slots2), NA, simplify = FALSE)
+    names(output) <- Slots2
+    
+  }
   
   return(output)
 }

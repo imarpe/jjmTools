@@ -87,9 +87,9 @@ runJJM <- function(modelName, path = "", wait = TRUE, ...)
   return(invisible())
 }
 
-# .runJJM = function(model, wait, ...) {
-#   return(invisible())
-# }
+.runJJM = function(model, wait, ...) {
+  return(invisible())
+}
 
 #' @title Combine outputs
 #' @description This function takes model objects (class \code{outputs}) of JJM and generate an object 
@@ -118,10 +118,37 @@ combineModels <- function(...)
 #' mod2 <- runJJM(modelName = "mod2.2")
 #' mod3 <- runJJM(modelName = "mod2.3")
 #' 
-#' combinedMod_123 <- combineStocks(mod1, mod2, mod3, model = "mod_123")
-combineStocks <- function(..., model = NULL)
-{
-  output <- .combineStocks(..., model = model)
+#' combinedMod_123 <- combineStocks(mod1, mod2, mod3)
+
+
+combineStocks = function(...){
   
-  return(output)
+  listModels = .prepareCombine(...)
+  
+  finalList1 = list(
+    SSB     = .combineSSB(models = listModels$allModels),
+    R       = .combineR(models = listModels$allModels),
+    TotBiom = .combineTotBiom(models = listModels$allModels),
+    N       = .combineN(models = listModels$allModels))
+  
+  finalList = c(
+    finalList1,
+    .combineCatchFut(models = listModels$allModels),
+    .combineSSBFut(models = listModels$allModels)
+  )
+  
+  return(finalList)
+  
+}
+
+
+writeCombinedStocks = function(combinedModel, modelName = NULL){
+  
+  # Final Result
+  if(is.null(modelName)) 
+    writeList(combinedModel, file.path("arc","Combine_R.rep"), format = "P") 
+  else 
+    writeList(combinedModel, file.path("arc", paste0(modelName, "_R.rep")), format = "P")
+  
+  return(invisible())
 }
