@@ -3,19 +3,30 @@
 \alias{runJJM}
 \title{Run a JJM model}
 \usage{
-runJJM(modelName, path = "", wait = TRUE, ...)
+runJJM(models, path = "", output = "arc", useGuess = FALSE,
+  guess = NULL, iprint = 100, wait = TRUE, ...)
 }
 \arguments{
-\item{modelName}{String with the name of model that will be readed or run.}
+\item{models}{String with the name of the models to be run.}
 
 \item{path}{Directory where the 'admb' folder is located.}
+
+\item{output}{Folder to save the outputs, 'arc' by default.}
+
+\item{useGuess}{boolean, to use an initial guess for the parameters?}
+
+\item{guess}{File with the initial guess for the parameters. If \code{NULL}, will use \code{model.par} in the output folder.}
+
+\item{iprint}{iprint parameter for the JJM model, 100 by default.}
+
+\item{wait}{boolean, wait for the model to finish? Forced to be TRUE.}
 
 \item{...}{Arguments passed from \code{system} function.}
 }
 \description{
-Function to run a model (o list of models) of JJM and generate inputs files
+Function to run one or several JJM models
 }
 \examples{
-model <- runJJM(modelName = "mod2.4")
+model = runJJM(models = "mod2.4")
 }
 

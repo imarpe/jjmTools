@@ -3,12 +3,14 @@
 \alias{readJJM}
 \title{Read a model or list of models}
 \usage{
-readJJM(modelName, path = "", ...)
+readJJM(model, path = "", modelName = model, ...)
 }
 \arguments{
-\item{modelName}{String with the name of model that will be readed or run.}
+\item{model}{String with the name of model that will be readed or run.}
 
 \item{path}{Directory where the 'admb' folder is located.}
+
+\item{modelName}{alias for \code{model} (to be deprecated).}
 
 \item{...}{Extra arguments}
 }
@@ -16,7 +18,6 @@ readJJM(modelName, path = "", ...)
 Function to read models and list if models and generate results
 }
 \examples{
-readJJM(modelName = "mod2.4")
-readJJM(modelName = paste0("mod2.", 1:4))
+readJJM(model = "mod2.4")
 }
 

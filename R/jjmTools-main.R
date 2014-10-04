@@ -22,17 +22,17 @@ NULL
 
 #' @title Read a model or list of models
 #' @description Function to read models and list if models and generate results
-#' @param modelName String with the name of model that will be readed or run.
+#' @param model String with the name of model that will be readed or run.
 #' @param path Directory where the 'admb' folder is located.
+#' @param modelName alias for \code{model} (to be deprecated).
 #' @param ... Extra arguments
 #' @examples
-#' readJJM(modelName = "mod2.4")
-#' readJJM(modelName = paste0("mod2.", 1:4))
+#' readJJM(model = "mod2.4")
 readJJM <- function(model, path = "", modelName=model, ...) {
   
   path <- .getPath(path)
   
-  output <- .getJjmOutput(path = path, model = modelName, ...)      
+  output <- .getJjmOutput(path = path, model = model, ...)      
   
   if(length(modelName) > 1)
     warning("The condition has length > 1 and only the first element will be used")
@@ -48,6 +48,11 @@ readJJM <- function(model, path = "", modelName=model, ...) {
 #' @description Function to run one or several JJM models
 #' @param models String with the name of the models to be run.
 #' @param path Directory where the 'admb' folder is located.
+#' @param output Folder to save the outputs, 'arc' by default.
+#' @param useGuess boolean, to use an initial guess for the parameters?
+#' @param guess File with the initial guess for the parameters. If \code{NULL}, will use \code{model.par} in the output folder. 
+#' @param iprint iprint parameter for the JJM model, 100 by default.
+#' @param wait boolean, wait for the model to finish? Forced to be TRUE.
 #' @param ... Arguments passed from \code{system} function.
 #' @examples
 #' model = runJJM(models = "mod2.4")

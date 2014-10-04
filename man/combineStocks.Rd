@@ -3,7 +3,7 @@
 \alias{combineStocks}
 \title{combineStocks}
 \usage{
-combineStocks(..., model = NULL)
+combineStocks(..., modelName = NULL)
 }
 \arguments{
 \item{...}{One or more output objects, to be combined to list of models.}
@@ -19,6 +19,6 @@ mod1 <- runJJM(modelName = "mod2.1")
 mod2 <- runJJM(modelName = "mod2.2")
 mod3 <- runJJM(modelName = "mod2.3")
 
-combinedMod_123 <- combineStocks(mod1, mod2, mod3, model = "mod_123")
+combinedMod_123 <- combineStocks(mod1, mod2, mod3, modelName = NULL)
 }
 
