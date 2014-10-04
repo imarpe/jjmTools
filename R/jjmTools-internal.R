@@ -262,7 +262,7 @@
 }
 
 .LikeTable <- function(lstOuts){
-  if(class(lstOuts)[1] == 'jjm.output'){
+  if(class(lstOuts)[1] == 'jjm.output') {
     Name <- lstOuts$output$info$model
     lstOuts <- list(lstOuts$output$output)
   }else {
