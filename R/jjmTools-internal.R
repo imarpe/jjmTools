@@ -1035,6 +1035,14 @@
 .checkModels = function(models) {
   models = tolower(models)
   models = unique(models)
+  check = file.exists(models)
+  if(any(!check)) {
+    noCtl = models[!check]
+    msg = paste("Ignoring non existing models:", 
+                paste(noCtl, collapse=", "))
+    message(msg)
+    models = models[check]
+  }
   return(models)
 }
 

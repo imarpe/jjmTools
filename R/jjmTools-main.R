@@ -66,6 +66,13 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
   on.exit(setwd(oldwd))
   
   models = .checkModels(models)
+  if(length(models)<1) {
+    cat("No models to be run.")
+    return(invisible())
+  }
+
+  cat("Running models", paste(models, collapse=", "))
+  
   guess  = .checkGuess(models, guess) # to be updated
   
   # Set lower case for model name and filter repeated names
