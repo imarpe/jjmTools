@@ -496,56 +496,11 @@
   return(output)
 }
 
-.compareModels <- function(lstObject, comparisonType = "time", comparisonParams, ...) {
-  
-  # Prepare model names
-  modelNames <- names(lstObject$data)
-  
-  # Get plots
-  if(comparisonType == "time")
-  {
-    comparisonParams <- .getParameters(pattern = list(SD = FALSE, Sum = NULL, startYear = NULL, legendPos = "topright",
-                                                      xlim = NULL, ylim = NULL),
-                                       myList = comparisonParams)
-    
-    .compareTime(lstOuts = lstOuts, Slot = comparisonParams$Slot, SD = comparisonParams$SD,
-                Sum = comparisonParams$Sum, startYear = comparisonParams$startYear,
-                legendPos = comparisonParams$legendPos, xlim = comparisonParams$xlim,
-                ylim = comparisonParams$ylim)
-  }else if(comparisonType == "matrix")
-  {
-    comparisonParams <- .getParameters(pattern = list(SD = FALSE, Sum = NULL, YrInd = NULL, Apply = mean,
-                                                      startYear = NULL, legendPos = "topright",
-                                                      xlim = NULL, ylim = NULL),
-                                       myList = comparisonParams)
-    
-    .compareMatrix(lstOuts = lstOuts, Slot = comparisonParams$Slot, SD = comparisonParams$SD,
-                  Sum = comparisonParams$Sum, YrInd = comparisonParams$YrInd,
-                  Apply = comparisonParams$Apply, startYear = comparisonParams$startYear,
-                  legendPos = comparisonParams$legendPos, xlim = comparisonParams$xlim,
-                  ylim = comparisonParams$ylim)
-  }else if(comparisonType == "times")
-  {
-    comparisonParams <- .getParameters(pattern = list(SD = FALSE, Sum = NULL, YrInd = NULL, Apply = mean,
-                                                      startYear = NULL, legendPos = "topright",
-                                                      xlim = NULL, ylim = NULL),
-                                       myList = comparisonParams)
-    
-    .compareTimes(lstOuts = lstOuts, Slots = comparisonParams$Slot, SD = comparisonParams$SD,
-                 Sum = comparisonParams$Sum, YrInd = comparisonParams$YrInd,
-                 Apply = comparisonParams$Apply, startYear = comparisonParams$startYear,
-                 legendPos = comparisonParams$legendPos, xlim = comparisonParams$xlim,
-                 ylim = comparisonParams$ylim)
-  }else stop("Incorrect value for 'comparisonType'.")
-  
-  return(invisible())
-}
-
 .compareTime <-  function(lstOuts, Slot = "TotBiom", SD = FALSE, Sum = NULL, startYear = NULL, legendPos = "topright",
                           ylim = NULL, grid = TRUE, yFactor = 1, main = NA, ylab = Slot,
                           linesCol = NULL, lwd = 1, lty = 1, ...){
   
-  dat <- lapply(lstOuts$data, function(x){return(x[[Slot]])})
+  dat <- lapply(lstOuts$combined$outputs, function(x){return(x[[Slot]])})
   nms <- names(dat)
   
   if(!is.null(Sum)){
@@ -581,7 +536,7 @@
   axis(2, las=2)
   
   for(i in 2:nD)
-    lines(x = dat[[1]][,1], y = dat[[i]][,2]*yFactor, col = linesCol[i], lwd = lwd, lty = lty)
+    lines(x = dat[[i]][,1], y = dat[[i]][,2]*yFactor, col = linesCol[i], lwd = lwd, lty = lty)
   
   if(!is.null(Sum)){
     idx1    <- which(nms == Sum[1])
@@ -601,6 +556,8 @@
   
   legend(legendPos, legend = nms, col = linesCol, lwd = lwd, lty = lty, box.col = NA)
   box()
+  
+  return(invisible())
 }
 
 .compareMatrix <- function(lstOuts, Slot = 'TotF', Sum = NULL, YrInd = FALSE, Apply = "mean", startYear = NULL,
@@ -608,13 +565,13 @@
   
   lst     <- list(...)
   
-  dat     <- lapply(lstOuts,function(x){return(x[[Slot]])})
+  dat     <- lapply(lstOuts$combined$outputs,function(x){return(x[[Slot]])})
   nms     <- names(dat); if(!is.null(Sum)){nms <- c(nms,paste(Sum[1],"+",Sum[2],sep=""))}
   
   nD      <- length(dat)
   if(!YrInd){
     for(i in 1:nD){
-      dat[[i]] = cbind(lstOuts[[i]]$Yr,dat[[i]])
+      dat[[i]] = cbind(lstOuts$combined$outputs[[i]]$Yr,dat[[i]])
     }
   }
   
@@ -645,6 +602,8 @@
   
   legend(legendPos,legend=c(nms),col=1:length(nms),lwd=2,lty=1,box.lty=0,bty="n")
   box()
+  
+  return(invisible())
 }
 
 .getParameters <- function(patternList, myList) {

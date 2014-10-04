@@ -87,9 +87,9 @@ runJJM <- function(modelName, path = "", wait = TRUE, ...)
   return(invisible())
 }
 
-.runJJM = function(model, wait, ...) {
-  return(invisible())
-}
+# .runJJM = function(model, wait, ...) {
+#   return(invisible())
+# }
 
 #' @title Combine outputs
 #' @description This function takes model objects (class \code{outputs}) of JJM and generate an object 
