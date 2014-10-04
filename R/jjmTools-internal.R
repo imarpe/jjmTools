@@ -1002,6 +1002,15 @@
   return(output)
 }
 
+.getPath3 <- function(path, pattern, target, output="arc", ...)
+{
+  Dir <- output
+  output <- list.files(path = path, recursive = TRUE, pattern = paste0(target, pattern))
+  output <- output[grep(x = output, pattern = Dir, fixed = TRUE)]
+  output <- output[grep(x = output, pattern = paste0(target, pattern))]
+  
+  return(output)
+}
 
 .cleanad = function() {
   cat("\n\tCleaning ADMB files...\n")
