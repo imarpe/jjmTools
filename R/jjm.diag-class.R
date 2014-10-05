@@ -45,6 +45,10 @@ plot.jjm.diag <- function(x, what = c("input", "fit", "projections", "ypr"),
     
   } else {
     
+    Var = var %in% names(x[[what[1]]])
+    msg = paste("Variable", sQuote(var), "does not exist.")
+    if(!isTRUE(Var)) stop(msg)
+    
     if(is.null(fleet)) {
       print(x[[what[1]]][[var]])      
     } else {
@@ -52,7 +56,9 @@ plot.jjm.diag <- function(x, what = c("input", "fit", "projections", "ypr"),
       if(isTRUE(Fleet)) {
         print(x[[what[1]]][[var]][[fleet]])
       } else {
-        stop("Fleet does not exist for this variable.")
+        msg = paste("Fleet ", sQuote(fleet), " does not exist for variable ", 
+                    sQuote(var), ".", sep="")
+        stop(msg)
         print(x[[what[1]]][[var]])
       }
     }
