@@ -31,15 +31,33 @@ print.summary.jjm.diag <- function(x, ...) {
   return(invisible())
 }
 
-plot.jjm.diag <- function(x, what = c("input", "fit", "projections", "ypr"), ...)
+plot.jjm.diag <- function(x, what = c("input", "fit", "projections", "ypr"), 
+                          var=NULL, fleet=NULL, ...)
 {
   what <- tolower(what)
   
   if(!all(!is.na(match(what, c("input", "fit", "projections", "ypr")))))
     stop("Incorrect values for parameter 'what'.")
   
-  for(i in what)
-    print(x[[i]])
+  if(is.null(var)) {
+    
+    for(i in what) print(x[[i]])
+    
+  } else {
+    
+    if(is.null(fleet)) {
+      print(x[[what[1]]][[var]])      
+    } else {
+      Fleet = fleet %in% names(x[[what[1]]][[var]])
+      if(isTRUE(Fleet)) {
+        print(x[[what[1]]][[var]][[fleet]])
+      } else {
+        stop("Fleet does not exist for this variable.")
+        print(x[[what[1]]][[var]])
+      }
+    }
+    
+  }
   
   return(invisible())
 }
