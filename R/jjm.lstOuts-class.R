@@ -104,8 +104,12 @@ plot.jjm.lstOuts <- function(lstObject, what = "SSB", SD = TRUE,
 }
 
 
-logLik.jjm.lstOuts = function(object, ...) {
-  lik = summary(object)$lik
-  return(lik)
+logLik.jjm.lstOuts = function(object, detailed = FALSE, ...) {
+  
+  if(isTRUE(detailed))
+    like <- .detailedIndLikelihood(object) else
+      like <- .LikeTable(object)
+  
+  return(like)
 }
 
