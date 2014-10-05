@@ -644,7 +644,7 @@
   ageFleetsPlots <- list()
   for(iFleet in unique(res$fleet)){
     tmpres <- subset(res, fleet == iFleet)
-    tmpres$data[tmpres$age == 1] <- 0
+    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] <- 0
     
     pic <- xyplot(data ~ age | as.factor(year), data = tmpres,
                   main = paste("Age composition in fleets", iFleet),
@@ -1049,7 +1049,7 @@
   ageFitsCatch <- list()
   for(iFleet in c(jjm.out$Fshry_names)[.an(ageFleets)]){
     tmpres  <- subset(res, fleet == iFleet)
-    tmpres$data[tmpres$age == 1] <- 0
+    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] <- 0
     
     pic <- xyplot(data ~ age | factor(year), data = tmpres,
                   groups = class,
@@ -1293,7 +1293,7 @@
   ageFitsSurvey <- list()
   for(iSurvey in c(jjm.out$Index_names)[.an(ageFleets)]){
     tmpres <- subset(res, survey == iSurvey)
-    tmpres$data[tmpres$age == 1] <- 0
+    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] <- 0
     
     if(nrow(tmpres) > 0)
       pic <- xyplot(data ~ age | factor(year), data = tmpres,
