@@ -88,28 +88,21 @@ print.summary.jjm.lstOuts = function(x, ...) {
   return(invisible(x))
 }
 
-plot.jjm.lstOuts <- function(lstObject, comparisonType = "time", Slot = NULL, SD = TRUE, 
+plot.jjm.lstOuts <- function(lstObject, what = "SSB", SD = TRUE, 
                              Sum = NULL, startYear = NULL, legendPos = "topright", 
-                             YrInd = FALSE, Apply = "mean", ...){
-  if(comparisonType == "time")
-  {
-    if(is.null(Slot))
-      Slot <- "TotBiom"
-    
-   .compareTime(lstObject, Slot = Slot, SD = SD, Sum = Sum, startYear = startYear,
-                legendPos = legendPos, ...)
-  } else if(comparisonType == "matrix")
-  {
-    if(is.null(Slot)) 
-      Slot <- "TotF"
-    
-   .compareMatrix(lstObject , Slot = Slot, Sum = Sum, YrInd = YrInd, Apply = Apply, 
-                  startYear = startYear, legendPos = legendPos, ...)
-  } else
-    stop("Incorrect value for 'comparisonType'.")
+                             YrInd = FALSE, Apply = "mean", ...) {
+
+  .compareTime(lstObject, Slot="TotBiom", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
+  .compareTime(lstObject, Slot="SSB", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
+  .compareTime(lstObject, Slot="TotBiom_NoFish", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
+  .compareTime(lstObject, Slot="SSB_NoFishR", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
+  .compareTime(lstObject, Slot="R", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
+  .compareTime(lstObject, Slot="SSB_fut_1", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
+#   .compareMatrix(lstObject, Slot="TotF", Sum=Sum, YrInd=YrInd, Apply=Apply, startYear=startYear, legendPos=legendPos, ...)
   
   return(invisible())
 }
+
 
 logLik.jjm.lstOuts = function(object, ...) {
   lik = summary(object)$lik
