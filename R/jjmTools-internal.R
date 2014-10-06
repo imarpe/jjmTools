@@ -1058,26 +1058,52 @@
   return(models)
 }
 
-.checkGuess = function(models, guess) {
-  return(invisible(NULL))
+.checkGuess = function(models, guess, output) {
+  
+  if(is.null(guess)) guess = file.path(output, paste0(models, ".par"))
+  if(length(guess)==1) {
+    guess = rep(guess, length(models))
+    warning("Using the same initial guess for all models.")
+  }
+  if(length(guess)!=length(models)) stop("Initial guess files for models do not match model length.")
+  
+  guess = normalizePath(guess, mustWork = FALSE)
+  
+  guess[!file.exists(guess)] = NA
+  
+  return(guess)
 }
 
+.setParallelJJM = function(model, tmpDir=NULL) {
+  
+  if(is.null(tmpDir)) tmpDir = tempdir()
+  tmpDir = file.path(tmpDir, model)
+  if(!file.exists(tmpDir)) dir.create(tmpDir)
+  
+  ctl = paste0(model, ".ctl") # ctl file
+  dat = .getDatFile(ctl)
+  execs = c("jjm", "jjm.exe")
+  jjm = execs[file.exists(execs)]
+  
+  file.copy(from=ctl, to=tmpDir, overwrite=TRUE)
+  file.copy(from=dat, to=tmpDir, overwrite=TRUE)
+  file.copy(from=jjm, to=tmpDir, overwrite=TRUE)
+  
+  return(tmpDir)
+  
+}
+
+.getDatFile = function(ctl) {
+  dat = scan(ctl, nlines=1, what="character", quote = "#")
+  return(dat)
+}
 
 .runJJM = function(model, output, useGuess, guess, iprint, wait, ...) {
   
   cat("\nRunning model", model, "|", 
       as.character(Sys.time()), "\n")
   
-  if(!file.exists(output)) dir.create(output)
-  
-  if(is.null(guess)) guess = file.path(output, sprintf("%s.par", model))
-  if(!file.exists(guess)) {
-    useGuess = FALSE
-    msg = paste("File", guess, "does not exist, ignoring initial guess.")
-    warning(msg)
-  }
-  
-  jjm = if(isTRUE(useGuess)) {
+  jjm = if(isTRUE(useGuess) & !is.na(guess)) {
     sprintf("jjm -nox -ind %s.ctl -ainp %s -iprint %d", 
             model, guess, iprint)
   } else {
@@ -1099,8 +1125,6 @@
   file.copy(from="fprof.yld", to=.to(".yld",   output, model))
   file.copy(from="for_r.rep", to=.to("_R.rep", output, model))
   
-  .cleanad() # clean admb files
-  
   cat("\n\n")
-  return(invisible())
+  return(as.numeric(elapsed[3]))
 }
