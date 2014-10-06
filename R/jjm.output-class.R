@@ -150,7 +150,7 @@ kobe = function(model, Blim = 0.5, Flim = 1.5, Bref = 1, Fref = 1,
           y=c(Flim, ylim[2], ylim[2], Flim),
           col=rgb(1, 0, 0, alpha = 0.5), border=NA)
   
-  lines(B_Bmsy, F_Fmsy, type="b", pch=pch, cex=cex, col="black")
+  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col="black")
   points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col="blue")
   text(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], labels=range(years), cex=0.6,
        adj=-0.2)
