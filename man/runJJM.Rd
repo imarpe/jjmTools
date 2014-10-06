@@ -4,7 +4,7 @@
 \title{Run a JJM model}
 \usage{
 runJJM(models, path = "", output = "arc", useGuess = FALSE,
-  guess = NULL, iprint = 100, wait = TRUE, ...)
+  guess = NULL, iprint = 100, wait = TRUE, parallel = FALSE, ...)
 }
 \arguments{
 \item{models}{String with the name of the models to be run.}

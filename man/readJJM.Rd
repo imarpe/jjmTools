@@ -3,7 +3,7 @@
 \alias{readJJM}
 \title{Read a model or list of models}
 \usage{
-readJJM(model, path = "", modelName = model, ...)
+readJJM(model, path = "", output = "arc", modelName = model, ...)
 }
 \arguments{
 \item{model}{String with the name of model that will be readed or run.}

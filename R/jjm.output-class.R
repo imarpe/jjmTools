@@ -98,12 +98,65 @@ print.summary.jjm.output <- function(x, ...) {
   return(invisible(x))
 }
 
-# plot.jjm.output <- function(x, jjm.data, type = 'all',what = c("fit"), ...) {
-# 
-#   switch(type,
-#          all = diagnostics(jjm.out = x$data, jjm.in = jjm.data$data, jjm.ypr = jjm.ypr, what = what),
-#          
-#          stop("Plot type not defined."))
-#   
-#   return(invisible())
-# }
+
+# Kobe plot ---------------------------------------------------------------
+
+#' @title Kobe plot
+#' @description This function create a kobe plot from JJM  model outputs
+#' @param model Name for new model created with the \code{readJJM} function.
+#' @param Blim Limit reference point for B/B_MSY, default=0.5.
+#' @param Flim Limit reference point for F/F_MSY, default=1.5.
+#' @param Bref Reference point for B/B_MSY, default=1.
+#' @param Fref Reference point for F/F_MSY, default=1.
+#' @param xlim 'x' axis limits.
+#' @param ylim 'y' axis limits.
+#' @param ... Additional parameters passed to plot.
+#' @examples
+#' kobe(model)
+kobe = function(model, Blim = 0.5, Flim = 1.5, Bref = 1, Fref = 1, 
+                xlim = NULL, ylim = NULL, ...) {
+  
+  kob = model$output$output$msy_mt
+  
+  F_Fmsy = kob[,4]
+  B_Bmsy = kob[,13]
+  years  = kob[,1]
+  
+  n = length(B_Bmsy)
+  
+  if(is.null(xlim)) xlim= range(pretty(c(0, B_Bmsy)))
+  if(is.null(ylim)) ylim= range(pretty(c(0, F_Fmsy)))
+  
+  plot.new()
+  plot.window(xlim=xlim, ylim=ylim, xaxs="i")
+  
+  ylim = par()$usr[3:4]
+  zero = ylim[1]
+  
+  
+  polygon(x=c(0, 0, Bref, Bref),
+          y=c(Fref, ylim[2], ylim[2], Fref),
+          col=rgb(1, 165/255, 0, alpha = 0.5), border=NA)
+  polygon(x=c(0, 0, Bref, Bref),
+          y=c(zero, Fref, Fref, zero),
+          col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+  polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+          y=c(Fref, ylim[2], ylim[2], Fref),
+          col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+  polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+          y=c(zero, Fref, Fref, zero),
+          col = rgb(0,1,0, alpha = 0.5), border=NA)
+  polygon(x=c(0, 0, Blim, Blim),
+          y=c(Flim, ylim[2], ylim[2], Flim),
+          col=rgb(1, 0, 0, alpha = 0.5), border=NA)
+  
+  lines(B_Bmsy, F_Fmsy, type="b", pch=pch, cex=cex, col="black")
+  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col="blue")
+  text(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], labels=range(years), cex=0.6,
+       adj=-0.2)
+  
+  axis(1, las=1)
+  axis(2, las=2)
+  box()
+  return(invisible())
+}
