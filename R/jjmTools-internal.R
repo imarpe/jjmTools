@@ -876,6 +876,8 @@
   
   lst <- list(...)
   
+  Apply = match.fun(Apply)
+  
   dat <- lapply(lstOuts$combined$outputs, function(x) x[[Slot]])
   nms <- names(dat)
   
@@ -891,7 +893,7 @@
   }
   
   for(i in 1:nD) 
-    dat[[i]] <- cbind(dat[[i]][,1],apply(dat[[i]][,-1],1, get(Apply)))
+    dat[[i]] <- cbind(dat[[i]][,1], apply(dat[[i]][,-1], 1, FUN=Apply))
   
   if(is.null(startYear)){
     xrange <- range(unlist(lapply(dat, function(x) x[,1])), na.rm = TRUE)
@@ -912,7 +914,7 @@
     xlab <- "Years"
   
   if(is.null(ylab))
-    xlab <- Slot
+    ylab <- Slot
   
   if(is.null(linesCol))
     linesCol <- rainbow(nD) else

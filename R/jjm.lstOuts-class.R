@@ -98,7 +98,7 @@ plot.jjm.lstOuts <- function(lstObject, what = "SSB", SD = TRUE,
   .compareTime(lstObject, Slot="SSB_NoFishR", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
   .compareTime(lstObject, Slot="R", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
   .compareTime(lstObject, Slot="SSB_fut_1", SD=SD, Sum=Sum, startYear=startYear, legendPos=legendPos, ...)
-#   .compareMatrix(lstObject, Slot="TotF", Sum=Sum, YrInd=YrInd, Apply=Apply, startYear=startYear, legendPos=legendPos, ...)
+  .compareMatrix(lstObject, Slot="TotF", Sum=Sum, YrInd=YrInd, Apply=Apply, startYear=startYear, legendPos=legendPos, ...)
   
   return(invisible())
 }
