@@ -32,7 +32,7 @@ print.summary.jjm.diag <- function(x, ...) {
 }
 
 plot.jjm.diag <- function(x, what = c("input", "fit", "projections", "ypr"), 
-                          var=NULL, fleet=NULL, ...)
+                          var=NULL, fleet=NULL, xlim=NULL, ylim=NULL, ...)
 {
   what <- tolower(what)
   
@@ -50,16 +50,18 @@ plot.jjm.diag <- function(x, what = c("input", "fit", "projections", "ypr"),
     if(!isTRUE(Var)) stop(msg)
     
     if(is.null(fleet)) {
-      print(x[[what[1]]][[var]])      
+      xx = x[[what[1]]][[var]]
+      # to be continued
+      if(class(xx)=="trellis") print(update(xx, ...)) else print(xx)      
     } else {
       Fleet = fleet %in% names(x[[what[1]]][[var]])
       if(isTRUE(Fleet)) {
-        print(x[[what[1]]][[var]][[fleet]])
+        plot(update(x[[what[1]]][[var]][[fleet]], ...))
       } else {
         msg = paste("Fleet ", sQuote(fleet), " does not exist for variable ", 
                     sQuote(var), ".", sep="")
         stop(msg)
-        print(x[[what[1]]][[var]])
+        plot(update(x[[what[1]]][[var]], ...))
       }
     }
     
