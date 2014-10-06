@@ -3,11 +3,15 @@
 \alias{kobe}
 \title{Kobe plot}
 \usage{
-kobe(model, Blim = 0.5, Flim = 1.5, Bref = 1, Fref = 1, xlim = NULL,
-  ylim = NULL, ...)
+kobe(model, add = FALSE, col = "black", Blim = 0.5, Flim = 1.5,
+  Bref = 1, Fref = 1, xlim = NULL, ylim = NULL, ...)
 }
 \arguments{
 \item{model}{Name for new model created with the \code{readJJM} function.}
+
+\item{add}{boolean, add to an existing kobe plot?}
+
+\item{col}{color for the lines and points.}
 
 \item{Blim}{Limit reference point for B/B_MSY, default=0.5.}
 
