@@ -936,7 +936,7 @@
   if(!is.null(Sum))
     lines(x = dat[[idx1]][,1], y = datsum, col = nD + 1, lwd = lwd, lty = lty)
   
-  legend(legendPos,legend = nms, col = seq_along(nms), lwd = lwd, lty = lty, 
+  legend(legendPos,legend = nms, col = linesCol, lwd = lwd, lty = lty, 
          box.lty = 0, bty = "n")
   box()
   
