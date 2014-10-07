@@ -1933,7 +1933,7 @@
   
   pic <- xyplot(data ~ year, data = totres, type = "l", groups = scenario,
                 xlim = c(2000, max(totres$year)),
-                key = ikey,
+#                 key = ikey,
                 prepanel = function(...) {list(ylim = c(0, max(totres$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
