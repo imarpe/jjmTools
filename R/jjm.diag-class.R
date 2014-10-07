@@ -32,7 +32,7 @@ print.summary.jjm.diag <- function(x, ...) {
 }
 
 plot.jjm.diag <- function(x, what = c("input", "fit", "projections", "ypr"), 
-                          var=NULL, fleet=NULL, xlim=NULL, ylim=NULL, ...)
+                          var=NULL, fleet=NULL, ...)
 {
   what <- tolower(what)
   
