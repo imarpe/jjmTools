@@ -684,7 +684,7 @@
   colnames(tot) <- c("year", "data", "age", "survey"); res <- tot
   
   pic <- barchart(data ~ age | survey * as.factor(year), data = subset(res, year %in% yrs),
-                   
+                  
                   groups = survey, 
                   reverse.rows = TRUE,
                   as.table = TRUE,
@@ -1313,7 +1313,7 @@
                       panel.barchart(x[first], y[first], horizontal = FALSE, origin = 0, box.width = 1, col = cols[colidx])
                       panel.points(x[second], y[second], pch = 19, col = 1, cex = 0.5)
                     }, ...) else NULL
-        
+    
     ageFitsSurvey[[iSurvey]] <- pic
   }
   
@@ -1662,14 +1662,13 @@
   TotCatch <- 0
   for(iFlt in grep("Obs_catch_", names(jjm.out)))
     TotCatch    <- jjm.out[[iFlt]] + TotCatch
-  summaryData <- rbind(cbind(jjm.out$Yr, jjm.out$TotBiom[,-1], "Total biomass"),
-                       cbind(jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), 1],
-                             jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), -1], "Spawning Stock Biomass"),
+  summaryData <- rbind(cbind(jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), 1],
+                             jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), -1], "SSB"),
                        cbind(jjm.out$Yr, jjm.out$R[,-1], "Recruitment"),
                        cbind(jjm.out$Yr, cbind(rowMeans(jjm.out$TotF[,-1]), rowMeans(jjm.out$TotF[,-1]),
                                                rowMeans(jjm.out$TotF[,-1]), rowMeans(jjm.out$TotF[,-1])),
                              "Fishing mortality"),
-                       cbind(jjm.out$Yr, TotCatch, TotCatch, TotCatch, TotCatch, "Catches"))
+                       cbind(jjm.out$Yr, TotCatch, TotCatch, TotCatch, TotCatch, "Landings"))
   
   summaryData <- rbind(cbind(summaryData[,c(1:2, 6)], "point"),
                        cbind(summaryData[,c(1, 4, 6)], "lower"),
@@ -1684,7 +1683,7 @@
   
   pic <- xyplot(data ~ year | class, data = summaryData, groups = class,
                 prepanel = function(...) {list(ylim = range(pretty(c(0, 1.1*list(...)$y))))},
-                layout = c(1, 5),
+                layout = c(2, 2),
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
                   point <- 1:length(jjm.out$Yr)
@@ -1692,14 +1691,14 @@
                   upper <- (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
                   
                   # catches
-                  if(panel.number() == 1){
+                  if(panel.number() == 2){
                     panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
                     panel.lines(x[point], jjm.out$msy_mt[,8], lwd = 4, 
                                 col = adjustcolor("red", alpha.f = alpha.f))
                   }
                   
                   # SSB
-                  if(panel.number() == 4){
+                  if(panel.number() == 3){
                     panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
                     panel.xyplot(x[point], y[point], type = "l", lwd = 3, lty = 1, col = 1)
                     panel.lines(x[point], jjm.out$msy_mt[,10], lwd = 4, 
@@ -1707,22 +1706,16 @@
                   }
                   
                   # Recruitment
-                  if(panel.number() == 3){
+                  if(panel.number() == 1){
                     panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
                     panel.segments(x[lower], y[lower], x[lower], y[upper])
                   }
                   
                   # F
-                  if(panel.number() == 2){
+                  if(panel.number() == 4){
                     panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
                     panel.lines(x[point], jjm.out$msy_mt[,5], lwd = 4, 
                                 col = adjustcolor("red", alpha.f = alpha.f))
-                  }
-                  
-                  # Total biomass
-                  if(panel.number() == 5){
-                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
-                    panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
                   }
                 }, ...)
   
@@ -1938,7 +1931,7 @@
   
   pic <- xyplot(data ~ year, data = totres, type = "l", groups = scenario,
                 xlim = c(2000, max(totres$year)),
-#                 key = ikey,
+                key = ikey,
                 prepanel = function(...) {list(ylim = c(0, max(totres$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
@@ -1946,7 +1939,7 @@
                                 seq(length(x)/Nfutscen, length(x), length.out = Nfutscen), FUN = seq)
                   idx2 <- mapply(seq(length(idx[,1])/3, length(idx[,1]), length.out = 3) - length(idx[,1])/3 + 1,
                                  seq(length(idx[,1])/3, length(idx[,1]), length.out = 3), FUN = seq)
-
+                  
                   for(iScen in 2:Nfutscen){
                     panel.xyplot(x[idx[,iScen][idx2[,1]]], y[idx[,iScen][idx2[,1]]], type = "l", col = iScen, lwd = 3)
                     iCol  <- col2rgb(iScen)
