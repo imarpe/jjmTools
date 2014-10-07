@@ -152,16 +152,16 @@ plot.jjm.output <- function(x, what = "ss1", ...){
 #' @param model Name for new model created with the \code{readJJM} function.
 #' @param add boolean, add to an existing kobe plot?
 #' @param col color for the lines and points.
-#' @param Blim Limit reference point for B/B_MSY, default=0.5.
-#' @param Flim Limit reference point for F/F_MSY, default=1.5.
 #' @param Bref Reference point for B/B_MSY, default=1.
 #' @param Fref Reference point for F/F_MSY, default=1.
+#' @param Blim Limit reference point for B/B_MSY, default=0.5.
+#' @param Flim Limit reference point for F/F_MSY, default=1.5.
 #' @param xlim 'x' axis limits.
 #' @param ylim 'y' axis limits.
 #' @param ... Additional parameters passed to plot.
 #' @examples
 #' kobe(model)
-kobe = function(model, add=FALSE, col="black", Blim = 0.5, Flim = 1.5, Bref = 1, Fref = 1, 
+kobe = function(model, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Flim = Fref,  
                 xlim = NULL, ylim = NULL, ...) {
   
   kob = model$output$output$msy_mt
@@ -179,7 +179,7 @@ kobe = function(model, add=FALSE, col="black", Blim = 0.5, Flim = 1.5, Bref = 1,
     if(is.null(ylim)) ylim= range(pretty(c(0, F_Fmsy)))
     
     plot.new()
-    plot.window(xlim=xlim, ylim=ylim, xaxs="i")
+    plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
     
     ylim = par()$usr[3:4]
     zero = ylim[1]
@@ -196,7 +196,7 @@ kobe = function(model, add=FALSE, col="black", Blim = 0.5, Flim = 1.5, Bref = 1,
             col=rgb(1, 1, 0, alpha = 0.5), border=NA)
     polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
             y=c(zero, Fref, Fref, zero),
-            col = rgb(0,1,0, alpha = 0.5), border=NA)
+            col = rgb(0, 1, 0, alpha = 0.5), border=NA)
     polygon(x=c(0, 0, Blim, Blim),
             y=c(Flim, ylim[2], ylim[2], Flim),
             col=rgb(1, 0, 0, alpha = 0.5), border=NA)
@@ -204,11 +204,11 @@ kobe = function(model, add=FALSE, col="black", Blim = 0.5, Flim = 1.5, Bref = 1,
 
   
   lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
-  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col)
-  text(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], labels=range(years), cex=0.6,
+  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
+  text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels=range(years), cex=0.6,
        adj=-0.2, col=col)
-  mtext("F/F_msy", 2, line=2.5)
-  mtext("B/B_msy", 1, line=2.5)
+  mtext(toExpress("F/F[msy]"), 2, line=2.5)
+  mtext(toExpress("B/B[msy]"), 1, line=2.5)
   
   axis(1, las=1)
   axis(2, las=2)

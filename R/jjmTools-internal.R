@@ -2,6 +2,7 @@
 # INTERNAL FUNCTIONS
 ###########################################################################
 
+
 # Code to read in final data ----------------------------------------------
 .read.dat <- function(filename){
   ###-Read in the raw datafile-###
@@ -1140,3 +1141,8 @@
   cat("\n\n")
   return(as.numeric(elapsed[3]))
 }
+
+toExpress <- function(char.expressions){
+  return(parse(text=paste(char.expressions,collapse=";")))
+}
+

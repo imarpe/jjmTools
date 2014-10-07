@@ -1681,7 +1681,7 @@
   
   summaryData$class <- factor(summaryData$class, levels = unique(summaryData$class))
   
-  alpha.f <- 0.45
+  alpha.f <- 0.5
   
   pic <- xyplot(data ~ year | class, data = summaryData, groups = class,
                 prepanel = function(...) {list(ylim = range(pretty(c(0, 1.1*list(...)$y))))},
@@ -1694,14 +1694,14 @@
                   
                   # LANDINGS
                   if(panel.number() == 2){
-                    panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
+                    panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey90")
                     panel.lines(x[point], jjm.out$msy_mt[,8], lwd = 4, 
-                                col = adjustcolor("red", alpha.f = alpha.f))
+                                col = adjustcolor("blue", alpha.f = alpha.f))
                   }
                   
                   # Recruitment
                   if(panel.number() == 1){
-                    panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
+                    panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey90")
                     panel.segments(x[lower], y[lower], x[lower], y[upper])
                   }
                   
@@ -1714,10 +1714,10 @@
                   
                   # SSB
                   if(panel.number() == 3){
-                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
+                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey90", border = NA)
                     panel.xyplot(x[point], y[point], type = "l", lwd = 3, lty = 1, col = 1)
                     panel.lines(x[point], jjm.out$msy_mt[,10], lwd = 4, 
-                                col = adjustcolor("green", alpha.f = alpha.f))
+                                col = adjustcolor("blue", alpha.f = alpha.f))
                   }
                 }, ...)
   

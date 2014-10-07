@@ -3,8 +3,8 @@
 \alias{kobe}
 \title{Kobe plot}
 \usage{
-kobe(model, add = FALSE, col = "black", Blim = 0.5, Flim = 1.5,
-  Bref = 1, Fref = 1, xlim = NULL, ylim = NULL, ...)
+kobe(model, add = FALSE, col = "black", Bref = 1, Fref = 1,
+  Blim = Bref, Flim = Fref, xlim = NULL, ylim = NULL, ...)
 }
 \arguments{
 \item{model}{Name for new model created with the \code{readJJM} function.}
@@ -13,13 +13,13 @@ kobe(model, add = FALSE, col = "black", Blim = 0.5, Flim = 1.5,
 
 \item{col}{color for the lines and points.}
 
-\item{Blim}{Limit reference point for B/B_MSY, default=0.5.}
-
-\item{Flim}{Limit reference point for F/F_MSY, default=1.5.}
-
 \item{Bref}{Reference point for B/B_MSY, default=1.}
 
 \item{Fref}{Reference point for F/F_MSY, default=1.}
+
+\item{Blim}{Limit reference point for B/B_MSY, default=0.5.}
+
+\item{Flim}{Limit reference point for F/F_MSY, default=1.5.}
 
 \item{xlim}{'x' axis limits.}
 
