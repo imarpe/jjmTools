@@ -47,7 +47,7 @@
     
   output <- list(info = modelNames, data = models, combined = combined)
   
-  class(output) <- c("jjm.lstOuts", class(output))
+  class(output) <- c("jjm.lstOuts")
   return(output)
 }
 
@@ -111,5 +111,82 @@ logLik.jjm.lstOuts = function(object, detailed = FALSE, ...) {
       like <- .LikeTable(object)
   
   return(like)
+}
+
+
+kobe.jjm.lstOuts = function(model, add=FALSE, col=NULL, Bref = 1, Fref = 1, Blim = Bref, Flim = Fref,  
+                            xlim = NULL, ylim = NULL, ...) {
+  
+  nModels = length(model)
+  
+  kob  = list(nModels)
+  maxB = numeric(nModels)
+  maxF = numeric(nModels)
+  n = numeric(nModels)
+  for(i in seq(nModels)){
+    kob[[i]] = model$data[[i]]$output$output$msy_mt
+    kob[[i]] = kob[[i]][,c(1,4,13)]
+    maxB[i] = max(kob[[i]][,3]) 
+    maxF[i] = max(kob[[i]][,2]) 
+    n[i] = nrow(kob[[i]])
+  }
+  
+  maxBmsy = max(maxB)
+  maxFmsy = max(maxF)
+  
+  if(!isTRUE(add)) {
+    
+    if(is.null(xlim)) xlim= range(pretty(c(0, maxBmsy)))
+    if(is.null(ylim)) ylim= range(pretty(c(0, maxFmsy)))
+    
+    plot.new()
+    plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+    par(xpd = TRUE)
+    
+    ylim = par()$usr[3:4]
+    zero = ylim[1]
+    
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 165/255, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(zero, Fref, Fref, zero),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(zero, Fref, Fref, zero),
+            col = rgb(0, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Blim, Blim),
+            y=c(Flim, ylim[2], ylim[2], Flim),
+            col=rgb(1, 0, 0, alpha = 0.5), border=NA)
+    
+    mtext(toExpress("F/F[msy]"), 2, line=2.5)
+    mtext(toExpress("B/B[msy]"), 1, line=2.5)
+    axis(1, las=1)
+    axis(2, las=2)
+    box()
+    
+  }
+  
+  for(i in seq(nModels)){
+    if(is.null(col)){
+    text(kob[[i]][c(1,n[i]),3] + 0.01, kob[[i]][c(1,n[i]),2] + 0.1, labels=range(kob[[i]][,1]), cex=0.6,
+        adj=-0.2, col=i)
+    lines(kob[[i]][,3], kob[[i]][,2], type="b", pch=19, cex=0.5, col= i)
+    points(kob[[i]][c(1,n[i]),3], kob[[i]][c(1,n[i]),2], pch=c(15, 17), col= i, cex=0.8)
+    }
+    
+    else {
+      text(kob[[i]][c(1,n[i]),3] + 0.01, kob[[i]][c(1,n[i]),2] + 0.1, labels=range(kob[[i]][,1]), cex=0.6,
+         adj=-0.2, col=col[i])
+      lines(kob[[i]][,3], kob[[i]][,2], type="b", pch=19, cex=0.5, col= col[i])
+      points(kob[[i]][c(1,n[i]),3], kob[[i]][c(1,n[i]),2], pch=c(15, 17), col= col[i], cex=0.8)
+    }
+    
+    }	
+  
+  return(invisible())
 }
 

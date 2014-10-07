@@ -161,8 +161,8 @@ plot.jjm.output <- function(x, what = "ss1", ...){
 #' @param ... Additional parameters passed to plot.
 #' @examples
 #' kobe(model)
-kobe = function(model, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Flim = Fref,  
-                xlim = NULL, ylim = NULL, ...) {
+kobe.jjm.output = function(model, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Flim = Fref,  
+                           xlim = NULL, ylim = NULL, ...) {
   
   kob = model$output$output$msy_mt
 
@@ -216,3 +216,6 @@ kobe = function(model, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, 
   
   return(invisible())
 }
+
+
+

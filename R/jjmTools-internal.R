@@ -1146,3 +1146,6 @@ toExpress <- function(char.expressions){
   return(parse(text=paste(char.expressions,collapse=";")))
 }
 
+kobe = function (model, ...) 
+  UseMethod("kobe", model)
+
