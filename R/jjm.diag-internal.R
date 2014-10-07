@@ -1662,13 +1662,13 @@
   TotCatch <- 0
   for(iFlt in grep("Obs_catch_", names(jjm.out)))
     TotCatch    <- jjm.out[[iFlt]] + TotCatch
-  summaryData <- rbind(cbind(jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), 1],
+  summaryData <- rbind(cbind(jjm.out$Yr, jjm.out$R[,-1], "Recruitment"),
+                       cbind(jjm.out$Yr, TotCatch, TotCatch, TotCatch, TotCatch, "Landings"),
+                       cbind(jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), 1],
                              jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), -1], "SSB"),
-                       cbind(jjm.out$Yr, jjm.out$R[,-1], "Recruitment"),
                        cbind(jjm.out$Yr, cbind(rowMeans(jjm.out$TotF[,-1]), rowMeans(jjm.out$TotF[,-1]),
                                                rowMeans(jjm.out$TotF[,-1]), rowMeans(jjm.out$TotF[,-1])),
-                             "Fishing mortality"),
-                       cbind(jjm.out$Yr, TotCatch, TotCatch, TotCatch, TotCatch, "Landings"))
+                             "Fishing mortality"))
   
   summaryData <- rbind(cbind(summaryData[,c(1:2, 6)], "point"),
                        cbind(summaryData[,c(1, 4, 6)], "lower"),
@@ -1678,6 +1678,8 @@
   summaryData <- data.frame(summaryData, stringsAsFactors = FALSE)
   summaryData$year <- as.integer(summaryData$year)
   summaryData$data <- as.numeric(summaryData$data)
+  
+  summaryData$class <- factor(summaryData$class, levels = unique(summaryData$class))
   
   alpha.f <- 0.45
   
@@ -1690,18 +1692,10 @@
                   lower <- (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
                   upper <- (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
                   
-                  # catches
+                  # LANDINGS
                   if(panel.number() == 2){
                     panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
                     panel.lines(x[point], jjm.out$msy_mt[,8], lwd = 4, 
-                                col = adjustcolor("red", alpha.f = alpha.f))
-                  }
-                  
-                  # SSB
-                  if(panel.number() == 3){
-                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
-                    panel.xyplot(x[point], y[point], type = "l", lwd = 3, lty = 1, col = 1)
-                    panel.lines(x[point], jjm.out$msy_mt[,10], lwd = 4, 
                                 col = adjustcolor("red", alpha.f = alpha.f))
                   }
                   
@@ -1715,7 +1709,15 @@
                   if(panel.number() == 4){
                     panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
                     panel.lines(x[point], jjm.out$msy_mt[,5], lwd = 4, 
-                                col = adjustcolor("red", alpha.f = alpha.f))
+                                col = adjustcolor("blue", alpha.f = alpha.f))
+                  }
+                  
+                  # SSB
+                  if(panel.number() == 3){
+                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
+                    panel.xyplot(x[point], y[point], type = "l", lwd = 3, lty = 1, col = 1)
+                    panel.lines(x[point], jjm.out$msy_mt[,10], lwd = 4, 
+                                col = adjustcolor("green", alpha.f = alpha.f))
                   }
                 }, ...)
   
