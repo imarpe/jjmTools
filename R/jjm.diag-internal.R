@@ -1687,27 +1687,31 @@
                   lower <- (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
                   upper <- (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
                   
-                  #catches
+                  # catches
                   if(panel.number() == 1){
                     panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
                   }
                   
-                  #SSB
+                  # SSB
                   if(panel.number() == 4){
                     panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey")
-                    panel.xyplot(x[point],y[point],type="l",lwd=6,lty=3,col=1)
+                    panel.xyplot(x[point], y[point], type = "l", lwd = 6, lty = 3, col = 1)
+                    panel.lines(x[point], jjm.out$msy_mt[,10], col = "red")
                   }
                   
-                  #Recruitment
+                  # Recruitment
                   if(panel.number() == 3){
                     panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
                     panel.segments(x[lower], y[lower], x[lower], y[upper])
                   }
                   
-                  #F
-                  if(panel.number() == 2) panel.xyplot(x[point], y[point], lwd = 4, lty = 2, type = "l", col = 1)
+                  # F
+                  if(panel.number() == 2){
+                    panel.xyplot(x[point], y[point], lwd = 4, lty = 2, type = "l", col = 1)
+                    panel.lines(x[point], jjm.out$msy_mt[,5], col = "red")
+                  }
                   
-                  #Total biomass
+                  # Total biomass
                   if(panel.number() == 5){
                     panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey")
                     panel.xyplot(x[point], y[point], lwd = 4, lty = 1, type = "l", col = 1)
