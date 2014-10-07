@@ -98,6 +98,52 @@ print.summary.jjm.output <- function(x, ...) {
   return(invisible(x))
 }
 
+plot.jjm.output <- function(x, what = "ss1", ...){
+  jjm.out <- x$output
+  jjm.in  <- x$data$data
+  jjm.ypr <- x$output$YPR
+  
+  model   <- jjm.out$info$model
+  jjm.out <- jjm.out$output
+  
+  #- Generic attributes of the stock assessment
+  Nfleets   <- length(c(jjm.out$Fshry_names))
+  Nsurveys  <- length(c(jjm.out$Index_names))
+  ages      <- jjm.in$ages[1]:jjm.in$ages[2]
+  lengths   <- jjm.in$lengths[1]:jjm.in$lengths[2]
+  
+  #- Get the age-structured fleets and length-structured fleets out
+  if(length(grep("pobs_fsh_", names(jjm.out))) > 0){
+    ageFleets <- unlist(strsplit(names(jjm.out)[grep("pobs_fsh_", names(jjm.out))], split = "_"))
+    ageFleets <- ageFleets[seq(3, length(ageFleets), 3)]
+  } else { ageFleets <- 0}
+  
+  if(length(grep("pobs_len_fsh_", names(jjm.out))) > 0){
+    lgtFleets <- unlist(strsplit(names(jjm.out)[grep("pobs_len_fsh_", names(jjm.out))], split = "_"))
+    lgtFleets <- lgtFleets[seq(4, length(lgtFleets), 4)]
+  } else {lgtFleets <- 0}
+  
+  #- Get the age-structured surveys and length-structured surveys out
+  if(length(grep("pobs_ind_", names(jjm.out))) > 0){
+    ageSurveys <- unlist(strsplit(names(jjm.out)[grep("pobs_ind_", names(jjm.out))], "_"))
+    ageSurveys <- ageSurveys[seq(3, length(ageSurveys), 3)]
+  } else {ageSurveys <- 0}
+  
+  if(length(grep("pobs_len_ind_", names(jjm.out))) > 0){
+    lgtSurveys <- unlist(strsplit(names(jjm.out)[grep("pobs_len_ind_", names(jjm.out))], "_"))
+    lgtSurveys <- lgtSurveys[seq(4, length(lgtSurveys), 4)]
+  } else {lgtSurveys <- 0}
+  
+  pic <- switch(what,
+                ss1 = .fit_summarySheetFUN(jjm.out,
+                                           scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                         axs = "i"), ...),
+                ss2 = .fit_summarySheet2FUN(jjm.out,
+                                            scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                          axs = "i"), ...))  
+  
+  return(pic)
+}
 
 # Kobe plot ---------------------------------------------------------------
 
