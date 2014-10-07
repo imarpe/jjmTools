@@ -713,7 +713,7 @@
     nYearsProy  <- length(YearsProy)
     
     # Empty matrix
-    output <- matrix(0, ncol = 2, nrow = nYearsProy)
+    output <- matrix(0, ncol = 5, nrow = nYearsProy)
     output <- replicate(length(Slots2), output, simplify = FALSE)
     
     # Analysis (only sum)
@@ -723,7 +723,17 @@
       for(i in seq(nModels)){
         output[[j]][,2] <- rowSums(cbind(output[[j]][,2],
                                          models[[i]][[Slots2[j]]][,2]))
+        output[[j]][,3] <- rowSums(cbind(output[[j]][,3],
+                                         (models[[i]][[Slots2[j]]][,3])^2))
       }
+      
+      output[[j]][,3] <- sqrt(output[[j]][,3])
+      
+      for(i in seq(nModels)){
+        output[[j]][,4] <- output[[j]][,2] - 1.96*output[[j]][,3]
+        output[[j]][,5] <- output[[j]][,2] + 1.96*output[[j]][,3]
+      }
+      
     }
     
     # name to the list
