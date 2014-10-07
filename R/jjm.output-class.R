@@ -180,6 +180,7 @@ kobe = function(model, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, 
     
     plot.new()
     plot.window(xlim=xlim, ylim=ylim, xaxs="i", yaxs="i")
+    par(xpd = TRUE)
     
     ylim = par()$usr[3:4]
     zero = ylim[1]
@@ -200,18 +201,18 @@ kobe = function(model, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, 
     polygon(x=c(0, 0, Blim, Blim),
             y=c(Flim, ylim[2], ylim[2], Flim),
             col=rgb(1, 0, 0, alpha = 0.5), border=NA)
+ 
+    mtext(toExpress("F/F[msy]"), 2, line=2.5)
+    mtext(toExpress("B/B[msy]"), 1, line=2.5)
+    axis(1, las=1)
+    axis(2, las=2)
+    box()
   }
 
-  
-  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
-  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
   text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels=range(years), cex=0.6,
        adj=-0.2, col=col)
-  mtext(toExpress("F/F[msy]"), 2, line=2.5)
-  mtext(toExpress("B/B[msy]"), 1, line=2.5)
+  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
+  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
   
-  axis(1, las=1)
-  axis(2, las=2)
-  box()
   return(invisible())
 }
