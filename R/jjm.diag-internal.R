@@ -406,13 +406,15 @@
   #-----------------------------------------------------------------------------
   # 22a: summary sheet with SSB, R, F and Biomass and Catch
   fitPlots$summarySheet <- .fit_summarySheetFUN(jjm.out,
-                                                main = "Summary sheet",
-                                                scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
+                                                main = NA,
+                                                scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                              axs = "i"))
   
   # 22b: Summary sheet 2
   fitPlots$summarySheet2 <- .fit_summarySheet2FUN(jjm.out,
                                                   main = NA, 
-                                                  scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
+                                                  scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                                axs = "i"))
   
   # 22b Uncertainties of key parameters
   fitPlots$uncertaintyKeyParams <- .fit_uncertaintyKeyParamsFUN(jjm.out,
@@ -1678,8 +1680,10 @@
   summaryData$year <- as.integer(summaryData$year)
   summaryData$data <- as.numeric(summaryData$data)
   
+  alpha.f <- 0.45
+  
   pic <- xyplot(data ~ year | class, data = summaryData, groups = class,
-                prepanel = function(...) {list(ylim = range(pretty(c(0, list(...)$y))))},
+                prepanel = function(...) {list(ylim = range(pretty(c(0, 1.1*list(...)$y))))},
                 layout = c(1, 5),
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
@@ -1690,13 +1694,16 @@
                   # catches
                   if(panel.number() == 1){
                     panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
+                    panel.lines(x[point], jjm.out$msy_mt[,8], lwd = 4, 
+                                col = adjustcolor("red", alpha.f = alpha.f))
                   }
                   
                   # SSB
                   if(panel.number() == 4){
-                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey")
-                    panel.xyplot(x[point], y[point], type = "l", lwd = 6, lty = 3, col = 1)
-                    panel.lines(x[point], jjm.out$msy_mt[,10], col = "red")
+                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
+                    panel.xyplot(x[point], y[point], type = "l", lwd = 3, lty = 1, col = 1)
+                    panel.lines(x[point], jjm.out$msy_mt[,10], lwd = 4, 
+                                col = adjustcolor("red", alpha.f = alpha.f))
                   }
                   
                   # Recruitment
@@ -1707,14 +1714,15 @@
                   
                   # F
                   if(panel.number() == 2){
-                    panel.xyplot(x[point], y[point], lwd = 4, lty = 2, type = "l", col = 1)
-                    panel.lines(x[point], jjm.out$msy_mt[,5], col = "red")
+                    panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
+                    panel.lines(x[point], jjm.out$msy_mt[,5], lwd = 4, 
+                                col = adjustcolor("red", alpha.f = alpha.f))
                   }
                   
                   # Total biomass
                   if(panel.number() == 5){
-                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey")
-                    panel.xyplot(x[point], y[point], lwd = 4, lty = 1, type = "l", col = 1)
+                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
+                    panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
                   }
                 }, ...)
   
@@ -1746,9 +1754,11 @@
   summaryData$year <- as.integer(summaryData$year)
   summaryData$data <- as.numeric(summaryData$data)
   
+  alpha.f <- 0.45
+  
   pic <- xyplot(data ~ year | class, data = summaryData,
                 groups = class,
-                prepanel = function(...) {list(ylim = range(pretty(c(0, list(...)$y))))},
+                prepanel = function(...) {list(ylim = range(pretty(c(0, 1.1*list(...)$y))))},
                 layout = c(1, 4),
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
@@ -1756,23 +1766,30 @@
                   lower <- (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
                   upper <- (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
                   
+                  # Unfished biomass
                   if(panel.number() == 1){
-                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey")
-                    panel.xyplot(x[point], y[point], lwd = 4, lty = 1, type = "l", col = 1)
+                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
+                    panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
                   }
                   
+                  # Recruitment
                   if(panel.number() == 2){
                     panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
                     panel.segments(x[lower], y[lower], x[lower], y[upper])
                   }
                   
+                  # F
                   if(panel.number() == 3){
-                    panel.xyplot(x[point], y[point], lwd = 4, lty = 2, type = "l", col = 1)
+                    panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
+                    panel.lines(x[point], jjm.out$msy_mt[,5], lwd = 4, 
+                                col = adjustcolor("red", alpha.f = alpha.f))
                   }
                   
+                  # Total biomass
                   if(panel.number() == 4){
-                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey")
-                    panel.xyplot(x[point], y[point], lwd = 4, lty = 1, type = "l", col = 1)
+                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey",
+                                  border = NA)
+                    panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
                   }
                 }, ...)
   
