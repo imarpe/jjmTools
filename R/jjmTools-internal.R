@@ -382,7 +382,7 @@
   minF <- which.min(nFilas)[1]
   for(i in seq_along(models)){
     index <- which(names(models[[i]]) == "SSB")
-    FYear <- models[[minF]][[index]][1, 1]
+    FYear <- models[[minF]]$SSB[1, 1]
     
     temp <- models[[i]]
     temp <- temp$SSB[which(temp$SSB[,1] == FYear):nrow(temp$SSB),]
@@ -392,7 +392,7 @@
   
   for(i in seq_along(models)){
     index <- which(names(models[[i]]) == "SSB")
-    FYear <- models[[minF]][[index]][nrow(models[[minF]][[index]]), 1]
+    FYear <- models[[minF]]$SSB[nrow(models[[minF]]$SSB), 1]
     
     temp <- models[[i]]
     temp <- temp$SSB[1:which(temp$SSB[,1] == FYear),]
@@ -438,7 +438,7 @@
   minF <- which.min(nFilas)[1]
   for(i in seq_along(models)){
     index <- which(names(models[[i]]) == "R")
-    FYear <- models[[minF]][[index]][1, 1]
+    FYear <- models[[minF]]$R[1, 1]
     
     temp <- models[[i]]
     temp <- temp$R[which(temp$R[,1] == FYear):nrow(temp$R),]
@@ -448,7 +448,7 @@
   
   for(i in seq_along(models)){
     index <- which(names(models[[i]]) == "R")
-    FYear <- models[[minF]][[index]][nrow(models[[minF]]$R), 1]
+    FYear <- models[[minF]]$R[nrow(models[[minF]]$R), 1]
     
     temp <- models[[i]]
     temp <- temp$R[1:which(temp$R[,1] == FYear),]
@@ -494,7 +494,7 @@
   minF <- which.min(nFilas)[1]
   for(i in seq_along(models)){
     index <- which(names(models[[i]]) == "TotBiom")
-    FYear <- models[[minF]][[index]][1, 1]
+    FYear <- models[[minF]]$TotBiom[1, 1]
     
     temp <- models[[i]]
     temp <- temp$TotBiom[which(temp$TotBiom[,1] == FYear):nrow(temp$TotBiom),]
@@ -504,7 +504,7 @@
   
   for(i in seq_along(models)){
     index <- which(names(models[[i]]) == "TotBiom")
-    FYear <- models[[minF]][[index]][nrow(models[[minF]]$TotBiom), 1]
+    FYear <- models[[minF]]$TotBiom[nrow(models[[minF]]$TotBiom), 1]
     
     temp <- models[[i]]
     temp <- temp$TotBiom[1:which(temp$TotBiom[,1] == FYear),]
@@ -550,7 +550,7 @@
   minF <- which.min(nFilas)[1]
   for(i in seq_along(models)){
     index <- which(names(models[[i]]) == "N")
-    FYear <- models[[minF]][[index]][1, 1]
+    FYear <- models[[minF]]$N[1, 1]
     
     temp <- models[[i]]
     temp <- temp$N[which(temp$N[,1] == FYear):nrow(temp$N),]
@@ -560,7 +560,7 @@
   
   for(i in seq_along(models)){
     index <- which(names(models[[i]]) == "N")
-    FYear <- models[[minF]][[index]][nrow(models[[minF]]$N), 1]
+    FYear <- models[[minF]]$N[nrow(models[[minF]]$N), 1]
     
     temp <- models[[i]]
     temp <- temp$N[1:which(temp$N[,1] == FYear),]
