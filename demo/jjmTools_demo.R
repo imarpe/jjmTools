@@ -4,20 +4,20 @@
 # ------------------------------------------------------------------------
 
 library(devtools)
-install_github(repo="imarpe/jjmTools")
+#install_github(repo="imarpe/jjmTools")
 library(jjmTools)
 
 # Set parameters ----------------------------------------------------------
 
 # Path of JJM repository (from current working directory)
 
-reposDir =  "../admb/"
+reposDir =  "D:/JMSR/JJM/SPRFMO/admb/"
 
 # Name of a model
 model = "mod0.0"
 
 # Names of models
-compareList = paste0("mod0.", 1:3)
+compareList = paste0("mod0.", 1:2)
 
 # Run models --------------------------------------------------------------
 
@@ -25,7 +25,7 @@ compareList = paste0("mod0.", 1:3)
 runJJM(model = model, path = reposDir)
 
 # Run a list of models
-runJJM(model = compareList, path = reposDir)
+#runJJM(model = compareList, path = reposDir)
 
 
 # Reading -----------------------------------------------------------------
@@ -37,9 +37,9 @@ model = readJJM(model = model, path = reposDir)
 
 mod1 = readJJM(model = compareList[1], path = reposDir)
 mod2 = readJJM(model = compareList[2], path = reposDir)
-mod3 = readJJM(model = compareList[3], path = reposDir)
+#mod3 = readJJM(model = compareList[3], path = reposDir)
 
-mod4 = mod2
+#mod3 = mod2
 
 # DIAG object
 diagPlots = diagnostics(outputObject = model)
@@ -47,12 +47,12 @@ diagPlots = diagnostics(outputObject = model)
 
 # Combine models ----------------------------------------------------------
 
-mod1234 = combineModels(mod1, mod2, mod3, mod4)
+mod12 = combineModels(mod1, mod2)
 
 
 # Integrating models ------------------------------------------------------
 
-mod123 = combineStocks(mod1, mod2, mod3)
+mod123 = combineStocks(mod1, mod2)
 
 # Write new model ------------------------------------------------------
 

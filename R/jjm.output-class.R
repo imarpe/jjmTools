@@ -7,7 +7,7 @@
   # Set files .rep and .yld
   outputs = file.path(output, paste0(model, "_R.rep")) 
   ypr     = file.path(output, paste0(model, ".yld"))
-  
+    
   # Verify if files exist
   necesaryFiles = c(paste0(model, ".ctl"), outputs)
   necesaryFiles = file.path(inputPath, necesaryFiles)
@@ -19,6 +19,7 @@
   # Read files .rep and .yld
   outputs = readList(file.path(inputPath, outputs))
   ypr     = .readYPR(file.path(inputPath, ypr))
+  outputs$YPR = ypr
   
   # Extract asociated .dat file
   dataName    <- scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 2, 
@@ -37,9 +38,12 @@
                       indexModel = outputs$Index_names)
   
   # Group in a list
-  output <- list(info = list(model = modelName),
-                 output = list(info = info.output, output = outputs, YPR = ypr),
-                 data = list(info = info.data, data = data))
+  output <- list(#info = list(model = modelName),
+                 #output = list(info = info.output, output = outputs),
+                 #data = list(info = info.data, data = data),
+                  output = outputs,
+                  data = data,
+                  info = list(data = info.data, output = info.output))
   
   # Define jjm.output class
   class(output) <- c("jjm.output")
@@ -49,15 +53,15 @@
 
 print.jjm.output <- function(x, ...) {
   
-  cat("jjm.data from ", sQuote(x$data$info$file), "\n", sep = "")
-  cat("Number of variables: ", x$data$info$variables, "\n", sep = "")
-  cat("Years from: ", x$data$info$year[1] ,"to", x$data$info$year[2], "\n", sep = " ")
-  cat("Ages from: ", x$data$info$age[1] ,"to", x$data$info$age[2], "\n", sep = " ")
-  cat("Lengths from: ", x$data$info$length[1] ,"to", x$data$info$length[2], "\n", sep = " ")
+  cat("jjm.data from ", sQuote(x$info$data$file), "\n", sep = "")
+  cat("Number of variables: ", x$info$data$variables, "\n", sep = "")
+  cat("Years from: ", x$info$data$year[1] ,"to", x$info$data$year[2], "\n", sep = " ")
+  cat("Ages from: ", x$info$data$age[1] ,"to", x$info$data$age[2], "\n", sep = " ")
+  cat("Lengths from: ", x$info$data$length[1] ,"to", x$dinfo$data$length[2], "\n", sep = " ")
   
-  cat("Model name: ", x$output$info$model, "\n")
-  cat("Fisheries names: ", paste(x$output$info$fisheryNames, collapse = ", "), "\n")
-  cat("Asociated indices: ", paste(x$output$info$indexModel, collapse = ", "), "\n")
+  cat("Model name: ", x$info$output$model, "\n")
+  cat("Fisheries names: ", paste(x$info$output$fisheryNames, collapse = ", "), "\n")
+  cat("Associated indices: ", paste(x$info$output$indexModel, collapse = ", "), "\n")
   
   return(invisible())
 }
