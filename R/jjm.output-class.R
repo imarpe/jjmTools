@@ -105,8 +105,15 @@ print.summary.jjm.output <- function(x, ...) {
   cat("\nLikelihood Table:\n\n")
   print(x$like, ...)
   
-  cat("\nProjection Table:\n\n")
-  print(x$projections, ...)
+  cat("\nProjection Table (s):\n\n")
+
+  for(i in seq_along(x$projections)){
+  
+	  cat(names(x$projections)[i], "\n")
+	  print(x$projections[[i]], ...)
+	  cat(" ", "\n")
+  
+  }
   
   #cat("\nFuture SSB and SD:\n\n")
   #print(x$fut, ...)
