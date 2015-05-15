@@ -1,11 +1,13 @@
 .combineModels <- function(...){
+  
   modelList <- list(...)
   
-  # Verify if the models are jjm.outputs objects
   for(i in modelList)
     if(class(i) != "jjm.output")
       stop("Objects must be of class 'jjm.output'.")
-
+  
+  modelList <- c(...)
+  
   # Remove repeated models from modelList 
   modelList2 <- modelList
   for(i in seq_along(modelList[-length(modelList)]))
@@ -16,39 +18,24 @@
   modelList <- modelList2; rm("modelList2")
   
   modelNames <- NULL
-  for(i in modelList)
-    modelNames <- c(modelNames, i$info$model)  
+    for(j in seq_along(modelList)){
+      modelNames <- c(modelNames, modelList[[j]]$info$output$model)
+    }
     
   # Models
   models <- list()
-  for(i in seq_along(modelList))
-    models[[i]] <- modelList[[i]][c("output", "data")]
-  names(models) <- modelNames
-  
-  # Combined results
-  # Combine plots
-  combined <- list()
-  
-  allOutputs <- list()
-  allYPR <- list()
-  allData <- list()
-  for(i in seq_along(modelList))
-  {
-    allOutputs[[i]] <- modelList[[i]]$output$output
-    allYPR[[i]]     <- modelList[[i]]$output$YPR
-    allData[[i]]    <- modelList[[i]]$data$data  
+  for(i in seq_along(modelList)){
+    models[[i]] <- modelList[[i]][c("info", "output", "data")]
   }
-  # correct the naming
-  names(allOutputs) = modelNames
-  names(allYPR)     = modelNames
-  names(allData)    = modelNames
   
-  combined <- list(outputs = allOutputs, YPR = allYPR, data = allData)
-    
-  output <- list(info = modelNames, data = models, combined = combined)
+  names(models) <- modelNames
+
+  output = models 
+
+  class(output) <- c("jjm.output")
   
-  class(output) <- c("jjm.lstOuts")
   return(output)
+
 }
 
 print.jjm.lstOuts <- function(x, ...) {

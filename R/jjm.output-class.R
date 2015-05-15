@@ -35,15 +35,17 @@
   info.data   <- list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
                       age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]))
   info.output <- list(model = modelName, fisheryNames = outputs$Fshry_names, modelYears = outputs$Yr,
-                      indexModel = outputs$Index_names)
-  
+                                              indexModel = outputs$Index_names)
+
+  output = list()												
   # Group in a list
-  output <- list(#info = list(model = modelName),
+  output[[1]] <- list(#info = list(model = modelName),
                  #output = list(info = info.output, output = outputs),
                  #data = list(info = info.data, data = data),
                   output = outputs,
                   data = data,
                   info = list(data = info.data, output = info.output))
+  names(output) = modelName				  
   
   # Define jjm.output class
   class(output) <- c("jjm.output")
@@ -53,27 +55,37 @@
 
 print.jjm.output <- function(x, ...) {
   
-  cat("jjm.data from ", sQuote(x$info$data$file), "\n", sep = "")
-  cat("Number of variables: ", x$info$data$variables, "\n", sep = "")
-  cat("Years from: ", x$info$data$year[1] ,"to", x$info$data$year[2], "\n", sep = " ")
-  cat("Ages from: ", x$info$data$age[1] ,"to", x$info$data$age[2], "\n", sep = " ")
-  cat("Lengths from: ", x$info$data$length[1] ,"to", x$dinfo$data$length[2], "\n", sep = " ")
+  for(i in seq_along(x)){
   
-  cat("Model name: ", x$info$output$model, "\n")
-  cat("Fisheries names: ", paste(x$info$output$fisheryNames, collapse = ", "), "\n")
-  cat("Associated indices: ", paste(x$info$output$indexModel, collapse = ", "), "\n")
+  obj = x[[i]]
+  
+  cat("Model name: ", obj$info$output$model, "\n")
+  cat("jjm.data from ", sQuote(obj$info$data$file), "\n", sep = "")
+  cat("Number of variables: ", obj$info$data$variables, "\n", sep = "")
+  cat("Years from: ", obj$info$data$year[1] ,"to", obj$info$data$year[2], "\n", sep = " ")
+  cat("Ages from: ", obj$info$data$age[1] ,"to", obj$info$data$age[2], "\n", sep = " ")
+  cat("Lengths from: ", obj$info$data$length[1] ,"to", obj$info$data$length[2], "\n", sep = " ")
+  cat("Fisheries names: ", paste(obj$info$output$fisheryNames, collapse = ", "), "\n")
+  cat("Associated indices: ", paste(obj$info$output$indexModel, collapse = ", "), "\n")
+  cat(" ", "\n")
+  
+  }
   
   return(invisible())
+  
 }
 
-summary.jjm.output = function(object, ...) {
+summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.75, 1, 1.25),
+					BiomProj = c(2016, 2024, 2034), CapProj = c(2015, 2016), MRS = 4500, ...) {
   
   output = list()
   
-  output$info <- object$output$info
+  #output$info <- object$output$info
   output$like <- .LikeTable(object)
-  output$fut  <- .Fut_SSB_SD(object)
-  output$SSB  <- .SSB_SD(object)
+  output$projections <- .ProjTable(object, Projections = Projections, 
+						  Fmult = Fmult, BiomProj = BiomProj, CapProj = CapProj, MRS = MRS)
+  #output$fut  <- .Fut_SSB_SD(object)
+  #output$SSB  <- .SSB_SD(object)
   
   class(output) <- "summary.jjm.output"
   return(output)
@@ -82,22 +94,25 @@ summary.jjm.output = function(object, ...) {
 
 print.summary.jjm.output <- function(x, ...) {
   
-  cat("\nModel:\n", x$info$model, "\n\n")
+  #cat("\nModel:\n", x$info$model, "\n\n")
   
-  cat("\nFishyNames:\n", paste(x$info$fisheryNames, collapse = ", "), "\n\n")
+  #cat("\nFishyNames:\n", paste(x$info$fisheryNames, collapse = ", "), "\n\n")
   
-  cat("\nYears:\n", paste(range(x$info$modelYears), collapse = "-"), "\n\n")
+  #cat("\nYears:\n", paste(range(x$info$modelYears), collapse = "-"), "\n\n")
   
-  cat("\nModel's indices:\n", paste(x$info$indexModel, collapse = ", "), "\n\n")
+  #cat("\nModel's indices:\n", paste(x$info$indexModel, collapse = ", "), "\n\n")
   
   cat("\nLikelihood Table:\n\n")
   print(x$like, ...)
   
-  cat("\nFuture SSB and SD:\n\n")
-  print(x$fut, ...)
+  cat("\nProjection Table:\n\n")
+  print(x$projections, ...)
   
-  cat("\nSSB and SD:\n\n")
-  print(x$SSB, ...)
+  #cat("\nFuture SSB and SD:\n\n")
+  #print(x$fut, ...)
+  
+  #cat("\nSSB and SD:\n\n")
+  #print(x$SSB, ...)
   
   return(invisible(x))
 }
