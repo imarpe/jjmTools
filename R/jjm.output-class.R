@@ -125,12 +125,12 @@ print.summary.jjm.output <- function(x, ...) {
 }
 
 plot.jjm.output <- function(x, what = "ss1", ...){
-  jjm.out <- x$output
-  jjm.in  <- x$data$data
-  jjm.ypr <- x$output$YPR
+  jjm.out <- x[[1]]$output
+  jjm.in  <- x[[1]]$data
+  jjm.ypr <- x[[1]]$output$YPR
   
-  model   <- jjm.out$info$model
-  jjm.out <- jjm.out$output
+  model   <- x[[1]]$info$output$model
+  #jjm.out <- jjm.out$output
   
   #- Generic attributes of the stock assessment
   Nfleets   <- length(c(jjm.out$Fshry_names))
