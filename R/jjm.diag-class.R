@@ -5,21 +5,25 @@ print.jjm.diag = function(x, ...) {
   
   obj = x[[i]]
   
-  cat("Model name:\n", obj$info$output$model, "\n\n")
-  cat("Input Plots:\n", paste(x$info$input, collapse = "\n "), "\n\n")
-  cat("Fit Plots:\n", paste(x$info$fit, collapse = "\n "), "\n\n")
-  cat("Projections Plots:\n", paste(x$info$projections, collapse = "\n "), "\n\n")
-  cat("YPR Plots:\n", paste(x$info$ypr, collapse = "\n "), "\n")
+  cat("Model name (s):\n", obj$info$model, "\n")
   cat(" ", "\n")
   
   }
+  
+  cat("Input Plots:\n", paste(x[[1]]$info$input, collapse = "\n "), "\n\n")
+  cat("Output Plots:\n", paste(x[[1]]$info$output, collapse = "\n "), "\n\n")
+ # cat("Projections Plots:\n", paste(x$info$projections, collapse = "\n "), "\n\n")
+ # cat("YPR Plots:\n", paste(x$info$ypr, collapse = "\n "), "\n")
+  
+  
+  
   
   return(invisible())  
 }
 
 summary.jjm.diag = function(object,...) {
   
-  namesPlots <- names(object$info)[-1]
+  namesPlots <- names(object[[1]]$info)[-1]
   
   output <- lapply(namesPlots, .getResume, object = object)
   

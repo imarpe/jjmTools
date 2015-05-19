@@ -143,6 +143,8 @@ diagnostics <- function(outputObject, ...) {
  #                               jjm.ypr = outputObject[[i]]$output$YPR)
   }
   
+  names(output) = names(outputObject)
+  
   # Return a jjm.diag object
   class(output) = c("jjm.diag", class(output))
   return(output)

@@ -246,35 +246,35 @@
   }
   
   # Plots of the fit of the catch data
-  fitPlots <- list()
+  outPlots <- list()
   
   # 9a: Trend in catch
-  fitPlots$totalCatch <- .fit_totalCatchFUN(Nfleets, jjm.out,
+  outPlots$totalCatch <- .fit_totalCatchFUN(Nfleets, jjm.out,
                                             xlab = "Years", ylab = "Catch in kt", main = "Total catch", 
                                             scales = list(y = list(axs = "i")))
   
   #9b: trends in catch by fleet as polygon
   if(Nfleets > 1){
-    fitPlots$totalCatchByFleet <- .fit_totalCatchByFleetFUN(jjm.out, Nfleets,
+    outPlots$totalCatchByFleet <- .fit_totalCatchByFleetFUN(jjm.out, Nfleets,
                                                             xlab = "Years", ylab = "Catch by fleet in kt", 
                                                             main = "Total catch by fleet",
                                                             scales=list(y = list(axs = "i")))
   }
   
   # 10: Log residual total catch by fleet
-  fitPlots$catchResidualsByFleet <- .fit_catchResidualsByFleetFUN(Nfleets, jjm.out,
+  outPlots$catchResidualsByFleet <- .fit_catchResidualsByFleetFUN(Nfleets, jjm.out,
                                                                   xlab = "Years", ylab = "Residuals", 
                                                                   main = "Catch residuals by fleet", 
                                                                   lwd = 3, cex.axis = 1.2, font = 2)
   
   # 11: Absolute residual catch by fleet
-  fitPlots$absoluteResidualCatchByFleet <- .fit_absoluteResidualCatchByFleetFUN(Nfleets, jjm.out,
+  outPlots$absoluteResidualCatchByFleet <- .fit_absoluteResidualCatchByFleetFUN(Nfleets, jjm.out,
                                                                                 scales = list(y = list(draw = FALSE), 
                                                                                               alternating = 3))
   
   # 12a: Proportions catch by age modelled and observed
   if(.an(ageFleets)[1] != 0){        
-    fitPlots$residualsCatchAtAgeByFleet <- .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages,
+    outPlots$residualsCatchAtAgeByFleet <- .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages,
                                                                               xlab = "Years", ylab = "Absolute residual catch", 
                                                                               main = "Absolute residual catch by fleet",
                                                                               scales = list(alternating = 3))
@@ -282,7 +282,7 @@
   
   # 12b: Proportions catch by length modelled and observed
   if(.an(lgtFleets)[1] != 0){    
-    fitPlots$residualsCatchAtLengthByFleet <- .fit_residualsCatchAtLengthByFleetFUN(lgtFleets, jjm.out, lengths, Nfleets,
+    outPlots$residualsCatchAtLengthByFleet <- .fit_residualsCatchAtLengthByFleetFUN(lgtFleets, jjm.out, lengths, Nfleets,
                                                                                     xlab = "Years", ylab = "Age", 
                                                                                     main = "Residuals catch-at-age by fleet",
                                                                                     scales = list(alternating = 3))
@@ -291,20 +291,20 @@
   # 13a: Fitted age by year by fleet
   
   if(.an(ageFleets)[1] != 0){
-    fitPlots$ageFitsCatch <- .fit_ageFitsCatchFUN(ageFleets, jjm.out, ages,
+    outPlots$ageFitsCatch <- .fit_ageFitsCatchFUN(ageFleets, jjm.out, ages,
                                                   xlab = "Age", ylab = "Proportion at age", 
                                                   scales = list(alternating = 3))
   }
   
   # 13b: Fitted length by year by fleet
   if(.an(lgtFleets)[1] != 0){
-    fitPlots$lengthFitsCatch <- .fit_lengthFitsCatchFUN(lgtFleets, jjm.out, lengths,
+    outPlots$lengthFitsCatch <- .fit_lengthFitsCatchFUN(lgtFleets, jjm.out, lengths,
                                                         xlab = "Length", ylab = "Proportion at length")
   }
   
   # 14: Absolute catch by fleet modelled and observed
   cols  <- rainbow(11)  
-  fitPlots$predictedObservedCatchesByFleet <- .fit_predictedObservedCatchesByFleetFUN(Nfleets, cols, jjm.out,
+  outPlots$predictedObservedCatchesByFleet <- .fit_predictedObservedCatchesByFleetFUN(Nfleets, cols, jjm.out,
                                                                                       main = "Predicted and observed catches by fleet",
                                                                                       xlab = "Years", ylab = "Thousand tonnes")
   
@@ -313,7 +313,7 @@
   #-----------------------------------------------------------------------------
   
   # 15: Standardized indices observed with error and modelled  
-  fitPlots$predictedObservedIndices <- .fit_predictedObservedIndicesFUN(Nsurveys, jjm.out,
+  outPlots$predictedObservedIndices <- .fit_predictedObservedIndicesFUN(Nsurveys, jjm.out,
                                                                         main = "Predicted and observed indices",
                                                                         xlab = "Years", ylab = "Normalized index value", 
                                                                         ylim = c(-0.2, 2),
@@ -321,21 +321,21 @@
   
   # 15b: Fitted age by year by survey
   if(.an(ageSurveys)[1] != 0){
-    fitPlots$ageFitsSurvey <- .fit_ageFitsSurveyFUN(ageSurveys, jjm.out, ages, ageFleets,
+    outPlots$ageFitsSurvey <- .fit_ageFitsSurveyFUN(ageSurveys, jjm.out, ages, ageFleets,
                                                     xlab = "Age", ylab = "Proportion at age", 
                                                     scales = list(alternating = 3))
   }
   
   # 16: Log residuals in survey
   cols  <- rainbow(length(ages))  
-  fitPlots$standardizedSurveyResiduals <- .fit_standardizedSurveyResidualsFUN(Nsurveys, jjm.out, cols,
+  outPlots$standardizedSurveyResiduals <- .fit_standardizedSurveyResidualsFUN(Nsurveys, jjm.out, cols,
                                                                               xlab = "Years", ylab = "Log residuals", 
                                                                               main = "Standardized survey residuals",
                                                                               lwd = 3, cex.axis = 1.2, font = 2,
                                                                               scales = list(y = list(draw = FALSE)))
   
   # 16b: standard deviation of time series variances
-  fitPlots$sdPerInputSeries <- .fit_sdPerInputSeriesFUN(jjm.out,
+  outPlots$sdPerInputSeries <- .fit_sdPerInputSeriesFUN(jjm.out,
                                                         main = "SD per input series", ylab = "SD", xlab = "Years",
                                                         scales = list(alternating = 3))
   
@@ -343,51 +343,51 @@
   #- Plots of selectivity in fleet and survey + F's
   #-----------------------------------------------------------------------------  
   # 17: Selectivity at age in the fleet
-  fitPlots$selectivityFisheryByPentad <- .fit_selectivityFisheryByPentadFUN(Nfleets, jjm.out, ages,
+  outPlots$selectivityFisheryByPentad <- .fit_selectivityFisheryByPentadFUN(Nfleets, jjm.out, ages,
                                                                             scale = list(alternating = FALSE),
                                                                             main = "Selectivity of the Fishery by Pentad",
                                                                             xlab = "Age", ylab = "Selectivity")
   
   # 18: selecitivity at age in the survey
-  fitPlots$selectivitySurveyByPentad <- .fit_selectivitySurveyByPentadFUN(Nsurveys, jjm.out, ages,
+  outPlots$selectivitySurveyByPentad <- .fit_selectivitySurveyByPentadFUN(Nsurveys, jjm.out, ages,
                                                                           scale = list(alternating = FALSE),
                                                                           main = "Selectivity of the survey by Pentad",
                                                                           xlab = "Age", ylab = "Selectivity")
   
   # 19a: F at age
   cols  <- rev(heat.colors(11))  
-  fitPlots$fAtAGe <- .fit_fAtAGeFUN(jjm.out, ages, cols,
+  outPlots$fAtAGe <- .fit_fAtAGeFUN(jjm.out, ages, cols,
                                     xlab = "Age", ylab = "Years", main = "F at age")
   
   # 19b: Prop F at age
   cols  <- rainbow(length(ages))
-  fitPlots$fProportionAtAGe <- .fit_fProportionAtAGeFUN(jjm.out, ages, cols,
+  outPlots$fProportionAtAGe <- .fit_fProportionAtAGeFUN(jjm.out, ages, cols,
                                                         xlab = "Years", ylab = "Proportion of F at age", 
                                                         main = "F proportion at age",
                                                         ylim = c(0, 1), scales = list(y = list(axs = "i")))
   
   #19b: N at age
   cols <- rev(heat.colors(11))  
-  fitPlots$nAtAGe <- .fit_nAtAGeFUN(jjm.out, cols,
+  outPlots$nAtAGe <- .fit_nAtAGeFUN(jjm.out, cols,
                                     xlab = "Age", ylab = "Years", main = "N at age")
   
   #19c: Prop N at age
   cols  <- rainbow(length(ages))
-  fitPlots$nProportionAtAGe <- .fit_nProportionAtAGeFUN(jjm.out, cols, ages,
+  outPlots$nProportionAtAGe <- .fit_nProportionAtAGeFUN(jjm.out, cols, ages,
                                                         xlab = "Years", ylab = "Proportion of N at age", 
                                                         main = "Proportion at age",
                                                         ylim = c(0, 1), scales = list(y = list(axs = "i")))
   
   #20: Fisheries mean age  
   if(.an(ageFleets)[1] != 0){
-    fitPlots$fisheryMeanAge <- .fit_fisheryMeanAgeFUN(jjm.out, ageFleets,
+    outPlots$fisheryMeanAge <- .fit_fisheryMeanAgeFUN(jjm.out, ageFleets,
                                                       lwd = 3, lty = c(1, 3), col = 1,
                                                       ylab = "Age", xlab = "Years", main = "Fishery mean age")
   } 
   
   #20: Fisheries mean length  
   if(.an(lgtFleets)[1] != 0){
-    fitPlots$fisheryMeanLength <- .fit_fisheryMeanLengthFUN(lgtFleets, jjm.out,
+    outPlots$fisheryMeanLength <- .fit_fisheryMeanLengthFUN(lgtFleets, jjm.out,
                                                             lwd = 3, lty = c(1, 3), col = 1,
                                                             ylab = "Length (cm)", xlab = "Years", 
                                                             main = "Fishery mean length")
@@ -395,7 +395,7 @@
   
   #21: Survey mean age
   if(.an(ageFleets)[1] != 0){
-    fitPlots$surveyMeanAge <- .fit_surveyMeanAgeFUN(Nsurveys, jjm.out,
+    outPlots$surveyMeanAge <- .fit_surveyMeanAgeFUN(Nsurveys, jjm.out,
                                                     lwd = 3, lty = c(1, 3), col = 1,
                                                     ylab = "Age", xlab = "Years", main = "Survey mean age",
                                                     scales = list(alternating = 3))
@@ -405,19 +405,19 @@
   #- Plots of stock summary
   #-----------------------------------------------------------------------------
   # 22a: summary sheet with SSB, R, F and Biomass and Catch
-  fitPlots$summarySheet <- .fit_summarySheetFUN(jjm.out,
+  outPlots$summarySheet <- .fit_summarySheetFUN(jjm.out,
                                                 main = NA,
                                                 scales = list(alternating = 1, y = list(relation = "free", rot = 0),
                                                               axs = "i"))
   
   # 22b: Summary sheet 2
-  fitPlots$summarySheet2 <- .fit_summarySheet2FUN(jjm.out,
+  outPlots$summarySheet2 <- .fit_summarySheet2FUN(jjm.out,
                                                   main = NA, 
                                                   scales = list(alternating = 1, y = list(relation = "free", rot = 0),
                                                                 axs = "i"))
   
   # 22b Uncertainties of key parameters
-  fitPlots$uncertaintyKeyParams <- .fit_uncertaintyKeyParamsFUN(jjm.out,
+  outPlots$uncertaintyKeyParams <- .fit_uncertaintyKeyParamsFUN(jjm.out,
                                                                 auto.key = list(space = "right", 
                                                                                 points = FALSE, 
                                                                                 lines = FALSE, 
@@ -427,18 +427,18 @@
   
   # 23: Mature - immature ratio
   cols  <- rainbow(length(ages))
-  fitPlots$matureInmatureFishes <- .fit_matureInmatureFishesFUN(jjm.out, 
+  outPlots$matureInmatureFishes <- .fit_matureInmatureFishesFUN(jjm.out, 
                                                                 lwd = 3, lty = c(1, 3), col = 1,
                                                                 ylab = "Biomass in kt", xlab = "Years", 
                                                                 main = "Mature - Immature fish")
   
   # 24: Stock-recruitment
-  fitPlots$stockRecruitment <- .fit_stockRecruitmentFUN(jjm.out, cols,
+  outPlots$stockRecruitment <- .fit_stockRecruitmentFUN(jjm.out, cols,
                                                         ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
                                                         main = "Stock Recruitment")
   
   # 25: SSB not fished over SSB fished
-  fitPlots$fishedUnfishedBiomass <- .fit_fishedUnfishedBiomassFUN(jjm.out,
+  outPlots$fishedUnfishedBiomass <- .fit_fishedUnfishedBiomassFUN(jjm.out,
                                                                   ylab = "Total biomass", xlab = "Years", 
                                                                   main = "Fished vs. unfished biomass",
                                                                   col = c(1, 1), lwd = 3, lty = c(1, 3))
@@ -447,12 +447,12 @@
   #projectionsPlots <- list()
   
   # 25: SSB projections
-  fitPlots$ssbPrediction <- .projections_ssbPredictionFUN(jjm.out,
+  outPlots$ssbPrediction <- .projections_ssbPredictionFUN(jjm.out,
                                                                   ylab = "Spawning Stock Biomass", xlab = "Years", 
                                                                   main = "SSB prediction")
   
   # 26: Catch projections    
-  fitPlots$catchPrediction <- .projections_catchPredictionFUN(jjm.out,
+  outPlots$catchPrediction <- .projections_catchPredictionFUN(jjm.out,
                                                                       ylab = "Catch", xlab = "Years", 
                                                                       main = "Catch prediction")
   
@@ -460,16 +460,17 @@
   # Plots of yield per recruit and yield biomass
   #yprPlots <- list()
   
-  fitPlots$yieldSsbPerRecruit <- .ypr_yieldSsbPerRecruitFUN(jjm.out,
+  outPlots$yieldSsbPerRecruit <- .ypr_yieldSsbPerRecruitFUN(jjm.out,
                                                             main = "Yield and spawing stock biomass per recruit",
                                                             xlab = "Fishing mortality", ylab = "Spawing biomass / Yield per recruit",
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
   
   # Join all plots
-  plotTree <- list(model = model, input = names(inputPlots), fit = names(fitPlots),
-                   projections = names(projectionsPlots), ypr = names(yprPlots))
-  allPlots <- list(input = inputPlots, fit = fitPlots, projections = projectionsPlots, ypr = yprPlots,
-                   info = plotTree)
+  plotTree <- list(model = model, input = names(inputPlots), output = names(outPlots))
+            #       projections = names(projectionsPlots), ypr = names(yprPlots))
+  allPlots <- list(input = inputPlots, output = outPlots, info = plotTree)
+					#, projections = projectionsPlots, ypr = yprPlots,
+                    # )
   
   class(allPlots) <- "jjm.diag"
   
