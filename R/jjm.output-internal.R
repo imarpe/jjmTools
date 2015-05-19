@@ -13,8 +13,8 @@
     jjm.out = x[[i]]$output
     jjm.out$Ftot = cbind(jjm.out$Yr, rowMeans(jjm.out$TotF[, -1]), 
                          apply(jjm.out$TotF[, -1], 1, sd), 
-                         rowMeans(jjm.out$TotF[, -1]) - apply(jjm.out$TotF[, -1], 1, sd),
-                         rowMeans(jjm.out$TotF[, -1]) + apply(jjm.out$TotF[, -1], 1, sd))            
+                         rowMeans(jjm.out$TotF[, -1]) - rowMeans(jjm.out$TotF[, -1]),
+                         rowMeans(jjm.out$TotF[, -1]) - rowMeans(jjm.out$TotF[, -1]))            
     jjm.in  = x[[i]]$data
     jjm.ypr = x[[i]]$output$YPR
     model   = x[[i]]$info$output$model 
