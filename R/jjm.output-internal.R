@@ -2,7 +2,7 @@
   
   var = switch(what,
                biomass     = "TotBiom",
-               #Fm          = "TotF",
+               Ftot        = "Ftot",
                recruitment = "R",
                ssb         = "SSB")
   
@@ -11,6 +11,10 @@
   for(i in seq_along(x)) {
     
     jjm.out = x[[i]]$output
+    jjm.out$Ftot = cbind(jjm.out$Yr, rowMeans(jjm.out$TotF[, -1]), 
+                         apply(jjm.out$TotF[, -1], 1, sd), 
+                         rowMeans(jjm.out$TotF[, -1]) - apply(jjm.out$TotF[, -1], 1, sd),
+                         rowMeans(jjm.out$TotF[, -1]) + apply(jjm.out$TotF[, -1], 1, sd))            
     jjm.in  = x[[i]]$data
     jjm.ypr = x[[i]]$output$YPR
     model   = x[[i]]$info$output$model 
