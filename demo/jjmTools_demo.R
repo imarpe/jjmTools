@@ -65,7 +65,7 @@ writeCombinedStocks(combinedModel = mod123)
 print(model)
 
 # List of outputs 
-print(mod1234)
+print(mod12)
 
 # Diagnostics object
 print(diagPlots)
@@ -78,7 +78,7 @@ sumModel = summary(model)
 print(sumModel)
 
 # List of outputs object
-sumList = summary(mod1234)
+sumList = summary(mod12, Projections = T)
 print(sumList)
 
 # Diagnostics object
@@ -89,8 +89,4 @@ sumPlots
 # Get and print plots -----------------------------------------------------
 
 plot(diagPlots, what = "input")
-plot(diagPlots, what = "fit")
-plot(diagPlots, what = "projections")
-plot(diagPlots, what = "ypr")
-
-
+plot(diagPlots, what = "output")
