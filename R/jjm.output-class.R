@@ -1,8 +1,8 @@
 
-.getJjmOutput <- function(path, output, model, ...) {
+.getJjmOutput = function(path, output, model, ...) {
   
   # Define path of input
-  inputPath   <- path
+  inputPath   = path
   
   # Set files .rep and .yld
   outputs = file.path(output, paste0(model, "_R.rep")) 
@@ -22,38 +22,35 @@
   outputs$YPR = ypr
   
   # Extract asociated .dat file
-  dataName    <- scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 2, 
+  dataName    = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 2, 
                       what = character(), sep = "\n", quiet = TRUE)
-  modelName   <- gsub(x = dataName[2], pattern = " ", replacement = "")
-  dataName    <- gsub(x = dataName[1], pattern = " ", replacement = "")
+  modelName   = gsub(x = dataName[2], pattern = " ", replacement = "")
+  dataName    = gsub(x = dataName[1], pattern = " ", replacement = "")
   
   # Read .dat file
-  data        <- .read.dat(filename = file.path(inputPath, dataName))
+  data        = .read.dat(filename = file.path(inputPath, dataName))
   
   # Generate extra info
-  iFilename   <- file.path(inputPath, dataName)
-  info.data   <- list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
+  iFilename   = file.path(inputPath, dataName)
+  info.data   = list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
                       age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]))
-  info.output <- list(model = modelName, fisheryNames = outputs$Fshry_names, modelYears = outputs$Yr,
+  info.output = list(model = modelName, fisheryNames = outputs$Fshry_names, modelYears = outputs$Yr,
                                               indexModel = outputs$Index_names)
 
   output = list()												
   # Group in a list
-  output[[1]] <- list(#info = list(model = modelName),
-                 #output = list(info = info.output, output = outputs),
-                 #data = list(info = info.data, data = data),
-                  output = outputs,
-                  data = data,
-                  info = list(data = info.data, output = info.output))
+  output[[1]]   = list(output = outputs,
+                      data = data,
+                      info = list(data = info.data, output = info.output))
   names(output) = modelName				  
   
   # Define jjm.output class
-  class(output) <- c("jjm.output")
+  class(output) = c("jjm.output")
   
   return(output)
 }
 
-print.jjm.output <- function(x, ...) {
+print.jjm.output = function(x, ...) {
   
   for(i in seq_along(x)){
   
@@ -81,18 +78,18 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.7
   output = list()
   
   #output$info <- object$output$info
-  output$like <- .LikeTable(object)
-  output$projections <- .ProjTable(object, Projections = Projections, 
+  output$like = .LikeTable(object)
+  output$projections = .ProjTable(object, Projections = Projections, 
 						  Fmult = Fmult, BiomProj = BiomProj, CapProj = CapProj, MRS = MRS)
   #output$fut  <- .Fut_SSB_SD(object)
   #output$SSB  <- .SSB_SD(object)
   
-  class(output) <- "summary.jjm.output"
+  class(output) = "summary.jjm.output"
   return(output)
   
 }
 
-print.summary.jjm.output <- function(x, ...) {
+print.summary.jjm.output = function(x, ...) {
   
   #cat("\nModel:\n", x$info$model, "\n\n")
   
@@ -124,14 +121,13 @@ print.summary.jjm.output <- function(x, ...) {
   return(invisible(x))
 }
 
-plot.jjm.output <- function(x, what = "ss1", ...){
+plot.jjm.output <- function(x, what = "biomass", ...){
   jjm.out <- x[[1]]$output
   jjm.in  <- x[[1]]$data
   jjm.ypr <- x[[1]]$output$YPR
   
   model   <- x[[1]]$info$output$model
-  #jjm.out <- jjm.out$output
-  
+    
   #- Generic attributes of the stock assessment
   Nfleets   <- length(c(jjm.out$Fshry_names))
   Nsurveys  <- length(c(jjm.out$Index_names))
@@ -161,12 +157,18 @@ plot.jjm.output <- function(x, what = "ss1", ...){
   } else {lgtSurveys <- 0}
   
   pic <- switch(what,
-                ss1 = .fit_summarySheetFUN(jjm.out,
-                                           scales = list(alternating = 1, y = list(relation = "free", rot = 0),
-                                                         axs = "i"), ...),
-                ss2 = .fit_summarySheet2FUN(jjm.out,
-                                            scales = list(alternating = 1, y = list(relation = "free", rot = 0),
-                                                          axs = "i"), ...))  
+                                             
+                biomass = .fit_biomassFUN(jjm.out, scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                             axs = "i"), ...),
+                
+                recruitment = .fit_recruitFUN(jjm.out, scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                                 axs = "i"), ...),
+                
+                ssb = .fit_ssbFUN(jjm.out, scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                             axs = "i"), ...),
+                
+                Fm = .fit_fFUN(jjm.out, scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                 axs = "i"), ...))
   
   return(pic)
 }

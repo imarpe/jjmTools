@@ -25,7 +25,7 @@ compareList = paste0("mod0.", 1:2)
 runJJM(model = model, path = reposDir)
 
 # Run a list of models
-#runJJM(model = compareList, path = reposDir)
+runJJM(model = compareList, path = reposDir)
 
 
 # Reading -----------------------------------------------------------------
