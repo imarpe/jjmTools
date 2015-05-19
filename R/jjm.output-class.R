@@ -154,7 +154,10 @@ plot.jjm.output <- function(x, what = "biomass", stack = TRUE, ...){
   dataShape = .reshapeJJM(x, what = what)
   
   if(stack == !TRUE){
-    pic = xyplot(mean ~ year, data = dataShape, groups = model,  
+    pic = xyplot(mean ~ year, data = dataShape, groups = model, 
+                 auto.key = list(title = "", x = 0.8, y = 0.9, cex = 1.25,
+                                 points = FALSE, border = FALSE, 
+                                 lines = TRUE),
                  upper = dataShape$upper, lower = dataShape$lower,
                  panel = function(x, y, ...){
                    panel.superpose(x, y, panel.groups = .my.panel.bands, type='l', col='gray',...)
