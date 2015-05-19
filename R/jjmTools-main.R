@@ -135,8 +135,15 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
 diagnostics <- function(outputObject, ...) {
   
   # Take an output object and get diagnostic plots extracting outputs, data and YPR
-  output <- .diagnostics(jjm.out = outputObject$output, jjm.in = outputObject$data$data,
-                         jjm.ypr = outputObject$output$YPR)
+  output = list()
+  
+  for(i in seq_along(outputObject)){
+	output[[i]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
+								jjm.out = outputObject[[i]]$output, jjm.in = outputObject[[i]]$data)
+ #                               jjm.ypr = outputObject[[i]]$output$YPR)
+  }
+  
+  names(output) = names(outputObject)
   
   # Return a jjm.diag object
   class(output) = c("jjm.diag", class(output))
