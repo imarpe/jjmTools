@@ -58,6 +58,7 @@ plot.jjm.diag <- function(x, what = c("input", "output"), pdf = FALSE, file = NU
   if(pdf) {
   for(j in seq_along(x)){
 	if(is.null(file)) pdf(file = paste0("Plots_", x[[j]]$info$model, ".pdf"), ...)
+		else pdf(file = paste0(file, ".pdf"), ...)
 	for(i in what){ print(x[[j]][[i]]) }
 	dev.off()
 	}
@@ -66,6 +67,7 @@ plot.jjm.diag <- function(x, what = c("input", "output"), pdf = FALSE, file = NU
 			for(i in what){ print(x[[j]][[i]]) }
 	}
   }
+  
   #if(is.null(var)) {
     
   #  for(i in what) print(x[[i]])
