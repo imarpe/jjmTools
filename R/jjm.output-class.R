@@ -149,57 +149,32 @@ print.summary.jjm.output = function(x, ...) {
   return(invisible(x))
 }
 
-plot.jjm.output <- function(x, what = "biomass", ...){
-  jjm.out <- x[[1]]$output
-  jjm.in  <- x[[1]]$data
-  jjm.ypr <- x[[1]]$output$YPR
+
+plot.jjm.output <- function(x, what = "biomass", stack = TRUE, ...){
+      
+  dataShape = .reshapeJJM(x, what = what)
   
-  model   <- x[[1]]$info$output$model
-    
-  #- Generic attributes of the stock assessment
-  Nfleets   <- length(c(jjm.out$Fshry_names))
-  Nsurveys  <- length(c(jjm.out$Index_names))
-  ages      <- jjm.in$ages[1]:jjm.in$ages[2]
-  lengths   <- jjm.in$lengths[1]:jjm.in$lengths[2]
-  
-  #- Get the age-structured fleets and length-structured fleets out
-  if(length(grep("pobs_fsh_", names(jjm.out))) > 0){
-    ageFleets <- unlist(strsplit(names(jjm.out)[grep("pobs_fsh_", names(jjm.out))], split = "_"))
-    ageFleets <- ageFleets[seq(3, length(ageFleets), 3)]
-  } else { ageFleets <- 0}
-  
-  if(length(grep("pobs_len_fsh_", names(jjm.out))) > 0){
-    lgtFleets <- unlist(strsplit(names(jjm.out)[grep("pobs_len_fsh_", names(jjm.out))], split = "_"))
-    lgtFleets <- lgtFleets[seq(4, length(lgtFleets), 4)]
-  } else {lgtFleets <- 0}
-  
-  #- Get the age-structured surveys and length-structured surveys out
-  if(length(grep("pobs_ind_", names(jjm.out))) > 0){
-    ageSurveys <- unlist(strsplit(names(jjm.out)[grep("pobs_ind_", names(jjm.out))], "_"))
-    ageSurveys <- ageSurveys[seq(3, length(ageSurveys), 3)]
-  } else {ageSurveys <- 0}
-  
-  if(length(grep("pobs_len_ind_", names(jjm.out))) > 0){
-    lgtSurveys <- unlist(strsplit(names(jjm.out)[grep("pobs_len_ind_", names(jjm.out))], "_"))
-    lgtSurveys <- lgtSurveys[seq(4, length(lgtSurveys), 4)]
-  } else {lgtSurveys <- 0}
-  
-  pic <- switch(what,
-                                             
-                biomass = .fit_biomassFUN(jjm.out, scales = list(alternating = 1, y = list(relation = "free", rot = 0),
-                                                             axs = "i"), ...),
-                
-                recruitment = .fit_recruitFUN(jjm.out, scales = list(alternating = 1, y = list(relation = "free", rot = 0),
-                                                                 axs = "i"), ...),
-                
-                ssb = .fit_ssbFUN(jjm.out, scales = list(alternating = 1, y = list(relation = "free", rot = 0),
-                                             axs = "i"), ...),
-                
-                Fm = .fit_fFUN(jjm.out, scales = list(alternating = 1, y = list(relation = "free", rot = 0),
-                                                 axs = "i"), ...))
+  if(stack == !TRUE){
+    pic = xyplot(mean ~ year, data = dataShape, groups = model,  
+                 upper = dataShape$upper, lower = dataShape$lower,
+                 panel = function(x, y, ...){
+                   panel.superpose(x, y, panel.groups = .my.panel.bands, type='l', col='gray',...)
+                   panel.xyplot(x, y, type='l', cex=0.6, lty=1, lwd =2, ...)
+                 }
+    )
+  } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model,
+                       upper = dataShape$upper, lower = dataShape$lower,
+                       panel = function(x, y, ...){
+                         panel.superpose(x, y, panel.groups = .my.panel.bands, type='l', col='gray',...)
+                         panel.xyplot(x, y, type='l', cex=0.6, lty=1, lwd = 2, ...)
+                       })
+  }
   
   return(pic)
 }
+
+
+
 
 # Kobe plot ---------------------------------------------------------------
 
