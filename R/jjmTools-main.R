@@ -208,14 +208,21 @@ combineStocks = function(..., modelName = NULL){
 #' @param ... Additional parameters passed to plot.
 #' @examples
 #' kobe(model)
-kobe = function(..., add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Flim = Fref,  
-                xlim = NULL, ylim = NULL, single = TRUE) {
-  
-    output <- .kobe(..., add=add, col=col, Bref = Bref, Fref = Fref, 
-				    Blim = Bref, Flim = Fref, xlim = xlim, ylim = ylim, 
-					single = single)
-  
-	return(output)
+kobe = function(obj, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Flim = Fref,  
+                xlim = NULL, ylim = NULL, ...) {
+    
+	for(i in seq_along(obj)){
+	
+	object = obj[[i]]
+	
+    .kobe1(x = object, add=add, col=col, Bref = Bref, Fref = Fref, 
+		  Blim = Bref, Flim = Fref, xlim = xlim, ylim = ylim, ...)
+    
+	}
+	
+	#print(output)
+	
+	return(invisible())
   
  }
 

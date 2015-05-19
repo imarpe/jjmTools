@@ -1,7 +1,7 @@
 
 print.jjm.diag = function(x, ...) {
   
-  cat("Model name (s):\n\n")
+  cat("Model name (s):\n")
   
   for(i in seq_along(x)){
   
@@ -10,6 +10,7 @@ print.jjm.diag = function(x, ...) {
   cat(obj$info$model, "\n")
   
   }
+  cat("\n")
   
   cat("Input Plots:\n", paste(x[[1]]$info$input, collapse = "\n "), "\n\n")
   cat("Output Plots:\n", paste(x[[1]]$info$output, collapse = "\n "), "\n\n")
