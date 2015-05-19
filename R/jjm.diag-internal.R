@@ -119,11 +119,11 @@
 }
 
 # .diagnostic function -----------------------------------------------------
-.diagnostics <- function(jjm.out, jjm.in, jjm.ypr){
+.diagnostics <- function(jjm.info, jjm.out, jjm.in){
   
   # Get model name
-  model <- jjm.out$info$model
-  jjm.out <- jjm.out$output
+  model <- jjm.info$model
+  #jjm.out <- jjm.out
   
   #- Generic attributes of the stock assessment
   Nfleets   <- length(c(jjm.out$Fshry_names))
@@ -444,23 +444,23 @@
                                                                   col = c(1, 1), lwd = 3, lty = c(1, 3))
   
   # Plots of catch and ssb projections
-  projectionsPlots <- list()
+  #projectionsPlots <- list()
   
   # 25: SSB projections
-  projectionsPlots$ssbPrediction <- .projections_ssbPredictionFUN(jjm.out,
+  fitPlots$ssbPrediction <- .projections_ssbPredictionFUN(jjm.out,
                                                                   ylab = "Spawning Stock Biomass", xlab = "Years", 
                                                                   main = "SSB prediction")
   
   # 26: Catch projections    
-  projectionsPlots$catchPrediction <- .projections_catchPredictionFUN(jjm.out,
+  fitPlots$catchPrediction <- .projections_catchPredictionFUN(jjm.out,
                                                                       ylab = "Catch", xlab = "Years", 
                                                                       main = "Catch prediction")
   
   
   # Plots of yield per recruit and yield biomass
-  yprPlots <- list()
+  #yprPlots <- list()
   
-  yprPlots$yieldSsbPerRecruit <- .ypr_yieldSsbPerRecruitFUN(jjm.ypr,
+  fitPlots$yieldSsbPerRecruit <- .ypr_yieldSsbPerRecruitFUN(jjm.out,
                                                             main = "Yield and spawing stock biomass per recruit",
                                                             xlab = "Fishing mortality", ylab = "Spawing biomass / Yield per recruit",
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
@@ -2148,8 +2148,10 @@
   return(pic)
 }
 
-.ypr_yieldSsbPerRecruitFUN <- function(jjm.ypr, ...)
+.ypr_yieldSsbPerRecruitFUN <- function(jjm.out, ...)
 {
+  jjm.ypr = jjm.out$YPR
+
   if(is.null(jjm.ypr)) return(invisible(NULL))
   res <- rbind(data.frame(cbind(jjm.ypr$F, jjm.ypr$SSB), class = "SSB"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$Yld), class = "Yield"),
