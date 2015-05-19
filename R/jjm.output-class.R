@@ -160,15 +160,15 @@ plot.jjm.output <- function(x, what = "biomass", stack = TRUE, ...){
                                  lines = TRUE),
                  upper = dataShape$upper, lower = dataShape$lower,
                  panel = function(x, y, ...){
-                   panel.superpose(x, y, panel.groups = .my.panel.bands, type='l', col='gray',...)
-                   panel.xyplot(x, y, type='l', cex=0.6, lty=1, lwd =2, ...)
+                   panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                   panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
                  }
     )
   } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model,
                        upper = dataShape$upper, lower = dataShape$lower,
                        panel = function(x, y, ...){
-                         panel.superpose(x, y, panel.groups = .my.panel.bands, type='l', col='gray',...)
-                         panel.xyplot(x, y, type='l', cex=0.6, lty=1, lwd = 2, ...)
+                         panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                         panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
                        })
   }
   
