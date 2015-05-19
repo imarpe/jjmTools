@@ -64,6 +64,7 @@ print.jjm.output = function(x, ...) {
   cat("Lengths from: ", obj$info$data$length[1] ,"to", obj$info$data$length[2], "\n", sep = " ")
   cat("Fisheries names: ", paste(obj$info$output$fisheryNames, collapse = ", "), "\n")
   cat("Associated indices: ", paste(obj$info$output$indexModel, collapse = ", "), "\n")
+  #cat("Projection years number: ", paste(length(obj$output$SSB_fut_1), collapse = ", "), "\n")
   cat(" ", "\n")
   
   }
@@ -73,18 +74,35 @@ print.jjm.output = function(x, ...) {
 }
 
 summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.75, 1, 1.25),
-					BiomProj = c(2016, 2024, 2034), CapProj = c(2015, 2016), MRS = 4500, ...) {
+					BiomProj = c(2015, 2020, 2024), 
+					CapProj = c(2015, 2016), 
+					MRS = 4500, ...) {
   
+  pic = list()
+  namesPlot = NULL
+  for(i in seq_along(object)){
+  
+  jjm.out <- object[[i]]$output
+  jjm.in  <- object[[i]]$data
+  jjm.ypr <- object[[i]]$output$YPR
+  namesPlot[i] = object[[i]]$info$output$model
+  
+  pic[[i]] = .fit_summarySheetFUN(jjm.out, scales = list(alternating = 1, 
+						y = list(relation = "free", rot = 0),
+                        axs = "i"), ...)
+  
+  }
+  
+  names(pic) = namesPlot
+
   output = list()
-  
-  #output$info <- object$output$info
-  output$like = .LikeTable(object)
-  output$projections = .ProjTable(object, Projections = Projections, 
+  output$like <- .LikeTable(object)
+  output$projections <- .ProjTable(object, Projections = Projections, 
 						  Fmult = Fmult, BiomProj = BiomProj, CapProj = CapProj, MRS = MRS)
-  #output$fut  <- .Fut_SSB_SD(object)
-  #output$SSB  <- .SSB_SD(object)
+  output$plots <- pic
   
-  class(output) = "summary.jjm.output"
+  class(output) <- "summary.jjm.output"
+
   return(output)
   
 }
@@ -108,6 +126,16 @@ print.summary.jjm.output = function(x, ...) {
   
 	  cat(names(x$projections)[i], "\n")
 	  print(x$projections[[i]], ...)
+	  cat(" ", "\n")
+  
+  }
+  
+    cat("\nSummary Plot (s):\n\n")
+
+  for(i in seq_along(x$projections)){
+  
+	  cat(names(x$projections)[i], "\n")
+	  plot(x$plots[[i]])
 	  cat(" ", "\n")
   
   }
