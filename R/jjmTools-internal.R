@@ -1244,6 +1244,139 @@ toExpress <- function(char.expressions){
   return(parse(text=paste(char.expressions,collapse=";")))
 }
 
-kobe = function (model, ...) 
-  UseMethod("kobe", model)
+.kobe = function(..., add, col, Bref, Fref, 
+				    Blim, Flim, xlim, ylim, single) {
+
+modelList <- list(...)
+  
+  for(i in modelList)
+    if(class(i) != "jjm.output" | class(i) != "jjm.diag")
+      stop("Objects must be of class 'jjm.output' or 'jjm.diag'.")
+  
+  modelList <- c(...)
+  
+  if(single){
+  
+  plot.new()
+  for(i in seq_along(modelList)){
+  
+  kob = modelList[[i]]$output$msy_mt
+
+  F_Fmsy = kob[,4]
+  B_Bmsy = kob[,13]
+  years  = kob[,1]
+  
+  n = length(B_Bmsy)
+  
+  if(!isTRUE(add)) {
+   
+    
+    if(is.null(xlim)) xlim= range(pretty(c(0, B_Bmsy)))
+    if(is.null(ylim)) ylim= range(pretty(c(0, F_Fmsy)))
+    
+    plot.window(xlim=xlim, ylim=ylim, 
+					  xaxs="i", yaxs="i")
+    par(xpd = TRUE)
+    
+    ylim = par()$usr[3:4]
+    zero = ylim[1]
+    
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 165/255, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(zero, Fref, Fref, zero),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(zero, Fref, Fref, zero),
+            col = rgb(0, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Blim, Blim),
+            y=c(Flim, ylim[2], ylim[2], Flim),
+            col=rgb(1, 0, 0, alpha = 0.5), border=NA)
+ 
+    mtext(toExpress("F/F[msy]"), 2, line=2.5)
+    mtext(toExpress("B/B[msy]"), 1, line=2.5)
+    axis(1, las=1)
+    axis(2, las=2)
+    box()
+  }
+
+  text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels=range(years), cex=0.6,
+       adj=-0.2, col=col)
+  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
+  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
+  
+  }
+  
+  }
+  
+  else {
+  
+  plot.new()
+  if(length(modelList) == 1) par(mfrow = c(1,1))
+  if(length(modelList) == 2) par(mfrow = c(1,2))
+  if(length(modelList) == 3) par(mfrow = c(2,2))
+  if(length(modelList) == 4) par(mfrow = c(2,2))
+  
+  for(i in seq_along(modelList)){
+  
+  kob = modelList[[i]]$output$msy_mt
+
+  F_Fmsy = kob[,4]
+  B_Bmsy = kob[,13]
+  years  = kob[,1]
+  
+  n = length(B_Bmsy)
+  
+  if(!isTRUE(add)) {
+   
+    
+    if(is.null(xlim)) xlim= range(pretty(c(0, B_Bmsy)))
+    if(is.null(ylim)) ylim= range(pretty(c(0, F_Fmsy)))
+    
+    plot.window(xlim=xlim, ylim=ylim, 
+					  xaxs="i", yaxs="i")
+    par(xpd = TRUE)
+    
+    ylim = par()$usr[3:4]
+    zero = ylim[1]
+    
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 165/255, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(zero, Fref, Fref, zero),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(zero, Fref, Fref, zero),
+            col = rgb(0, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Blim, Blim),
+            y=c(Flim, ylim[2], ylim[2], Flim),
+            col=rgb(1, 0, 0, alpha = 0.5), border=NA)
+ 
+    mtext(toExpress("F/F[msy]"), 2, line=2.5)
+    mtext(toExpress("B/B[msy]"), 1, line=2.5)
+    axis(1, las=1)
+    axis(2, las=2)
+    box()
+  }
+
+  text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels=range(years), cex=0.6,
+       adj=-0.2, col=col)
+  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
+  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
+  
+  }
+  }
+  
+  return(invisible())
+ 
+}
+  
 
