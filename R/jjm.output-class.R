@@ -136,7 +136,6 @@ print.summary.jjm.output = function(x, ...) {
   
 	  cat(names(x$projections)[i], "\n")
 	  plot(x$plots[[i]])
-	  cat(" ", "\n")
   
   }
   
