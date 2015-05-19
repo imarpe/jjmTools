@@ -47,7 +47,7 @@ print.summary.jjm.diag <- function(x, ...) {
   return(invisible())
 }
 
-plot.jjm.diag <- function(x, what = c("input", "output"), pdf = FALSE) 
+plot.jjm.diag <- function(x, what = c("input", "output"), pdf = FALSE, file = NULL, ...) 
                           #var=NULL, fleet=NULL, ...)
 {
   what <- tolower(what)
@@ -55,8 +55,17 @@ plot.jjm.diag <- function(x, what = c("input", "output"), pdf = FALSE)
   if(!all(!is.na(match(what, c("input", "output")))))
     stop("Incorrect values for parameter 'what'.")
   
-  for(i in what) print(x[[i]])
-  
+  if(pdf) {
+  for(j in seq_along(x)){
+	if(is.null(file)) pdf(file = paste0("Plots_", x[[j]]$info$model, ".pdf"), ...)
+	for(i in what){ print(x[[j]][[i]]) }
+	dev.off()
+	}
+  } else { 
+		for(j in seq_along(x)){
+			for(i in what){ print(x[[j]][[i]]) }
+	}
+  }
   #if(is.null(var)) {
     
   #  for(i in what) print(x[[i]])
