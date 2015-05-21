@@ -263,68 +263,166 @@
 }
 
 .LikeTable <- function(lstOuts){
-  if(class(lstOuts)[1] == 'jjm.output') {
-    Name <- lstOuts$output$info$model
-    lstOuts <- list(lstOuts$output$output)
-  }else {
-    Name <- lstOuts$info
-    lstOuts <- lstOuts$combined$outputs
-  }
-  
-  names(lstOuts) <- Name
-  tab <- do.call(cbind, lapply(lstOuts, function(x){round(x$Like_Comp, 2)}))
-  row.names(tab) <- lstOuts[[1]]$Like_Comp_names
+
+  Name = NULL
+  Outs = list()
+  for(i in seq_along(lstOuts)){
+    Name[i] <- lstOuts[[i]]$info$output$model
+    Outs[[i]] <- lstOuts[[i]]$output
+	}
+ 
+  names(Outs) <- Name
+  tab <- do.call(cbind, lapply(Outs, function(x){round(x$Like_Comp, 2)}))
+  row.names(tab) <- Outs[[1]]$Like_Comp_names
   
   return(tab)
 }
 
-.Fut_SSB_SD <- function(lstOuts){
-  if(class(lstOuts)[1] == 'jjm.output') {
-    Name <- lstOuts$output$info$model
-    lstOuts <- list(lstOuts$output$output)
-  }else {
-    Name <- lstOuts$info
-    lstOuts <- lstOuts$combined$output
+.ProjTable <- function(lstOuts, Projections, Fmult, BiomProj, CapProj, MRS){
+
+if(Projections){
+
+		Name = NULL
+		Outs = list()
+		for(i in seq_along(lstOuts)){
+			Name[i] <- lstOuts[[i]]$info$output$model
+			Outs[[i]] <- lstOuts[[i]]$output
+		}
+		
+		Fs <- Fmult
+		Bp <- BiomProj
+		Cp <- CapProj
+		mrs <- MRS
+		
+		names(Outs) <- Name
+		
+	tableTot = list()
+	
+	for(i in seq_along(Outs)){
+		
+	fut <- do.call(rbind,lapply(Outs[[i]][grep("SSB_fut_",names(Outs[[i]]))],
+                   function(y){return(y[,1:3])}))
+		
+	#fut <- do.call(rbind, lapply(Outs, function(x){
+	#				do.call(rbind, lapply(x[grep("SSB_fut_",names(x))],
+    #                      function(y){return(y[,1:3])}))})
+  
+	  fut <- as.data.frame(fut, stringsAsFactors = F)
+	  colnames(fut) <- c("year", "SSB", "SD")
+	  fut$modelscenario <- paste(rep(names(Outs)[i], each=nrow(Outs[[i]]$SSB_fut_1) *
+									   length(grep("SSB_fut_", names(Outs[[i]])))),
+								 paste("Scen",
+									   rep(1:length(grep("SSB_fut_", names(Outs[[i]]))), each=nrow(Outs[[i]]$SSB_fut_1)),
+									   sep="_"),
+								 sep="_")
+  
+  assdato <- mrs
+  
+  partName = NULL
+  for(j in seq_along(Bp)){
+    part = c(paste("B",Bp[j],sep=""), paste("P(B",Bp[j],">Bmsy)",sep=""))
+    partName = c(partName, part)
   }
   
-  names(lstOuts) <- Name
-  fut <- do.call(rbind, lapply(lstOuts, function(x){do.call(rbind, lapply(x[grep("SSB_fut_", names(x))],
-                                                                          function(y){return(y[,1:3])}))}))
-  fut <- as.data.frame(fut, stringsAsFactors = FALSE)
-  colnames(fut) <- c("year", "SSB", "SD")
+  namesTabla = list(rep("",times = length(Fs)), c("Fs",partName,
+                                                  paste0("Catch", Cp)))
   
-  fut$modelscenario <- paste(rep(names(lstOuts),
-                                 lapply(lstOuts, function(x) {nrow(x$SSB_fut_1)*length(grep("SSB_fut_", names(x)))})),
-                             paste("Scen",
-                                   as.vector(do.call(c, lapply(lstOuts, 
-                                                               function(x){rep(1:length(grep("SSB_fut_", names(x))),
-                                                                               each = nrow(x$SSB_fut_1))}))),
-                                   sep = "_"),
-                             sep = "_")
+  #tabla   <- list()
   
-  return(fut)
+  #for(i in names(lstOuts)){
+    
+    #tabla[[i]] <- matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
+	tabla <- matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
+    rsktable  <- matrix(NA, nrow = 1, ncol = length(grep("SSB_fut_", names(Outs[[i]]))),
+                        dimnames = list(names(Outs)[i], 1:length(grep("SSB_fut_",names(Outs[[i]])))))
+    
+    for(j in seq_along(Bp)){
+      
+      futdat <- subset(fut, year == Bp[j] &
+                         paste("Model_", unlist(strsplit(fut$modelscenario,"_"))[seq(2, nrow(fut)*4, 4)],sep="") == names(Outs)[i])
+      Bs <- futdat[,2][c(5:4,2:1,3)]
+      rsktable[1,] <- (1 - pnorm(mrs, futdat$SSB, futdat$SD))*100
+      tabla[,1] <- Fs
+      tabla[,(j*2)] <- round(Bs)
+      tabla[,(j*2+1)] <- round(rsktable[1,][c(5:4,2:1,3)])
+      
+    }
+  #}
+  
+  catchPrj = list()
+  for(k in seq_along(Cp)){
+    catchPrj[[k]] = unlist(lapply(Outs[[i]][grep("Catch_fut_",names(Outs[[i]]))],
+                                  function(y){y[y[,1]==Cp[k],2]}))
+  }
+  
+  seqPos = (length(Bp)*2+2):length(namesTabla[[2]])
+
+    for(j in seq_along(seqPos)){
+      tabla[,seqPos[j]] <- catchPrj[[j]][c(5:4,2:1,3)]
+    }
+	
+	tableTot[[i]] = tabla
+	
+	}
+	
+	names(tableTot) = names(Outs)
+	
+	}
+	
+	else { tableTot = NULL }
+
+  return(tableTot)
+  
 }
 
-.SSB_SD <- function(lstOuts){
-  if(class(lstOuts)[1] == 'jjm.output') {
-    Name <- lstOuts$output$info$model
-    lstOuts <- list(lstOuts$output$output)
-  }else {
-    Name <- lstOuts$info
-    lstOuts <- lstOuts$combined$output
-  }
+
+#.Fut_SSB_SD <- function(lstOuts){
+#  if(class(lstOuts)[1] == 'jjm.output') {
+#    Name <- lstOuts$output$info$model
+#    lstOuts <- list(lstOuts$output$output)
+#  }else {
+ #   Name <- lstOuts$info
+#    lstOuts <- lstOuts$combined$output
+#  }
   
-  names(lstOuts) <- Name
-  SSB_SD <- do.call(rbind, lapply(lstOuts, function(x){x$SSB}))
+#  names(lstOuts) <- Name
+#  fut <- do.call(rbind, lapply(lstOuts, function(x){do.call(rbind, lapply(x[grep("SSB_fut_", names(x))],
+#                                                                          function(y){return(y[,1:3])}))}))
+#  fut <- as.data.frame(fut, stringsAsFactors = FALSE)
+#  colnames(fut) <- c("year", "SSB", "SD")
+#  
+#  fut$modelscenario <- paste(rep(names(lstOuts),
+#                                 lapply(lstOuts, function(x) {nrow(x$SSB_fut_1)*length(grep("SSB_fut_", names(x)))})),
+#                             paste("Scen",
+#                                   as.vector(do.call(c, lapply(lstOuts, 
+#                                                               function(x){rep(1:length(grep("SSB_fut_", names(x))),
+#                                                                               each = nrow(x$SSB_fut_1))}))),
+#                                   sep = "_"),
+#                             sep = "_")
+  
+ # return(fut)
+#}
+
+#.SSB_SD <- function(lstOuts){
+#  if(class(lstOuts)[1] == 'jjm.output') {
+#    Name <- lstOuts$output$info$model
+#    lstOuts <- list(lstOuts$output$output)
+#  }else {
+#    Name <- lstOuts$info
+#    lstOuts <- lstOuts$combined$output
+#  }
+  
+#  names(lstOuts) <- Name
+#  SSB_SD <- do.call(rbind, lapply(lstOuts, function(x){x$SSB}))
   #  SSB_SD=lstOuts[[1]]$SSB
-  SSB_SD <- SSB_SD[,1:3]
-  SSB_SD <- as.data.frame(SSB_SD, stringsAsFactors = FALSE)
-  colnames(SSB_SD) <- c("year", "SSB", "SD")
-  if(length(lstOuts) > 1){
-    SSB_SD$model <- rep(names(lstOuts), lapply(lstOuts, function(x){nrow(x$SSB)}))}
-  
-  return(SSB_SD)
-}
+#  SSB_SD <- SSB_SD[,1:3]
+#  SSB_SD <- as.data.frame(SSB_SD, stringsAsFactors = FALSE)
+#  colnames(SSB_SD) <- c("year", "SSB", "SD")
+#  if(length(lstOuts) > 1){
+#    SSB_SD$model <- rep(names(lstOuts), lapply(lstOuts, function(x){nrow(x$SSB)}))}
+#  
+#  return(SSB_SD)
+#}
 
 .Puntual_SSB_SD <- function(lstOuts,year){
   if(class(lstOuts)[1] == 'jjm.output') {
@@ -1146,6 +1244,62 @@ toExpress <- function(char.expressions){
   return(parse(text=paste(char.expressions,collapse=";")))
 }
 
-kobe = function (model, ...) 
-  UseMethod("kobe", model)
+.kobe1 = function(x, add, col, Bref, Fref, 
+				 Blim, Flim, xlim, ylim, ...) {
+
+  #if(class(obj) == "jjm.output") kob = x$output$msy_mt
+  #if(class(obj) == "jjm.diag") kob = x$
+
+  kob = x$output$msy_mt
+
+  F_Fmsy = kob[,4]
+  B_Bmsy = kob[,13]
+  years  = kob[,1]
+  
+  n = length(B_Bmsy)
+  
+  if(!isTRUE(add)) {
+      
+    if(is.null(xlim)) xlim= range(pretty(c(0, B_Bmsy)))
+    if(is.null(ylim)) ylim= range(pretty(c(0, F_Fmsy)))
+
+	plot.new()
+    plot.window(xlim=xlim, ylim=ylim, 
+			    xaxs="i", yaxs="i")
+    par(xpd = TRUE)
+    
+    ylim = par()$usr[3:4]
+    zero = ylim[1]
+    
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 165/255, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(zero, Fref, Fref, zero),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(zero, Fref, Fref, zero),
+            col = rgb(0, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Blim, Blim),
+            y=c(Flim, ylim[2], ylim[2], Flim),
+            col=rgb(1, 0, 0, alpha = 0.5), border=NA)
+ 
+    mtext(toExpress("F/F[msy]"), 2, line=2.5)
+    mtext(toExpress("B/B[msy]"), 1, line=2.5)
+    axis(1, las=1)
+    axis(2, las=2)
+    box()
+  }
+
+  text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels=range(years), cex=0.6,
+       adj=-0.2, col=col)
+  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
+  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
+  
+  return(invisible())
+ 
+}
 
