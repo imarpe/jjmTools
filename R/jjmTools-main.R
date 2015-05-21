@@ -1,20 +1,13 @@
 # jjmTools package Rd file ------------------------------------------------
-#' Tools to process and get results from Joint Jack Mackerel (JJM) model outputs.
-#' 
-#' Graphics and diagnostics tools for SPRFMO's Joint Jack Mackerel model.
-#' 
-#' \tabular{ll}{ Package: \tab jjmTools\cr Type: \tab Package\cr Version: \tab
-#' 1.0\cr Date: \tab 2014-08-15\cr License: \tab TBD\cr }
-#' 
+#' @title Graphics and diagnostics tools for SPRFMO's Joint Jack Mackerel model.
 #' @name jjmTools-package
 #' @aliases jjmTools-package jjmTools
 #' @docType package
-#' @author Ricardo Oliveros-Ramos, Wencheng Lau-Medrano, Giancarlo Moron and
+#' @author Ricardo Oliveros-Ramos, Wencheng Lau-Medrano, Giancarlo Morón, Josymar Torrejón-Magallanes and
 #' Niels Hintzen
 #' @seealso Joint Jack Mackerel Repository
 #' \code{\link{https://github.com/SPRFMO/jack_mackerel}}
 #' @keywords jjmTools
-#' 
 #' 
 NULL
 
