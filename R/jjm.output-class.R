@@ -82,9 +82,9 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.7
   namesPlot = NULL
   for(i in seq_along(object)){
   
-  jjm.out <- object[[i]]$output
-  jjm.in  <- object[[i]]$data
-  jjm.ypr <- object[[i]]$output$YPR
+  jjm.out = object[[i]]$output
+  jjm.in  = object[[i]]$data
+  jjm.ypr = object[[i]]$output$YPR
   namesPlot[i] = object[[i]]$info$output$model
   
   pic[[i]] = .fit_summarySheetFUN(jjm.out, scales = list(alternating = 1, 
@@ -96,12 +96,12 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.7
   names(pic) = namesPlot
 
   output = list()
-  output$like <- .LikeTable(object)
-  output$projections <- .ProjTable(object, Projections = Projections, 
+  output$like = .LikeTable(object)
+  output$projections = .ProjTable(object, Projections = Projections, 
 						  Fmult = Fmult, BiomProj = BiomProj, CapProj = CapProj, MRS = MRS)
-  output$plots <- pic
+  output$plots = pic
   
-  class(output) <- "summary.jjm.output"
+  class(output) = "summary.jjm.output"
 
   return(output)
   
@@ -149,7 +149,7 @@ print.summary.jjm.output = function(x, ...) {
 }
 
 
-plot.jjm.output <- function(x, what = "biomass", stack = TRUE, ...){
+plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
       
   dataShape = .reshapeJJM(x, what = what)
   

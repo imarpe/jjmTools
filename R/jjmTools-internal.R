@@ -4,319 +4,319 @@
 
 
 # Code to read in final data ----------------------------------------------
-.read.dat <- function(filename){
+.read.dat = function(filename){
   ###-Read in the raw datafile-###
-  res1      <- scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
+  res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
                     comment.char = "#", allowEscapes = TRUE)
-  res1      <- strsplit(res1, "\t")
+  res1      = strsplit(res1, "\t")
   
   #- Get some initial dimensions
-  nY        <- length(.an(unlist(res1[[1]][1])):.an(unlist(res1[[2]][1]))) #number of years
-  Ys        <- na.omit(.an(unlist(res1[1:2]))) #Years
-  nA        <- length(.an(unlist(res1[[3]][1])):.an(unlist(res1[[4]][1]))) #number of ages
-  As        <- na.omit(.an(unlist(res1[3:4]))) #Ages
-  nL        <- na.omit(.an(unlist(res1[[5]]))) #number of lengths
-  Ls        <- na.omit(.an(unlist(strsplit(res1[[6]], "  ")))) #Lengths
-  nF        <- na.omit(.an(unlist(res1[[7]]))) #number of fisheries
+  nY        = length(.an(unlist(res1[[1]][1])):.an(unlist(res1[[2]][1]))) #number of years
+  Ys        = na.omit(.an(unlist(res1[1:2]))) #Years
+  nA        = length(.an(unlist(res1[[3]][1])):.an(unlist(res1[[4]][1]))) #number of ages
+  As        = na.omit(.an(unlist(res1[3:4]))) #Ages
+  nL        = na.omit(.an(unlist(res1[[5]]))) #number of lengths
+  Ls        = na.omit(.an(unlist(strsplit(res1[[6]], "  ")))) #Lengths
+  nF        = na.omit(.an(unlist(res1[[7]]))) #number of fisheries
   
   #- Define storage object
-  cols      <- list()
+  cols      = list()
   
   ###-Fill cols with data from res1-###
   
   #-Common data
-  cols$years        <- matrix(NA, ncol = 2, nrow = 1 , dimnames = list("years", c("first year", "last year")))
-  cols$years[]      <- na.omit(.an(unlist(res1[1:2])))
-  cols$ages         <- matrix(NA, ncol = 2, nrow = 1, dimnames = list("age", c("age recruit", "oldest age")))
-  cols$ages[]       <- na.omit(.an(unlist(res1[3:4])))
-  cols$lengths      <- matrix(NA, ncol = 2, nrow = 1, dimnames = list("lengths", c("first length", "last length")))
-  cols$lengths[]    <- na.omit(c(min(Ls), max(Ls)))
-  cols$lengthbin    <- numeric()
+  cols$years        = matrix(NA, ncol = 2, nrow = 1 , dimnames = list("years", c("first year", "last year")))
+  cols$years[]      = na.omit(.an(unlist(res1[1:2])))
+  cols$ages         = matrix(NA, ncol = 2, nrow = 1, dimnames = list("age", c("age recruit", "oldest age")))
+  cols$ages[]       = na.omit(.an(unlist(res1[3:4])))
+  cols$lengths      = matrix(NA, ncol = 2, nrow = 1, dimnames = list("lengths", c("first length", "last length")))
+  cols$lengths[]    = na.omit(c(min(Ls), max(Ls)))
+  cols$lengthbin    = numeric()
   
   #-Fisheries data
-  cols$Fnum         <- numeric()
-  cols$Fnum         <- na.omit(.an(unlist(res1[7])))
+  cols$Fnum         = numeric()
+  cols$Fnum         = na.omit(.an(unlist(res1[7])))
   
   #-Start of dynamic rows
-  counter           <- 8 #first dynamic row
+  counter           = 8 #first dynamic row
   
-  cols$Fnames       <- list()
-  cols$Fnames       <- strsplit(unlist(res1[counter]), "%")[[1]]; counter <- counter + 1
-  cols$Fcaton       <- matrix(NA, ncol = nF, nrow = nY,
+  cols$Fnames       = list()
+  cols$Fnames       = strsplit(unlist(res1[counter]), "%")[[1]]; counter = counter + 1
+  cols$Fcaton       = matrix(NA, ncol = nF, nrow = nY,
                               dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
-  cols$Fcaton[]     <- matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))),
-                              ncol = nF, nrow = nY); counter <- counter + nF
-  cols$Fcatonerr    <- matrix(NA, ncol = nF, nrow = nY, dimnames = list(years = Ys[1]:Ys[2],
+  cols$Fcaton[]     = matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))),
+                              ncol = nF, nrow = nY); counter = counter + nF
+  cols$Fcatonerr    = matrix(NA, ncol = nF, nrow = nY, dimnames = list(years = Ys[1]:Ys[2],
                                                                         paste("fishery", 1:nF, sep = "")))
-  cols$Fcatonerr[]  <- matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))), 
-                              ncol = nF, nrow = nY); counter <- counter + nF
-  cols$FnumyearsA   <- matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
-  cols$FnumyearsA[] <- na.omit(.an(unlist(res1[counter:(counter+nF-1)]))); counter <- counter + nF
-  cols$FnumyearsL   <- matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
-  cols$FnumyearsL[] <- na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))); counter <- counter + nF
-  cols$Fageyears    <- matrix(NA, ncol = nF, nrow = nY,
+  cols$Fcatonerr[]  = matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))), 
+                              ncol = nF, nrow = nY); counter = counter + nF
+  cols$FnumyearsA   = matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
+  cols$FnumyearsA[] = na.omit(.an(unlist(res1[counter:(counter+nF-1)]))); counter = counter + nF
+  cols$FnumyearsL   = matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
+  cols$FnumyearsL[] = na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))); counter = counter + nF
+  cols$Fageyears    = matrix(NA, ncol = nF, nrow = nY,
                               dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   
   for(iFs in 1:nF){
     if(cols$FnumyearsA[iFs] > 0){
-      Fageyears <- c(na.omit(.an(res1[[counter]])))
-      wFyears   <- pmatch(Fageyears, cols$years[1]:cols$years[2])
-      cols$Fageyears[wFyears, paste("fishery", iFs, sep = "")] <- Fageyears
-      counter   <- counter + 1
+      Fageyears = c(na.omit(.an(res1[[counter]])))
+      wFyears   = pmatch(Fageyears, cols$years[1]:cols$years[2])
+      cols$Fageyears[wFyears, paste("fishery", iFs, sep = "")] = Fageyears
+      counter   = counter + 1
     }
   }
-  cols$Flengthyears <- matrix(NA, ncol = nF, nrow = nY, 
+  cols$Flengthyears = matrix(NA, ncol = nF, nrow = nY, 
                               dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   for(iFs in 1:nF){
     if(cols$FnumyearsL[iFs] > 0){
-      Flengthyears  <- c(na.omit(.an(res1[[counter]])))
-      lFyears       <- pmatch(Flengthyears, cols$years[1]:cols$years[2])
-      cols$Flengthyears[lFyears,paste("fishery", iFs, sep = "")] <- Flengthyears
-      counter       <- counter + 1
+      Flengthyears  = c(na.omit(.an(res1[[counter]])))
+      lFyears       = pmatch(Flengthyears, cols$years[1]:cols$years[2])
+      cols$Flengthyears[lFyears,paste("fishery", iFs, sep = "")] = Flengthyears
+      counter       = counter + 1
     }
   }
   
-  cols$Fagesample <- matrix(NA, ncol = nF, nrow = nY, 
+  cols$Fagesample = matrix(NA, ncol = nF, nrow = nY, 
                             dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   for(iFs in 1:nF){
     if(cols$FnumyearsA[iFs] > 0){
-      wFyears <- rownames(cols$Fageyears)[which(is.na(cols$Fageyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
-      cols$Fagesample[wFyears, paste("fishery", iFs, sep = "")] <- na.omit(.an(unlist(res1[counter])))
-      counter <- counter + 1
+      wFyears = rownames(cols$Fageyears)[which(is.na(cols$Fageyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
+      cols$Fagesample[wFyears, paste("fishery", iFs, sep = "")] = na.omit(.an(unlist(res1[counter])))
+      counter = counter + 1
     }
   }
   
-  cols$Flengthsample <- matrix(NA, ncol = nF, nrow = nY, 
+  cols$Flengthsample = matrix(NA, ncol = nF, nrow = nY, 
                                dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   for(iFs in 1:nF){
     if(cols$FnumyearsL[iFs] > 0){
-      lFyears <- rownames(cols$Flengthyears)[which(is.na(cols$Flengthyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
-      cols$Flengthsample[lFyears, paste("fishery", iFs, sep = "")] <- na.omit(.an(unlist(res1[counter])))
-      counter <- counter + 1
+      lFyears = rownames(cols$Flengthyears)[which(is.na(cols$Flengthyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
+      cols$Flengthsample[lFyears, paste("fishery", iFs, sep = "")] = na.omit(.an(unlist(res1[counter])))
+      counter = counter + 1
     }
   }
   
-  cols$Fagecomp <- array(NA, dim = c(nY, nA, nF), 
+  cols$Fagecomp = array(NA, dim = c(nY, nA, nF), 
                          dimnames = list(years = Ys[1]:Ys[2], age = As[1]:As[2], paste("fishery", 1:nF, sep = "")))
   for(iFs in 1:nF){
     if(cols$FnumyearsA[iFs] > 0){
-      wFyears <- rownames(cols$Fageyears)[which(is.na(cols$Fageyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
-      cols$Fagecomp[wFyears,,paste("fishery", iFs, sep = "")] <- 
+      wFyears = rownames(cols$Fageyears)[which(is.na(cols$Fageyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
+      cols$Fagecomp[wFyears,,paste("fishery", iFs, sep = "")] = 
         matrix(na.omit(.an(unlist(res1[counter:(counter + length(wFyears) - 1)]))), ncol = nA,
                nrow = length(wFyears), byrow = TRUE)
-      counter <- counter + length(wFyears)
+      counter = counter + length(wFyears)
     }
   }
   
-  cols$Flengthcomp <- array(NA, dim = c(nY, nL, nF), 
+  cols$Flengthcomp = array(NA, dim = c(nY, nL, nF), 
                             dimnames = list(years = Ys[1]:Ys[2], lengths = Ls[1]:Ls[length(Ls)],
                                             paste("fishery", 1:nF, sep = "")))
   for(iFs in 1:nF){
     if(cols$FnumyearsL[iFs] > 0){
-      lFyears <- rownames(cols$Flengthyears)[which(is.na(cols$Flengthyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
-      cols$Flengthcomp[lFyears,,paste("fishery", iFs, sep = "")] <- 
+      lFyears = rownames(cols$Flengthyears)[which(is.na(cols$Flengthyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
+      cols$Flengthcomp[lFyears,,paste("fishery", iFs, sep = "")] = 
         matrix(na.omit(.an(unlist(res1[counter:(counter + length(lFyears) - 1)]))),
                ncol = nL, nrow = length(lFyears), byrow = TRUE)
-      counter <- counter +length(lFyears)
+      counter = counter +length(lFyears)
     }
   }
   
-  cols$Fwtatage <- array(NA, dim = c(nY, nA, nF),
+  cols$Fwtatage = array(NA, dim = c(nY, nA, nF),
                          dimnames = list(years = Ys[1]:Ys[2], age = As[1]:As[2], paste("fishery",1:nF,sep="")))
   for(iFs in 1:nF){
-    cols$Fwtatage[,,iFs] <- matrix(na.omit(.an(unlist(res1[counter:(counter + nY - 1)]))),
+    cols$Fwtatage[,,iFs] = matrix(na.omit(.an(unlist(res1[counter:(counter + nY - 1)]))),
                                    ncol = nA, nrow = nY, byrow = TRUE)
-    counter <- counter + nY
+    counter = counter + nY
   } 
   
   #-Indices data
-  nI <- na.omit(.an(res1[[counter]]))
-  cols$Inum <- numeric()
-  cols$Inum <- na.omit(.an(res1[[counter]])); counter <- counter + 1
-  cols$Inames <- list()
-  cols$Inames <- strsplit(res1[[counter]], "%")[[1]] 
-  counter <- counter + 1
-  cols$Inumyears <- matrix(NA, ncol = nI, nrow = 1, dimnames = list("years", paste("index", 1:nI, sep = "")))
-  cols$Inumyears[] <- na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
-  counter <- counter + cols$Inum
+  nI = na.omit(.an(res1[[counter]]))
+  cols$Inum = numeric()
+  cols$Inum = na.omit(.an(res1[[counter]])); counter = counter + 1
+  cols$Inames = list()
+  cols$Inames = strsplit(res1[[counter]], "%")[[1]] 
+  counter = counter + 1
+  cols$Inumyears = matrix(NA, ncol = nI, nrow = 1, dimnames = list("years", paste("index", 1:nI, sep = "")))
+  cols$Inumyears[] = na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
+  counter = counter + cols$Inum
   
-  cols$Iyears <- matrix(NA, ncol = nI, nrow = nY, dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
+  cols$Iyears = matrix(NA, ncol = nI, nrow = nY, dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumyears[iSu] > 0){
-      Iyears <- na.omit(.an(res1[[counter]])); wIyears <- pmatch(Iyears, cols$years[1]:cols$years[2])
-      cols$Iyears[wIyears, paste("index", iSu, sep = "")] <- Iyears
-      counter <- counter + 1
+      Iyears = na.omit(.an(res1[[counter]])); wIyears = pmatch(Iyears, cols$years[1]:cols$years[2])
+      cols$Iyears[wIyears, paste("index", iSu, sep = "")] = Iyears
+      counter = counter + 1
     }
   }
   
-  cols$Imonths <- matrix(NA, ncol = nI, nrow = 1, dimnames = list("month", paste("index", 1:nI, sep = "")))
-  cols$Imonths[] <- na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
-  counter <- counter + cols$Inum
-  cols$Index <- matrix(NA, ncol = nI, nrow = nY, dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
+  cols$Imonths = matrix(NA, ncol = nI, nrow = 1, dimnames = list("month", paste("index", 1:nI, sep = "")))
+  cols$Imonths[] = na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
+  counter = counter + cols$Inum
+  cols$Index = matrix(NA, ncol = nI, nrow = nY, dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumyears[iSu] > 0){
-      wIyears <- rownames(cols$Iyears)[which(is.na(cols$Iyears[,paste("index", iSu, sep = "")]) == FALSE)]
-      cols$Index[wIyears, paste("index", iSu, sep = "")] <- na.omit(.an(res1[[counter]]))
-      counter <- counter + 1
+      wIyears = rownames(cols$Iyears)[which(is.na(cols$Iyears[,paste("index", iSu, sep = "")]) == FALSE)]
+      cols$Index[wIyears, paste("index", iSu, sep = "")] = na.omit(.an(res1[[counter]]))
+      counter = counter + 1
     }
   }
   
-  cols$Indexerr <- matrix(NA, ncol = nI, nrow = nY, dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
+  cols$Indexerr = matrix(NA, ncol = nI, nrow = nY, dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumyears[iSu] > 0){
-      wIyears <- rownames(cols$Iyears)[which(is.na(cols$Iyears[,paste("index", iSu, sep = "")]) == FALSE)]
-      cols$Indexerr[wIyears, paste("index", iSu, sep = "")] <- na.omit(.an(res1[[counter]]))
-      counter <- counter + 1
+      wIyears = rownames(cols$Iyears)[which(is.na(cols$Iyears[,paste("index", iSu, sep = "")]) == FALSE)]
+      cols$Indexerr[wIyears, paste("index", iSu, sep = "")] = na.omit(.an(res1[[counter]]))
+      counter = counter + 1
     }
   }
   
-  cols$Inumageyears <- matrix(NA, ncol = nI, nrow = 1, dimnames = list("years", paste("index", 1:nI, sep = "")))
-  cols$Inumageyears[] <- na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
-  counter <- counter + cols$Inum
-  cols$Inumlengthyears <- matrix(NA, ncol = nI, nrow = 1, dimnames = list("years", paste("index", 1:nI, sep = "")))
-  cols$Inumlengthyears[] <- na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
-  counter <- counter + cols$Inum
+  cols$Inumageyears = matrix(NA, ncol = nI, nrow = 1, dimnames = list("years", paste("index", 1:nI, sep = "")))
+  cols$Inumageyears[] = na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
+  counter = counter + cols$Inum
+  cols$Inumlengthyears = matrix(NA, ncol = nI, nrow = 1, dimnames = list("years", paste("index", 1:nI, sep = "")))
+  cols$Inumlengthyears[] = na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
+  counter = counter + cols$Inum
   
-  cols$Iyearslength <- matrix(NA, ncol = nI, nrow = nY, 
+  cols$Iyearslength = matrix(NA, ncol = nI, nrow = nY, 
                               dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumlengthyears[iSu] > 0){
-      Iyearslength <- na.omit(.an(res1[[counter]]))
-      wIyearslength <- pmatch(Iyearslength, cols$years[1]:cols$years[2])
-      cols$Iyearslength[wIyearslength, iSu] <- Iyearslength
-      counter <- counter + 1
+      Iyearslength = na.omit(.an(res1[[counter]]))
+      wIyearslength = pmatch(Iyearslength, cols$years[1]:cols$years[2])
+      cols$Iyearslength[wIyearslength, iSu] = Iyearslength
+      counter = counter + 1
     }
   }
   
-  cols$Iyearsage <- matrix(NA, ncol = nI, nrow = nY, 
+  cols$Iyearsage = matrix(NA, ncol = nI, nrow = nY, 
                            dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumageyears[iSu] > 0){
-      Iyearsage <- na.omit(.an(res1[[counter]])); wIyearsage <- pmatch(Iyearsage, cols$years[1]:cols$years[2])
-      cols$Iyearsage[wIyearsage, iSu] <- Iyearsage
-      counter <- counter + 1
+      Iyearsage = na.omit(.an(res1[[counter]])); wIyearsage = pmatch(Iyearsage, cols$years[1]:cols$years[2])
+      cols$Iyearsage[wIyearsage, iSu] = Iyearsage
+      counter = counter + 1
     }
   }
   
-  cols$Iagesample <- matrix(NA, ncol = nI, nrow = nY, 
+  cols$Iagesample = matrix(NA, ncol = nI, nrow = nY, 
                             dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumageyears[iSu] > 0){
-      wIyears <- rownames(cols$Iyearsage)[which(is.na(cols$Iyearsage[,paste("index", iSu, sep = "")]) == FALSE)]
-      cols$Iagesample[wIyears,iSu] <- na.omit(.an(res1[[counter]]))
-      counter <- counter + 1
+      wIyears = rownames(cols$Iyearsage)[which(is.na(cols$Iyearsage[,paste("index", iSu, sep = "")]) == FALSE)]
+      cols$Iagesample[wIyears,iSu] = na.omit(.an(res1[[counter]]))
+      counter = counter + 1
     }
   }
-  cols$Ipropage <- array(NA, dim = c(nY, nA, nI), 
+  cols$Ipropage = array(NA, dim = c(nY, nA, nI), 
                          dimnames = list(years = Ys[1]:Ys[2], age = As[1]:As[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumageyears[iSu] > 0){
-      wIyears <- rownames(cols$Iyearsage)[which(is.na(cols$Iyearsage[,paste("index", iSu, sep = "")]) == FALSE)]
-      cols$Ipropage[wIyears,,iSu] <- matrix(na.omit(.an(unlist(res1[counter:(counter + cols$Inumageyears[iSu]-1)]))),
+      wIyears = rownames(cols$Iyearsage)[which(is.na(cols$Iyearsage[,paste("index", iSu, sep = "")]) == FALSE)]
+      cols$Ipropage[wIyears,,iSu] = matrix(na.omit(.an(unlist(res1[counter:(counter + cols$Inumageyears[iSu]-1)]))),
                                             ncol = nA, nrow = cols$Inumageyears[iSu], byrow = TRUE)
-      counter <- counter + cols$Inumageyears[iSu]
+      counter = counter + cols$Inumageyears[iSu]
     }
   }
   
-  cols$Ilengthsample <- matrix(NA, ncol = nI, nrow = nY, 
+  cols$Ilengthsample = matrix(NA, ncol = nI, nrow = nY, 
                                dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumlengthyears[iSu] > 0){
-      wIyears <- rownames(cols$Iyearslength)[which(is.na(cols$Iyearslength[,paste("index", iSu, sep = "")]) == FALSE)]
-      cols$Ilengthsample[wIyears, iSu] <- na.omit(.an(res1[[counter]]))
-      counter <- counter + 1
+      wIyears = rownames(cols$Iyearslength)[which(is.na(cols$Iyearslength[,paste("index", iSu, sep = "")]) == FALSE)]
+      cols$Ilengthsample[wIyears, iSu] = na.omit(.an(res1[[counter]]))
+      counter = counter + 1
     }
   }
-  cols$Iproplength <- array(NA, dim = c(nY, nL, nI),
+  cols$Iproplength = array(NA, dim = c(nY, nL, nI),
                             dimnames = list(years = Ys[1]:Ys[2], lengths = Ls[1]:Ls[length(Ls)], 
                                             paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
     if(cols$Inumlengthyears[iSu] > 0){
-      wIyears <- rownames(cols$Iyearslength)[which(is.na(cols$Iyearslength[,paste("index", iSu, sep = "")]) == FALSE)]
-      cols$Iproplength[wIyears,,iSu] <- 
+      wIyears = rownames(cols$Iyearslength)[which(is.na(cols$Iyearslength[,paste("index", iSu, sep = "")]) == FALSE)]
+      cols$Iproplength[wIyears,,iSu] = 
         matrix(na.omit(.an(unlist(res1[counter:(counter + cols$Inumlengthyears[iSu] - 1)]))), 
                ncol = nL, nrow = cols$Inumlengthyears[iSu], byrow = TRUE)
-      counter <- counter + cols$Inumlengthyears[iSu]
+      counter = counter + cols$Inumlengthyears[iSu]
     }
   }
   
-  cols$Iwtatage <- array(NA, dim = c(nY, nA, nI),
+  cols$Iwtatage = array(NA, dim = c(nY, nA, nI),
                          dimnames = list(years = Ys[1]:Ys[2], age = As[1]:As[2], paste("index", 1:nI, sep = "")))
   
   for(iSu in 1:nI){
-    cols$Iwtatage[,,iSu] <- matrix(na.omit(.an(unlist(res1[counter:(counter + nY - 1)]))),
+    cols$Iwtatage[,,iSu] = matrix(na.omit(.an(unlist(res1[counter:(counter + nY - 1)]))),
                                    ncol = nA, nrow = nY, byrow = TRUE)
-    counter <- counter + nY
+    counter = counter + nY
   }
   
   #-Population data
-  cols$Pwtatage <- matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "weight"))
-  cols$Pwtatage[] <- na.omit(.an(res1[[counter]])); counter <- counter + 1
-  cols$Pmatatage <- matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "maturity"))
-  cols$Pmatatage[] <- na.omit(.an(res1[[counter]])); counter <- counter + 1
-  cols$Pspwn <- numeric()
-  cols$Pspwn <- na.omit(.an(res1[[counter]])); counter <- counter + 1
-  cols$Pageerr <- matrix(NA, ncol = nA, nrow = nA, dimnames = list(age = As[1]:As[2], age = As[1]:As[2]))
-  cols$Pageerr[] <- matrix(na.omit(.an(unlist(res1[counter:(counter + nA - 1)]))),
-                           ncol = nA, nrow = nA, byrow = TRUE); counter <- counter + nA
+  cols$Pwtatage = matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "weight"))
+  cols$Pwtatage[] = na.omit(.an(res1[[counter]])); counter = counter + 1
+  cols$Pmatatage = matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "maturity"))
+  cols$Pmatatage[] = na.omit(.an(res1[[counter]])); counter = counter + 1
+  cols$Pspwn = numeric()
+  cols$Pspwn = na.omit(.an(res1[[counter]])); counter = counter + 1
+  cols$Pageerr = matrix(NA, ncol = nA, nrow = nA, dimnames = list(age = As[1]:As[2], age = As[1]:As[2]))
+  cols$Pageerr[] = matrix(na.omit(.an(unlist(res1[counter:(counter + nA - 1)]))),
+                           ncol = nA, nrow = nA, byrow = TRUE); counter = counter + nA
   return(cols)
 }
 
-.LikeTable <- function(lstOuts){
+.LikeTable = function(lstOuts){
 
   Name = NULL
   Outs = list()
   for(i in seq_along(lstOuts)){
-    Name[i] <- lstOuts[[i]]$info$output$model
-    Outs[[i]] <- lstOuts[[i]]$output
+    Name[i] = lstOuts[[i]]$info$output$model
+    Outs[[i]] = lstOuts[[i]]$output
 	}
  
-  names(Outs) <- Name
-  tab <- do.call(cbind, lapply(Outs, function(x){round(x$Like_Comp, 2)}))
-  row.names(tab) <- Outs[[1]]$Like_Comp_names
+  names(Outs) = Name
+  tab = do.call(cbind, lapply(Outs, function(x){round(x$Like_Comp, 2)}))
+  row.names(tab) = Outs[[1]]$Like_Comp_names
   
   return(tab)
 }
 
-.ProjTable <- function(lstOuts, Projections, Fmult, BiomProj, CapProj, MRS){
+.ProjTable = function(lstOuts, Projections, Fmult, BiomProj, CapProj, MRS){
 
 if(Projections){
 
 		Name = NULL
 		Outs = list()
 		for(i in seq_along(lstOuts)){
-			Name[i] <- lstOuts[[i]]$info$output$model
-			Outs[[i]] <- lstOuts[[i]]$output
+			Name[i] = lstOuts[[i]]$info$output$model
+			Outs[[i]] = lstOuts[[i]]$output
 		}
 		
-		Fs <- Fmult
-		Bp <- BiomProj
-		Cp <- CapProj
-		mrs <- MRS
+		Fs = Fmult
+		Bp = BiomProj
+		Cp = CapProj
+		mrs = MRS
 		
-		names(Outs) <- Name
+		names(Outs) = Name
 		
 	tableTot = list()
 	
 	for(i in seq_along(Outs)){
 		
-	fut <- do.call(rbind,lapply(Outs[[i]][grep("SSB_fut_",names(Outs[[i]]))],
+	fut = do.call(rbind,lapply(Outs[[i]][grep("SSB_fut_",names(Outs[[i]]))],
                    function(y){return(y[,1:3])}))
 		
-	#fut <- do.call(rbind, lapply(Outs, function(x){
+	#fut = do.call(rbind, lapply(Outs, function(x){
 	#				do.call(rbind, lapply(x[grep("SSB_fut_",names(x))],
     #                      function(y){return(y[,1:3])}))})
   
-	  fut <- as.data.frame(fut, stringsAsFactors = F)
-	  colnames(fut) <- c("year", "SSB", "SD")
-	  fut$modelscenario <- paste(rep(names(Outs)[i], each=nrow(Outs[[i]]$SSB_fut_1) *
+	  fut = as.data.frame(fut, stringsAsFactors = F)
+	  colnames(fut) = c("year", "SSB", "SD")
+	  fut$modelscenario = paste(rep(names(Outs)[i], each=nrow(Outs[[i]]$SSB_fut_1) *
 									   length(grep("SSB_fut_", names(Outs[[i]])))),
 								 paste("Scen",
 									   rep(1:length(grep("SSB_fut_", names(Outs[[i]]))), each=nrow(Outs[[i]]$SSB_fut_1)),
 									   sep="_"),
 								 sep="_")
   
-  assdato <- mrs
+  assdato = mrs
   
   partName = NULL
   for(j in seq_along(Bp)){
@@ -327,24 +327,24 @@ if(Projections){
   namesTabla = list(rep("",times = length(Fs)), c("Fs",partName,
                                                   paste0("Catch", Cp)))
   
-  #tabla   <- list()
+  #tabla   = list()
   
   #for(i in names(lstOuts)){
     
-    #tabla[[i]] <- matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
-	tabla <- matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
-    rsktable  <- matrix(NA, nrow = 1, ncol = length(grep("SSB_fut_", names(Outs[[i]]))),
+    #tabla[[i]] = matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
+	tabla = matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
+    rsktable  = matrix(NA, nrow = 1, ncol = length(grep("SSB_fut_", names(Outs[[i]]))),
                         dimnames = list(names(Outs)[i], 1:length(grep("SSB_fut_",names(Outs[[i]])))))
     
     for(j in seq_along(Bp)){
       
-      futdat <- subset(fut, year == Bp[j] &
+      futdat = subset(fut, year == Bp[j] &
                          paste("Model_", unlist(strsplit(fut$modelscenario,"_"))[seq(2, nrow(fut)*4, 4)],sep="") == names(Outs)[i])
-      Bs <- futdat[,2][c(5:4,2:1,3)]
-      rsktable[1,] <- (1 - pnorm(mrs, futdat$SSB, futdat$SD))*100
-      tabla[,1] <- Fs
-      tabla[,(j*2)] <- round(Bs)
-      tabla[,(j*2+1)] <- round(rsktable[1,][c(5:4,2:1,3)])
+      Bs = futdat[,2][c(5:4,2:1,3)]
+      rsktable[1,] = (1 - pnorm(mrs, futdat$SSB, futdat$SD))*100
+      tabla[,1] = Fs
+      tabla[,(j*2)] = round(Bs)
+      tabla[,(j*2+1)] = round(rsktable[1,][c(5:4,2:1,3)])
       
     }
   #}
@@ -358,7 +358,7 @@ if(Projections){
   seqPos = (length(Bp)*2+2):length(namesTabla[[2]])
 
     for(j in seq_along(seqPos)){
-      tabla[,seqPos[j]] <- catchPrj[[j]][c(5:4,2:1,3)]
+      tabla[,seqPos[j]] = catchPrj[[j]][c(5:4,2:1,3)]
     }
 	
 	tableTot[[i]] = tabla
@@ -376,22 +376,22 @@ if(Projections){
 }
 
 
-#.Fut_SSB_SD <- function(lstOuts){
+#.Fut_SSB_SD = function(lstOuts){
 #  if(class(lstOuts)[1] == 'jjm.output') {
-#    Name <- lstOuts$output$info$model
-#    lstOuts <- list(lstOuts$output$output)
+#    Name = lstOuts$output$info$model
+#    lstOuts = list(lstOuts$output$output)
 #  }else {
- #   Name <- lstOuts$info
-#    lstOuts <- lstOuts$combined$output
+ #   Name = lstOuts$info
+#    lstOuts = lstOuts$combined$output
 #  }
   
-#  names(lstOuts) <- Name
-#  fut <- do.call(rbind, lapply(lstOuts, function(x){do.call(rbind, lapply(x[grep("SSB_fut_", names(x))],
+#  names(lstOuts) = Name
+#  fut = do.call(rbind, lapply(lstOuts, function(x){do.call(rbind, lapply(x[grep("SSB_fut_", names(x))],
 #                                                                          function(y){return(y[,1:3])}))}))
-#  fut <- as.data.frame(fut, stringsAsFactors = FALSE)
-#  colnames(fut) <- c("year", "SSB", "SD")
+#  fut = as.data.frame(fut, stringsAsFactors = FALSE)
+#  colnames(fut) = c("year", "SSB", "SD")
 #  
-#  fut$modelscenario <- paste(rep(names(lstOuts),
+#  fut$modelscenario = paste(rep(names(lstOuts),
 #                                 lapply(lstOuts, function(x) {nrow(x$SSB_fut_1)*length(grep("SSB_fut_", names(x)))})),
 #                             paste("Scen",
 #                                   as.vector(do.call(c, lapply(lstOuts, 
@@ -403,57 +403,57 @@ if(Projections){
  # return(fut)
 #}
 
-#.SSB_SD <- function(lstOuts){
+#.SSB_SD = function(lstOuts){
 #  if(class(lstOuts)[1] == 'jjm.output') {
-#    Name <- lstOuts$output$info$model
-#    lstOuts <- list(lstOuts$output$output)
+#    Name = lstOuts$output$info$model
+#    lstOuts = list(lstOuts$output$output)
 #  }else {
-#    Name <- lstOuts$info
-#    lstOuts <- lstOuts$combined$output
+#    Name = lstOuts$info
+#    lstOuts = lstOuts$combined$output
 #  }
   
-#  names(lstOuts) <- Name
-#  SSB_SD <- do.call(rbind, lapply(lstOuts, function(x){x$SSB}))
+#  names(lstOuts) = Name
+#  SSB_SD = do.call(rbind, lapply(lstOuts, function(x){x$SSB}))
   #  SSB_SD=lstOuts[[1]]$SSB
-#  SSB_SD <- SSB_SD[,1:3]
-#  SSB_SD <- as.data.frame(SSB_SD, stringsAsFactors = FALSE)
-#  colnames(SSB_SD) <- c("year", "SSB", "SD")
+#  SSB_SD = SSB_SD[,1:3]
+#  SSB_SD = as.data.frame(SSB_SD, stringsAsFactors = FALSE)
+#  colnames(SSB_SD) = c("year", "SSB", "SD")
 #  if(length(lstOuts) > 1){
-#    SSB_SD$model <- rep(names(lstOuts), lapply(lstOuts, function(x){nrow(x$SSB)}))}
+#    SSB_SD$model = rep(names(lstOuts), lapply(lstOuts, function(x){nrow(x$SSB)}))}
 #  
 #  return(SSB_SD)
 #}
 
-.Puntual_SSB_SD <- function(lstOuts,year){
+.Puntual_SSB_SD = function(lstOuts,year){
   if(class(lstOuts)[1] == 'jjm.output') {
-    Name <- lstOuts$output$info$model
-    lstOuts <- list(lstOuts$output$output)
+    Name = lstOuts$output$info$model
+    lstOuts = list(lstOuts$output$output)
   }else {
-    Name <- lstOuts$info
-    lstOuts <- lstOuts$combined$output
+    Name = lstOuts$info
+    lstOuts = lstOuts$combined$output
   }
   
-  names(lstOuts) <- Name
+  names(lstOuts) = Name
   if(year > lstOuts[[1]]$SSB[nrow(lstOuts[[1]]$SSB), 1])
     stop(cat('Year should be lesser than ', lstOuts[[1]]$SSB[nrow(lstOuts[[1]]$SSB), 1]))
   
-  ass <- do.call(rbind, lapply(lstOuts, function(x){x$SSB[which(x$SSB[,1] == year), 1:3]}))
-  ass <- as.data.frame(ass, stringsAsFactors = FALSE)
-  colnames(ass) <- c("year", "SSB", "SD")
-  # if(length(lstOuts)>1){ass$modelscenario <- names(lstOuts)}
+  ass = do.call(rbind, lapply(lstOuts, function(x){x$SSB[which(x$SSB[,1] == year), 1:3]}))
+  ass = as.data.frame(ass, stringsAsFactors = FALSE)
+  colnames(ass) = c("year", "SSB", "SD")
+  # if(length(lstOuts)>1){ass$modelscenario = names(lstOuts)}
   return(ass)
 }
 
 .prepareCombine = function(...){
   
-  modelList <- deparse(substitute(list(...)))
-  modelList <- substr(modelList, start = 6, stop = nchar(modelList) - 1)
-  modelList <- unlist(strsplit(x = modelList, split = ", "))
+  modelList = deparse(substitute(list(...)))
+  modelList = substr(modelList, start = 6, stop = nchar(modelList) - 1)
+  modelList = unlist(strsplit(x = modelList, split = ", "))
   
   # Models in a list called 'allModels'
-  allModels <- list()
+  allModels = list()
   for(i in 1:length(modelList)){
-    allModels[[i]] <- get(modelList[i])$output$output
+    allModels[[i]] = get(modelList[i])$output$output
   }
   
   result = list(
@@ -468,52 +468,52 @@ if(Projections){
 
 .combineSSB = function(models) {
   
-  nModels <- length(models)
+  nModels = length(models)
   
   # Correction of SSB, R, TotBiom matrices:
-  nFilas <- numeric(length(models))
+  nFilas = numeric(length(models))
   for(i in seq_along(models)){
-    nFilas[i] <- nrow(models[[i]]$SSB)
+    nFilas[i] = nrow(models[[i]]$SSB)
   }
   
   
-  minF <- which.min(nFilas)[1]
+  minF = which.min(nFilas)[1]
   for(i in seq_along(models)){
-    index <- which(names(models[[i]]) == "SSB")
-    FYear <- models[[minF]]$SSB[1, 1]
+    index = which(names(models[[i]]) == "SSB")
+    FYear = models[[minF]]$SSB[1, 1]
     
-    temp <- models[[i]]
-    temp <- temp$SSB[which(temp$SSB[,1] == FYear):nrow(temp$SSB),]
+    temp = models[[i]]
+    temp = temp$SSB[which(temp$SSB[,1] == FYear):nrow(temp$SSB),]
     
-    models[[i]]$SSB <- temp
+    models[[i]]$SSB = temp
   }
   
   for(i in seq_along(models)){
-    index <- which(names(models[[i]]) == "SSB")
-    FYear <- models[[minF]]$SSB[nrow(models[[minF]]$SSB), 1]
+    index = which(names(models[[i]]) == "SSB")
+    FYear = models[[minF]]$SSB[nrow(models[[minF]]$SSB), 1]
     
-    temp <- models[[i]]
-    temp <- temp$SSB[1:which(temp$SSB[,1] == FYear),]
+    temp = models[[i]]
+    temp = temp$SSB[1:which(temp$SSB[,1] == FYear),]
     
-    models[[i]]$SSB <- temp
+    models[[i]]$SSB = temp
   }
   
   
   # Empty matrix
-  output <- matrix(0, ncol = 5, nrow = nrow(models[[1]]$SSB))
+  output = matrix(0, ncol = 5, nrow = nrow(models[[1]]$SSB))
   
   # Analysis
-  output[,1] <- models[[1]]$SSB[,1]
+  output[,1] = models[[1]]$SSB[,1]
   for(i in seq(nModels)){
-    output[,2] <- rowSums(cbind(output[,2], models[[i]]$SSB[,2]))
-    output[,3] <- rowSums(cbind(output[,3], (models[[i]]$SSB[,3])^2))
+    output[,2] = rowSums(cbind(output[,2], models[[i]]$SSB[,2]))
+    output[,3] = rowSums(cbind(output[,3], (models[[i]]$SSB[,3])^2))
   }
   
-  output[,3] <- sqrt(output[,3])
+  output[,3] = sqrt(output[,3])
   
   for(i in seq(nModels)){
-    output[,4] <- output[,2] - 1.96*output[,3]
-    output[,5] <- output[,2] + 1.96*output[,3]
+    output[,4] = output[,2] - 1.96*output[,3]
+    output[,5] = output[,2] + 1.96*output[,3]
   }
   
   
@@ -524,52 +524,52 @@ if(Projections){
 
 .combineR = function(models) {
   
-  nModels <- length(models)
+  nModels = length(models)
   
   # Correction of SSB, R, TotBiom matrices:
-  nFilas <- numeric(length(models))
+  nFilas = numeric(length(models))
   for(i in seq_along(models)){
-    nFilas[i] <- nrow(models[[i]]$R)
+    nFilas[i] = nrow(models[[i]]$R)
   }
   
   
-  minF <- which.min(nFilas)[1]
+  minF = which.min(nFilas)[1]
   for(i in seq_along(models)){
-    index <- which(names(models[[i]]) == "R")
-    FYear <- models[[minF]]$R[1, 1]
+    index = which(names(models[[i]]) == "R")
+    FYear = models[[minF]]$R[1, 1]
     
-    temp <- models[[i]]
-    temp <- temp$R[which(temp$R[,1] == FYear):nrow(temp$R),]
+    temp = models[[i]]
+    temp = temp$R[which(temp$R[,1] == FYear):nrow(temp$R),]
     
-    models[[i]]$R <- temp
+    models[[i]]$R = temp
   }
   
   for(i in seq_along(models)){
-    index <- which(names(models[[i]]) == "R")
-    FYear <- models[[minF]]$R[nrow(models[[minF]]$R), 1]
+    index = which(names(models[[i]]) == "R")
+    FYear = models[[minF]]$R[nrow(models[[minF]]$R), 1]
     
-    temp <- models[[i]]
-    temp <- temp$R[1:which(temp$R[,1] == FYear),]
+    temp = models[[i]]
+    temp = temp$R[1:which(temp$R[,1] == FYear),]
     
-    models[[i]]$R <- temp
+    models[[i]]$R = temp
   }
   
   
   # Empty matrix
-  output <- matrix(0, ncol = 5, nrow = nrow(models[[1]]$R))
+  output = matrix(0, ncol = 5, nrow = nrow(models[[1]]$R))
   
   # Analysis
-  output[,1] <- models[[1]]$R[,1]
+  output[,1] = models[[1]]$R[,1]
   for(i in seq(nModels)){
-    output[,2] <- rowSums(cbind(output[,2], models[[i]]$R[,2]))
-    output[,3] <- rowSums(cbind(output[,3], (models[[i]]$R[,3])^2))
+    output[,2] = rowSums(cbind(output[,2], models[[i]]$R[,2]))
+    output[,3] = rowSums(cbind(output[,3], (models[[i]]$R[,3])^2))
   }
   
-  output[,3] <- sqrt(output[,3])
+  output[,3] = sqrt(output[,3])
   
   for(i in seq(nModels)){
-    output[,4] <- output[,2] - 1.96*output[,3]
-    output[,5] <- output[,2] + 1.96*output[,3]
+    output[,4] = output[,2] - 1.96*output[,3]
+    output[,5] = output[,2] + 1.96*output[,3]
   }
   
   
@@ -580,51 +580,51 @@ if(Projections){
 
 .combineTotBiom = function(models) {
   
-  nModels <- length(models)
+  nModels = length(models)
   
   # Correction of SSB, R, TotBiom matrices:
-  nFilas <- numeric(length(models))
+  nFilas = numeric(length(models))
   for(i in seq_along(models)){
-    nFilas[i] <- nrow(models[[i]]$TotBiom)
+    nFilas[i] = nrow(models[[i]]$TotBiom)
   }
   
   
-  minF <- which.min(nFilas)[1]
+  minF = which.min(nFilas)[1]
   for(i in seq_along(models)){
-    index <- which(names(models[[i]]) == "TotBiom")
-    FYear <- models[[minF]]$TotBiom[1, 1]
+    index = which(names(models[[i]]) == "TotBiom")
+    FYear = models[[minF]]$TotBiom[1, 1]
     
-    temp <- models[[i]]
-    temp <- temp$TotBiom[which(temp$TotBiom[,1] == FYear):nrow(temp$TotBiom),]
+    temp = models[[i]]
+    temp = temp$TotBiom[which(temp$TotBiom[,1] == FYear):nrow(temp$TotBiom),]
     
-    models[[i]]$TotBiom <- temp
+    models[[i]]$TotBiom = temp
   }
   
   for(i in seq_along(models)){
-    index <- which(names(models[[i]]) == "TotBiom")
-    FYear <- models[[minF]]$TotBiom[nrow(models[[minF]]$TotBiom), 1]
+    index = which(names(models[[i]]) == "TotBiom")
+    FYear = models[[minF]]$TotBiom[nrow(models[[minF]]$TotBiom), 1]
     
-    temp <- models[[i]]
-    temp <- temp$TotBiom[1:which(temp$TotBiom[,1] == FYear),]
+    temp = models[[i]]
+    temp = temp$TotBiom[1:which(temp$TotBiom[,1] == FYear),]
     
-    models[[i]]$TotBiom <- temp
+    models[[i]]$TotBiom = temp
   }
   
   # Empty matrix
-  output <- matrix(0, ncol = 5, nrow = nrow(models[[1]]$TotBiom))
+  output = matrix(0, ncol = 5, nrow = nrow(models[[1]]$TotBiom))
   
   # Analysis
-  output[,1] <- models[[1]]$TotBiom[,1]
+  output[,1] = models[[1]]$TotBiom[,1]
   for(i in seq(nModels)){
-    output[,2] <- rowSums(cbind(output[,2], models[[i]]$TotBiom[,2]))
-    output[,3] <- rowSums(cbind(output[,3], (models[[i]]$TotBiom[,3])^2))
+    output[,2] = rowSums(cbind(output[,2], models[[i]]$TotBiom[,2]))
+    output[,3] = rowSums(cbind(output[,3], (models[[i]]$TotBiom[,3])^2))
   }
   
-  output[,3] <- sqrt(output[,3])
+  output[,3] = sqrt(output[,3])
   
   for(i in seq(nModels)){
-    output[,4] <- output[,2] - 1.96*output[,3]
-    output[,5] <- output[,2] + 1.96*output[,3]
+    output[,4] = output[,2] - 1.96*output[,3]
+    output[,5] = output[,2] + 1.96*output[,3]
   }
   
   
@@ -636,60 +636,60 @@ if(Projections){
 
 .combineN = function(models) {
   
-  nModels <- length(models)
+  nModels = length(models)
   
   # Correction of SSB, R, TotBiom matrices:
-  nFilas <- numeric(length(models))
+  nFilas = numeric(length(models))
   for(i in seq_along(models)){
-    nFilas[i] <- nrow(models[[i]]$N)
+    nFilas[i] = nrow(models[[i]]$N)
   }
   
   
-  minF <- which.min(nFilas)[1]
+  minF = which.min(nFilas)[1]
   for(i in seq_along(models)){
-    index <- which(names(models[[i]]) == "N")
-    FYear <- models[[minF]]$N[1, 1]
+    index = which(names(models[[i]]) == "N")
+    FYear = models[[minF]]$N[1, 1]
     
-    temp <- models[[i]]
-    temp <- temp$N[which(temp$N[,1] == FYear):nrow(temp$N),]
+    temp = models[[i]]
+    temp = temp$N[which(temp$N[,1] == FYear):nrow(temp$N),]
     
-    models[[i]]$N <- temp
+    models[[i]]$N = temp
   }
   
   for(i in seq_along(models)){
-    index <- which(names(models[[i]]) == "N")
-    FYear <- models[[minF]]$N[nrow(models[[minF]]$N), 1]
+    index = which(names(models[[i]]) == "N")
+    FYear = models[[minF]]$N[nrow(models[[minF]]$N), 1]
     
-    temp <- models[[i]]
-    temp <- temp$N[1:which(temp$N[,1] == FYear),]
+    temp = models[[i]]
+    temp = temp$N[1:which(temp$N[,1] == FYear),]
     
-    models[[i]]$N <- temp
+    models[[i]]$N = temp
   }
   
   
   # Take in account if all models have the same number of age
-  nAges <- numeric(length(models))
+  nAges = numeric(length(models))
   for(i in seq_along(models)){
-    nAges[i] <- ncol(models[[i]]$N)
+    nAges[i] = ncol(models[[i]]$N)
   }
   
   
   if(length(unique(nAges)) == 1){
     
     # Empty matrix
-    output <- matrix(0, ncol = ncol(models[[1]]$N), nrow = nrow(models[[1]]$N))
+    output = matrix(0, ncol = ncol(models[[1]]$N), nrow = nrow(models[[1]]$N))
     
     # Analysis
-    output[,1] <- models[[1]]$N[,1]
+    output[,1] = models[[1]]$N[,1]
     
     for(i in seq(nModels)){
-      output[, 2:ncol(output)] <- output[, 2:ncol(output)] + models[[i]]$N[, 2:ncol(output)]
+      output[, 2:ncol(output)] = output[, 2:ncol(output)] + models[[i]]$N[, 2:ncol(output)]
     }
     
     
   } else {
     
-    output <- NULL
+    output = NULL
   }
   
   return(output)
@@ -700,16 +700,16 @@ if(Projections){
 
 .combineCatchFut = function(models){
   
-  nModels <- length(models)
+  nModels = length(models)
   
   # Take in account if all models have the same number of scenarios
-  nScenarios <- numeric(length(models))
+  nScenarios = numeric(length(models))
   for(i in seq_along(models)){
-    nScenarios[i] <- length(grep("Catch_fut_", names(models[[i]])))
+    nScenarios[i] = length(grep("Catch_fut_", names(models[[i]])))
   }
   
   # Create Slots2
-  Slots2 <- c(paste0("Catch_fut_", seq(unique(nScenarios))))
+  Slots2 = c(paste0("Catch_fut_", seq(unique(nScenarios))))
   
   
   if(length(unique(nScenarios)) == 1){
@@ -736,33 +736,33 @@ if(Projections){
     }
     
     
-    LastYear    <- min(models[[1]]$Catch_fut_1[,1]) - 1
-    NYearP      <- nrow(models[[1]]$Catch_fut_1)
-    YearsProy   <- seq(from = (LastYear + 1), to = (LastYear + NYearP))
-    nYearsProy  <- length(YearsProy)
+    LastYear    = min(models[[1]]$Catch_fut_1[,1]) - 1
+    NYearP      = nrow(models[[1]]$Catch_fut_1)
+    YearsProy   = seq(from = (LastYear + 1), to = (LastYear + NYearP))
+    nYearsProy  = length(YearsProy)
     
     # Empty matrix
-    output <- matrix(0, ncol = 2, nrow = nYearsProy)
-    output <- replicate(length(Slots2), output, simplify = FALSE)
+    output = matrix(0, ncol = 2, nrow = nYearsProy)
+    output = replicate(length(Slots2), output, simplify = FALSE)
     
     # Analysis (only sum)
     for(j in seq_along(Slots2)){
-      output[[j]][,1] <- YearsProy # por el momento se pone de frente
+      output[[j]][,1] = YearsProy # por el momento se pone de frente
       
       for(i in seq(nModels)){
-        output[[j]][,2] <- rowSums(cbind(output[[j]][,2],
+        output[[j]][,2] = rowSums(cbind(output[[j]][,2],
                                          models[[i]][[Slots2[j]]][,2]))
       }
     }
     
     # name to the list
-    names(output) <- Slots2
+    names(output) = Slots2
     
   } else {
     
     # the outcome is a NA's matrix
-    output <- replicate(length(Slots2), NA, simplify = FALSE)
-    names(output) <- Slots2
+    output = replicate(length(Slots2), NA, simplify = FALSE)
+    names(output) = Slots2
     
   }
   
@@ -772,16 +772,16 @@ if(Projections){
 
 .combineSSBFut = function(models){
   
-  nModels <- length(models)
+  nModels = length(models)
   
   # Take in account if all models have the same number of scenarios
-  nScenarios <- numeric(length(models))
+  nScenarios = numeric(length(models))
   for(i in seq_along(models)){
-    nScenarios[i] <- length(grep("SSB_fut_", names(models[[i]])))
+    nScenarios[i] = length(grep("SSB_fut_", names(models[[i]])))
   }
   
   # Create Slots2
-  Slots2 <- c(paste0("SSB_fut_", seq(unique(nScenarios))))
+  Slots2 = c(paste0("SSB_fut_", seq(unique(nScenarios))))
   
   
   if(length(unique(nScenarios)) == 1){
@@ -806,43 +806,43 @@ if(Projections){
       }
     }
     
-    LastYear    <- min(models[[1]]$SSB_fut_1[,1]) - 1
-    NYearP      <- nrow(models[[1]]$SSB_fut_1)
-    YearsProy   <- seq(from = (LastYear + 1), to = (LastYear + NYearP))
-    nYearsProy  <- length(YearsProy)
+    LastYear    = min(models[[1]]$SSB_fut_1[,1]) - 1
+    NYearP      = nrow(models[[1]]$SSB_fut_1)
+    YearsProy   = seq(from = (LastYear + 1), to = (LastYear + NYearP))
+    nYearsProy  = length(YearsProy)
     
     # Empty matrix
-    output <- matrix(0, ncol = 5, nrow = nYearsProy)
-    output <- replicate(length(Slots2), output, simplify = FALSE)
+    output = matrix(0, ncol = 5, nrow = nYearsProy)
+    output = replicate(length(Slots2), output, simplify = FALSE)
     
     # Analysis (only sum)
     for(j in seq_along(Slots2)){
-      output[[j]][,1] <- YearsProy # por el momento se pone de frente
+      output[[j]][,1] = YearsProy # por el momento se pone de frente
       
       for(i in seq(nModels)){
-        output[[j]][,2] <- rowSums(cbind(output[[j]][,2],
+        output[[j]][,2] = rowSums(cbind(output[[j]][,2],
                                          models[[i]][[Slots2[j]]][,2]))
-        output[[j]][,3] <- rowSums(cbind(output[[j]][,3],
+        output[[j]][,3] = rowSums(cbind(output[[j]][,3],
                                          (models[[i]][[Slots2[j]]][,3])^2))
       }
       
-      output[[j]][,3] <- sqrt(output[[j]][,3])
+      output[[j]][,3] = sqrt(output[[j]][,3])
       
       for(i in seq(nModels)){
-        output[[j]][,4] <- output[[j]][,2] - 1.96*output[[j]][,3]
-        output[[j]][,5] <- output[[j]][,2] + 1.96*output[[j]][,3]
+        output[[j]][,4] = output[[j]][,2] - 1.96*output[[j]][,3]
+        output[[j]][,5] = output[[j]][,2] + 1.96*output[[j]][,3]
       }
       
     }
     
     # name to the list
-    names(output) <- Slots2
+    names(output) = Slots2
     
   } else {
     
     # the outcome is a NA's matrix
-    output <- replicate(length(Slots2), NA, simplify = FALSE)
-    names(output) <- Slots2
+    output = replicate(length(Slots2), NA, simplify = FALSE)
+    names(output) = Slots2
     
   }
   
@@ -882,27 +882,27 @@ if(Projections){
   
   
   # Length of the final list (to write in _R.rep)
-  nNames <- length(names(listModels$allModels[[1]]))
+  nNames = length(names(listModels$allModels[[1]]))
   
   # names to the final list
-  outcome <- replicate(nNames, NA, simplify = FALSE)
-  names(outcome) <- names(listModels$allModels[[1]])
+  outcome = replicate(nNames, NA, simplify = FALSE)
+  names(outcome) = names(listModels$allModels[[1]])
   
   # Merge final list with output.merge
   for(i in seq_along(names(finalList))){
-    index <- which(names(finalList)[i] == names(outcome))
-    outcome[[index]] <- finalList[[i]]
+    index = which(names(finalList)[i] == names(outcome))
+    outcome[[index]] = finalList[[i]]
   }
   
   .writeCombinedStocks(combinedModel = outcome, modelName = modelName)
   
-  infoData <- list(file = listModels$modelList,
+  infoData = list(file = listModels$modelList,
                    variables = sum(!is.na(outcome)),
                    year = c(outcome$TotBiom[1, 1], outcome$TotBiom[nrow(outcome$TotBiom), 1]),
                    age = NULL,
                    length = NULL)
   
-  output <- list(info = list(model = NULL),
+  output = list(info = list(model = NULL),
                  output = list(info = NULL, output = outcome, YPR = NULL),
                  data = list(info = infoData, data = NULL))
   
@@ -912,38 +912,38 @@ if(Projections){
 }
 
 
-.compareTime <-  function(lstOuts, Slot = "TotBiom", SD = TRUE, Sum = NULL, startYear = NULL, legendPos = "topright",
+.compareTime =  function(lstOuts, Slot = "TotBiom", SD = TRUE, Sum = NULL, startYear = NULL, legendPos = "topright",
                           xlim=NULL, ylim = NULL, yFactor = 1e-3, main = NA, ylab = Slot,
                           linesCol = NULL, lwd = 1, lty = 1, ...){
   
-  dat <- lapply(lstOuts$combined$outputs, function(x){return(x[[Slot]])})
-  nms <- names(dat)
+  dat = lapply(lstOuts$combined$outputs, function(x){return(x[[Slot]])})
+  nms = names(dat)
   
   if(!is.null(Sum)){
-    nms <- c(nms, paste(Sum[1], "+", Sum[2], sep = ""))}
+    nms = c(nms, paste(Sum[1], "+", Sum[2], sep = ""))}
   
-  nD <- length(dat)
+  nD = length(dat)
   if(is.null(startYear)){
-    xrange <- range(unlist(lapply(dat, function(x){x[,1]})), na.rm = TRUE)
+    xrange = range(unlist(lapply(dat, function(x){x[,1]})), na.rm = TRUE)
   }else {
-    xrange <- c(startYear, range(unlist(lapply(dat, function(x) x[,1] )), na.rm = TRUE)[2])
+    xrange = c(startYear, range(unlist(lapply(dat, function(x) x[,1] )), na.rm = TRUE)[2])
   }
   
   if(is.null(xlim)) xlim = xrange
   
-  dat <- lapply(dat, function(x) { idx <- which(x[,1] %in% xrange[1]:xrange[2]); 
+  dat = lapply(dat, function(x) { idx = which(x[,1] %in% xrange[1]:xrange[2]); 
                                    return(x[idx,]) } )
   
   if(is.null(ylim)) 
-    ylim <- range(pretty(range(unlist(lapply(dat, function(x) yFactor*x[,4:5] )), na.rm = TRUE)))
+    ylim = range(pretty(range(unlist(lapply(dat, function(x) yFactor*x[,4:5] )), na.rm = TRUE)))
   
   if(is.null(linesCol))
-    linesCol <- rainbow(nD) else
-      linesCol <- rep(linesCol, length.out = nD)
+    linesCol = rainbow(nD) else
+      linesCol = rep(linesCol, length.out = nD)
   
   if(is.na(main))
-    mar <- c(3, 5, 2, 3) else
-      mar <- c(3, 5, 4, 3)
+    mar = c(3, 5, 2, 3) else
+      mar = c(3, 5, 4, 3)
   
   par(mar = mar, xaxs = "i")
   
@@ -958,9 +958,9 @@ if(Projections){
     lines(x = dat[[i]][,1], y = dat[[i]][,2]*yFactor, col = linesCol[i], lwd = lwd, lty = lty)
   
   if(!is.null(Sum)){
-    idx1    <- which(nms == Sum[1])
-    idx2    <- which(nms == Sum[2])
-    datsum  <- colSums(rbind(dat[[idx1]][,2], dat[[idx2]][,2]))
+    idx1    = which(nms == Sum[1])
+    idx2    = which(nms == Sum[2])
+    datsum  = colSums(rbind(dat[[idx1]][,2], dat[[idx2]][,2]))
     
     lines(x = dat[[idx1]][,1], y = datsum*yFactor, col = nD + 1, lwd = lwd, lty = lty)
   }
@@ -979,61 +979,61 @@ if(Projections){
   return(invisible())
 }
 
-.compareMatrix <- function(lstOuts, Slot = 'TotF', Sum = NULL, YrInd = FALSE, Apply = "mean", startYear = NULL,
+.compareMatrix = function(lstOuts, Slot = 'TotF', Sum = NULL, YrInd = FALSE, Apply = "mean", startYear = NULL,
                            legendPos = "topright", lwd = 1, lty = 1, xlab = NULL, ylab = NULL, 
                            linesCol = NULL, ...){
   
-  lst <- list(...)
+  lst = list(...)
   
   Apply = match.fun(Apply)
   
-  dat <- lapply(lstOuts$combined$outputs, function(x) x[[Slot]])
-  nms <- names(dat)
+  dat = lapply(lstOuts$combined$outputs, function(x) x[[Slot]])
+  nms = names(dat)
   
   if(!is.null(Sum)){
-    nms <- c(nms,paste(Sum[1], "+", Sum[2], sep = ""))
+    nms = c(nms,paste(Sum[1], "+", Sum[2], sep = ""))
   }
   
-  nD <- length(dat)
+  nD = length(dat)
   if(!YrInd){
     for(i in seq(nD)){
-      dat[[i]] <- cbind(lstOuts$combined$outputs[[i]]$Yr, dat[[i]])
+      dat[[i]] = cbind(lstOuts$combined$outputs[[i]]$Yr, dat[[i]])
     }
   }
   
   for(i in 1:nD) 
-    dat[[i]] <- cbind(dat[[i]][,1], apply(dat[[i]][,-1], 1, FUN=Apply))
+    dat[[i]] = cbind(dat[[i]][,1], apply(dat[[i]][,-1], 1, FUN=Apply))
   
   if(is.null(startYear)){
-    xrange <- range(unlist(lapply(dat, function(x) x[,1])), na.rm = TRUE)
+    xrange = range(unlist(lapply(dat, function(x) x[,1])), na.rm = TRUE)
   } else{ 
-    xrange <- c(startYear, range(unlist(lapply(dat, function(x) x[,1])), na.rm = TRUE)[2])}
+    xrange = c(startYear, range(unlist(lapply(dat, function(x) x[,1])), na.rm = TRUE)[2])}
   
-  dat <- lapply(dat, function(x){idx <- which(x[,1] %in% xrange[1]:xrange[2]); return(x[idx,])})
+  dat = lapply(dat, function(x){idx = which(x[,1] %in% xrange[1]:xrange[2]); return(x[idx,])})
   
-  yrange <- range(pretty(range(unlist(lapply(dat,function(x){x[,2]})), na.rm = TRUE)))
+  yrange = range(pretty(range(unlist(lapply(dat,function(x){x[,2]})), na.rm = TRUE)))
   
   if(!is.null(lst$ylim)) 
-    yrange <- lst$ylim
+    yrange = lst$ylim
   
   if(!is.null(lst$xlim)) 
-    xrange <- lst$xlim
+    xrange = lst$xlim
   
   if(is.null(xlab))
-    xlab <- "Years"
+    xlab = "Years"
   
   if(is.null(ylab))
-    ylab <- Slot
+    ylab = Slot
   
   if(is.null(linesCol))
-    linesCol <- rainbow(nD) else
-      linesCol <- rep(linesCol, length.out = nD)
+    linesCol = rainbow(nD) else
+      linesCol = rep(linesCol, length.out = nD)
   
   if(!is.null(Sum)){
-    idx1 <- which(nms == Sum[1])
-    idx2 <- which(nms == Sum[2])
-    datsum <- colSums(rbind(dat[[idx1]][,2], dat[[idx2]][,2]))
-    yrange <- range(pretty(range(c(unlist(lapply(dat, function(x) x[,2])), datsum))))
+    idx1 = which(nms == Sum[1])
+    idx2 = which(nms == Sum[2])
+    datsum = colSums(rbind(dat[[idx1]][,2], dat[[idx2]][,2]))
+    yrange = range(pretty(range(c(unlist(lapply(dat, function(x) x[,2])), datsum))))
   }
   
   plot(x = dat[[1]][,1], y = dat[[1]][,2], type = "l", lwd = lwd, lty = lty, 
@@ -1052,73 +1052,73 @@ if(Projections){
   return(invisible())
 }
 
-.getParameters <- function(patternList, myList) {
+.getParameters = function(patternList, myList) {
   
-  list3 <- NULL
+  list3 = NULL
   for(i in seq_along(patternList))
     if(names(patternList)[i] %in% names(myList))
-      list3[[i]] <- myList[[i]] else
-        list3[[i]] <- patternList[[i]]
+      list3[[i]] = myList[[i]] else
+        list3[[i]] = patternList[[i]]
   
   return(list3)
 }
 
-.getResume <- function(typePlot, object) {
-  formulaVector <- NULL
+.getResume = function(typePlot, object) {
+  formulaVector = NULL
   for(i in names(object[[typePlot]]))
   {
     if(class(object[[typePlot]][[i]]) == "list")
     {
-      result <- c(name = i, type = "List of plots")
+      result = c(name = i, type = "List of plots")
     }else
     {
-      result <- c(name = i, type = "Single plot")
+      result = c(name = i, type = "Single plot")
     }
     
-    formulaVector <- rbind(formulaVector, result)
+    formulaVector = rbind(formulaVector, result)
   }
   
   return(formulaVector)
 }
 
-.getPath <- function(path)
+.getPath = function(path)
 {
-  firstChar <- substr(path, 1, 1)
-  firstSecondChar <- substr(path, 1, 2)
+  firstChar = substr(path, 1, 1)
+  firstSecondChar = substr(path, 1, 2)
   if(firstSecondChar != "..")
   {
     if(firstChar == "/" | firstChar == "" | firstChar == ".")
-      path <- file.path(getwd(), path)
+      path = file.path(getwd(), path)
   }
   else
   {
-    firstDir <- unlist(strsplit(getwd(), split = .Platform$file.sep)[[1]])
-    secondDir <- unlist(strsplit(path, split = .Platform$file.sep)[[1]])
-    m <- gregexpr(pattern = paste("..",.Platform$file.sep,sep=""), text = path, fixed = TRUE)
-    n <- length(unlist(regmatches(path, m)[[1]]))
-    firstDir <- rev(rev(firstDir)[-(1:n)])
-    secondDir <- regmatches(path, m, invert = TRUE)[[1]][-(1:n)]
-    path <- paste(firstDir, sep=.Platform$file.sep, collapse = '/')
-    path <- file.path(path, secondDir)
+    firstDir = unlist(strsplit(getwd(), split = .Platform$file.sep)[[1]])
+    secondDir = unlist(strsplit(path, split = .Platform$file.sep)[[1]])
+    m = gregexpr(pattern = paste("..",.Platform$file.sep,sep=""), text = path, fixed = TRUE)
+    n = length(unlist(regmatches(path, m)[[1]]))
+    firstDir = rev(rev(firstDir)[-(1:n)])
+    secondDir = regmatches(path, m, invert = TRUE)[[1]][-(1:n)]
+    path = paste(firstDir, sep=.Platform$file.sep, collapse = '/')
+    path = file.path(path, secondDir)
   }
   
   return(path)
 }
 
-.getPath2 <- function(path, pattern, target)
+.getPath2 = function(path, pattern, target)
 {
-  output <- list.files(path = path, recursive = TRUE, pattern = pattern)
-  output <- output[grep(x = output, pattern = target)]
+  output = list.files(path = path, recursive = TRUE, pattern = pattern)
+  output = output[grep(x = output, pattern = target)]
   
   return(output)
 }
 
-.getPath3 <- function(path, pattern, target, output="arc", ...)
+.getPath3 = function(path, pattern, target, output="arc", ...)
 {
-  Dir <- output
-  output <- list.files(path = path, recursive = TRUE, pattern = paste0(target, pattern))
-  output <- output[grep(x = output, pattern = Dir, fixed = TRUE)]
-  output <- output[grep(x = output, pattern = paste0(target, pattern))]
+  Dir = output
+  output = list.files(path = path, recursive = TRUE, pattern = paste0(target, pattern))
+  output = output[grep(x = output, pattern = Dir, fixed = TRUE)]
+  output = output[grep(x = output, pattern = paste0(target, pattern))]
   
   return(output)
 }
@@ -1240,7 +1240,7 @@ if(Projections){
   return(as.numeric(elapsed[3]))
 }
 
-toExpress <- function(char.expressions){
+toExpress = function(char.expressions){
   return(parse(text=paste(char.expressions,collapse=";")))
 }
 

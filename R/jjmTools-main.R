@@ -21,11 +21,11 @@ NULL
 #' @param ... Extra arguments
 #' @examples
 #' readJJM(model = "mod2.4")
-readJJM <- function(model, path = "", output="arc", modelName=model, ...) {
+readJJM = function(model, path = "", output="arc", modelName=model, ...) {
   
-  path <- .getPath(path)
+  path = .getPath(path)
   
-  output <- .getJjmOutput(path = path, output=output, model = model, ...)      
+  output = .getJjmOutput(path = path, output=output, model = model, ...)      
   
   if(length(modelName) > 1)
     warning("The condition has length > 1 and only the first element will be used")
@@ -123,15 +123,15 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
 #' @param outputObject Object ob class outputs.
 #' @param ... Extra arguments
 #' @examples
-#' model <- readJJM(modelName = "mod2.4")
+#' model = readJJM(modelName = "mod2.4")
 #' diagnostics(outputObject = model)
-diagnostics <- function(outputObject, ...) {
+diagnostics = function(outputObject, ...) {
   
   # Take an output object and get diagnostic plots extracting outputs, data and YPR
   output = list()
   
   for(i in seq_along(outputObject)){
-	output[[i]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
+	output[[i]] = .diagnostics(jjm.info = outputObject[[i]]$info$output,
 								jjm.out = outputObject[[i]]$output, jjm.in = outputObject[[i]]$data)
  #                               jjm.ypr = outputObject[[i]]$output$YPR)
   }
@@ -149,14 +149,14 @@ diagnostics <- function(outputObject, ...) {
 #' with combined models.
 #' @param ... One or more output objects, to be combined to list of models.
 #' @examples
-#' mod1 <- runJJM(modelName = "mod2.1")
-#' mod2 <- runJJM(modelName = "mod2.2")
-#' mod3 <- runJJM(modelName = "mod2.3")
+#' mod1 = runJJM(modelName = "mod2.1")
+#' mod2 = runJJM(modelName = "mod2.2")
+#' mod3 = runJJM(modelName = "mod2.3")
 #' 
-#' mod_123 <- combineModels(mod1, mod2, mod3)
-combineModels <- function(...)
+#' mod_123 = combineModels(mod1, mod2, mod3)
+combineModels = function(...)
 {
-  output <- .combineModels(...)
+  output = .combineModels(...)
   
   return(output)
 }
@@ -168,11 +168,11 @@ combineModels <- function(...)
 #' @param ... One or more output objects, to be combined to list of models.
 #' @param model Name for new model. If \code{NULL} (default) a temporal name will be used.
 #' @examples
-#' mod1 <- runJJM(modelName = "mod2.1")
-#' mod2 <- runJJM(modelName = "mod2.2")
-#' mod3 <- runJJM(modelName = "mod2.3")
+#' mod1 = runJJM(modelName = "mod2.1")
+#' mod2 = runJJM(modelName = "mod2.2")
+#' mod3 = runJJM(modelName = "mod2.3")
 #' 
-#' combinedMod_123 <- combineStocks(mod1, mod2, mod3, modelName = NULL)
+#' combinedMod_123 = combineStocks(mod1, mod2, mod3, modelName = NULL)
 
 
 combineStocks = function(..., modelName = NULL){
