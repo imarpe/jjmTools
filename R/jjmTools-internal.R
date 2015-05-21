@@ -1247,9 +1247,9 @@ toExpress <- function(char.expressions){
 .kobe1 = function(x, add, col, Bref, Fref, 
 				 Blim, Flim, xlim, ylim, ...) {
 
-    #if(class(obj) != "jjm.output" & class(obj) != "jjm.diag")
-    #  stop("Object must be of class 'jjm.output' or 'jjm.diag'.")
-  
+  #if(class(obj) == "jjm.output") kob = x$output$msy_mt
+  #if(class(obj) == "jjm.diag") kob = x$
+
   kob = x$output$msy_mt
 
   F_Fmsy = kob[,4]

@@ -132,9 +132,9 @@ print.summary.jjm.output = function(x, ...) {
   
     cat("\nSummary Plot (s):\n\n")
 
-  for(i in seq_along(x$projections)){
+  for(i in seq_along(x$plots)){
   
-	  cat(names(x$projections)[i], "\n")
+	  cat(names(x$plots)[i], "\n")
 	  plot(x$plots[[i]])
   
   }
