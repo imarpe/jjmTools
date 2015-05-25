@@ -465,12 +465,9 @@
                                                             xlab = "Fishing mortality", ylab = "Spawing biomass / Yield per recruit",
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
   
-<<<<<<< HEAD
+
   outPlots$kobePlot <- .kobeFUN(jjm.out, Bref, Fref)
-=======
-  outPlots$kobePlot = .kobe2(jjm.out, Bref, Fref)
->>>>>>> origin/master
-  
+
   # Join all plots
   plotTree = list(model = model, data = names(inputPlots), output = names(outPlots))
             #       projections = names(projectionsPlots), ypr = names(yprPlots))
