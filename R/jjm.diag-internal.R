@@ -2068,13 +2068,14 @@
 
   mypanel<-function(x,y,...){
   panel.xyplot(x, y, ...)
-  panel.text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels = range(years), cex = 0.6)
+  panel.text(B_Bmsy[c(1,n)] + 0.05, F_Fmsy[c(1,n)] + 0.2, labels = range(years), cex = 0.8)
   }
 
   b <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = col, pch = c(15, 17), panel = mypanel, cex = 0.8)
   c <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = col, pch = 19, cex = 0.5)
 
-  pic = xyplot(y ~ x, type="n", xlim = c(0, maxB), ylim = c(0, maxF)) + 
+  pic = xyplot(y ~ x, type="n", xlim = c(0, maxB), ylim = c(0, maxF), xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+				main="Kobe plot") + 
 		layer_(panel.xblocks(x, x < Blim, col = rgb(1, 0, 0, alpha = 0.5), block.y = Flim)) +
 		layer_(panel.xblocks(x, x < Blim, col = rgb(1, 1, 0, alpha = 0.5), block.y = Flim, vjust = Flim)) +
 		layer_(panel.xblocks(x, x >= Blim, col = rgb(1, 1, 0, alpha = 0.5), block.y = Flim)) +
