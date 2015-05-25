@@ -119,7 +119,7 @@
 }
 
 # .diagnostic function -----------------------------------------------------
-.diagnostics <- function(jjm.info, jjm.out, jjm.in){
+.diagnostics <- function(jjm.info, jjm.out, jjm.in, Bref, Fref){
   
   # Get model name
   model <- jjm.info$model
@@ -457,13 +457,15 @@
                                                                       main = "Catch prediction")
   
   
-  # Plots of yield per recruit and yield biomass
+  # Plots of yield per recruit and yield biomass and kobe plot
   #yprPlots <- list()
   
   outPlots$yieldSsbPerRecruit <- .ypr_yieldSsbPerRecruitFUN(jjm.out,
                                                             main = "Yield and spawing stock biomass per recruit",
                                                             xlab = "Fishing mortality", ylab = "Spawing biomass / Yield per recruit",
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
+  
+  outPlots$kobePlot <- .kobe2(jjm.out, Bref, Fref)
   
   # Join all plots
   plotTree <- list(model = model, input = names(inputPlots), output = names(outPlots))
@@ -2037,4 +2039,62 @@
                 }, ...)
   
   return(pic)
+}
+
+
+.kobe2 = function(jjm.out, Bref, Fref, ...) {
+
+  kob = jjm.out$msy_mt
+  
+  Blim = Bref
+  Flim = Fref
+  
+  col = "black"
+  
+  F_Fmsy = kob[,4]
+  B_Bmsy = kob[,13]
+  years  = kob[,1]
+  
+  n = length(B_Bmsy)
+      
+    xlim= range(pretty(c(0, B_Bmsy)))
+    ylim= range(pretty(c(0, F_Fmsy)))
+
+	plot.new()
+    plot.window(xlim=xlim, ylim=ylim, 
+			    xaxs="i", yaxs="i")
+    par(xpd = TRUE)
+    
+    ylim = par()$usr[3:4]
+    zero = ylim[1]
+    
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 165/255, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(zero, Fref, Fref, zero),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(zero, Fref, Fref, zero),
+            col = rgb(0, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Blim, Blim),
+            y=c(Flim, ylim[2], ylim[2], Flim),
+            col=rgb(1, 0, 0, alpha = 0.5), border=NA)
+ 
+    mtext(toExpress("F/F[msy]"), 2, line=2.5)
+    mtext(toExpress("B/B[msy]"), 1, line=2.5)
+    axis(1, las=1)
+    axis(2, las=2)
+    box()
+
+  text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels=range(years), cex=0.6,
+       adj=-0.2, col=col)
+  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
+  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
+  
+  return(pic)
+ 
 }
