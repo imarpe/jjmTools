@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+#<<<<<<< HEAD
 # jjmTools package Rd file ------------------------------------------------
 #' Tools to process and get results from Joint Jack Mackerel (JJM) model outputs.
 #' 
@@ -228,7 +228,6 @@ kobe = function(obj, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Fl
 
 
 
-=======
 # jjmTools package Rd file ------------------------------------------------
 #' @title Graphics and diagnostics tools for SPRFMO's Joint Jack Mackerel model.
 #' @name jjmTools-package
@@ -450,4 +449,4 @@ kobe = function(obj, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Fl
 
 
 
->>>>>>> origin/master
+#>>>>>>> origin/master
