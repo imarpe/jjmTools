@@ -39,9 +39,9 @@
 
   output = list()												
   # Group in a list
-  output[[1]]   = list(output = outputs,
-                      data = data,
-                      info = list(data = info.data, output = info.output))
+  output[[1]]   = list(info = list(data = info.data, output = info.output),
+                       data = data,
+                       output = outputs)
   names(output) = modelName				  
   
   # Define jjm.output class
@@ -74,9 +74,9 @@ print.jjm.output = function(x, ...) {
 }
 
 summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.75, 1, 1.25),
-					BiomProj = c(2015, 2020, 2024), 
-					CapProj = c(2015, 2016), 
-					MRS = 4500, ...) {
+                              BiomProj = c(2015, 2020, 2024), 
+                              CapProj = c(2015, 2016), 
+                              MRS = 4500, ...) {
   
   pic = list()
   namesPlot = NULL
@@ -87,9 +87,9 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.7
   jjm.ypr = object[[i]]$output$YPR
   namesPlot[i] = object[[i]]$info$output$model
   
-  pic[[i]] = .fit_summarySheetFUN(jjm.out, scales = list(alternating = 1, 
-						y = list(relation = "free", rot = 0),
-                        axs = "i"), ...)
+  pic[[i]] = .fit_summarySheetFUN(jjm.out, scales = list(alternating = 1,
+                                                         y = list(relation = "free", rot = 0),
+                                                         axs = "i"), ...)
   
   }
   
@@ -97,10 +97,11 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.7
 
   output = list()
   output$like = .LikeTable(object)
-  output$projections = .ProjTable(object, Projections = Projections, 
-						  Fmult = Fmult, BiomProj = BiomProj, CapProj = CapProj, MRS = MRS)
+  output$projections = .ProjTable(object, Projections = Projections,
+                                  Fmult = Fmult, BiomProj = BiomProj, 
+                                  CapProj = CapProj, MRS = MRS)
   output$plots = pic
-  
+    
   class(output) = "summary.jjm.output"
 
   return(output)
@@ -109,44 +110,32 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.7
 
 print.summary.jjm.output = function(x, ...) {
   
-  #cat("\nModel:\n", x$info$model, "\n\n")
-  
-  #cat("\nFishyNames:\n", paste(x$info$fisheryNames, collapse = ", "), "\n\n")
-  
-  #cat("\nYears:\n", paste(range(x$info$modelYears), collapse = "-"), "\n\n")
-  
-  #cat("\nModel's indices:\n", paste(x$info$indexModel, collapse = ", "), "\n\n")
   
   cat("\nLikelihood Table:\n\n")
   print(x$like, ...)
   
-  cat("\nProjection Table (s):\n\n")
-
+  if(!is.null(x$projections)) cat("\nProjection Table (s):\n\n")
+  
   for(i in seq_along(x$projections)){
-  
-	  cat(names(x$projections)[i], "\n")
-	  print(x$projections[[i]], ...)
-	  cat(" ", "\n")
-  
+    
+    cat(names(x$projections)[i], "\n")
+    print(x$projections[[i]], ...)
+    cat(" ", "\n")
+    
   }
   
-    cat("\nSummary Plot (s):\n\n")
-
+  cat("\nSummary Plot (s):\n\n")
+  
   for(i in seq_along(x$plots)){
-  
-	  cat(names(x$plots)[i], "\n")
-	  plot(x$plots[[i]])
-  
+    
+    cat(names(x$plots)[i], "\n")
+    plot(x$plots[[i]])
+    
   }
-  
-  #cat("\nFuture SSB and SD:\n\n")
-  #print(x$fut, ...)
-  
-  #cat("\nSSB and SD:\n\n")
-  #print(x$SSB, ...)
   
   return(invisible(x))
 }
+
 
 
 plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
@@ -155,6 +144,7 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
   
   if(stack == !TRUE){
     pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "",
+                 ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                  auto.key = list(title = "", x = 0.8, y = 0.9, cex = 1.25,
                                  points = FALSE, border = FALSE, 
                                  lines = TRUE),
@@ -165,6 +155,7 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
                  }
     )
   } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model, ylab = "",
+                       ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                        upper = dataShape$upper, lower = dataShape$lower,
                        panel = function(x, y, ...){
                          panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)

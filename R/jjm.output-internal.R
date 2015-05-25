@@ -63,7 +63,7 @@
   # Models
   models = list()
   for(i in seq_along(modelList)){
-    models[[i]] = modelList[[i]][c("info", "output", "data")]
+    models[[i]] = modelList[[i]][c("info", "data", "output")]
   }
   
   names(models) = modelNames
