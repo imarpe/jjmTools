@@ -132,9 +132,9 @@ diagnostics = function(outputObject, ...) {
   
   for(i in seq_along(outputObject)){
 	output[[i]] = .diagnostics(jjm.info = outputObject[[i]]$info$output,
-								jjm.out = outputObject[[i]]$output, jjm.in = outputObject[[i]]$data)
- #                               jjm.ypr = outputObject[[i]]$output$YPR)
-  }
+	                           jjm.out = outputObject[[i]]$output, 
+                             jjm.in = outputObject[[i]]$data)
+   }
   
   names(output) = names(outputObject)
   

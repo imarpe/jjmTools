@@ -466,9 +466,9 @@
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
   
   # Join all plots
-  plotTree <- list(model = model, input = names(inputPlots), output = names(outPlots))
+  plotTree <- list(model = model, data = names(inputPlots), output = names(outPlots))
             #       projections = names(projectionsPlots), ypr = names(yprPlots))
-  allPlots <- list(input = inputPlots, output = outPlots, info = plotTree)
+  allPlots <- list(info = plotTree, data = inputPlots, output = outPlots)
 					#, projections = projectionsPlots, ypr = yprPlots,
                     # )
   
