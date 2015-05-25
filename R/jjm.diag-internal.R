@@ -119,7 +119,7 @@
 }
 
 # .diagnostic function -----------------------------------------------------
-.diagnostics = function(jjm.info, jjm.out, jjm.in, Bref, Fref){
+.diagnostics = function(jjm.info, jjm.out, jjm.in, Bref = 1, Fref = 1){
   
   # Get model name
   model = jjm.info$model
@@ -466,7 +466,7 @@
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
   
 
-  outPlots$kobePlot <- .kobeFUN(jjm.out, Bref, Fref)
+  outPlots$kobePlot <- .kobeFUN(jjm.out, Bref = 1, Fref = 1)
 
   # Join all plots
   plotTree = list(model = model, data = names(inputPlots), output = names(outPlots))
@@ -2043,7 +2043,7 @@
 }
 
 
-.kobeFUN = function(jjm.out, Bref, Fref, ...) {
+.kobeFUN = function(jjm.out, Bref = 1, Fref = 1) {
 
   kob = jjm.out$msy_mt
   
@@ -2061,8 +2061,8 @@
     xlim= range(pretty(c(0, B_Bmsy)))
     ylim= range(pretty(c(0, F_Fmsy)))
 
-  x <- seq(0, maxB, by = 0.1)
-  y <- seq(0, maxF, by = 0.1)
+  x <- seq(0, max(xlim), by = 0.1)
+  y <- seq(0, max(ylim), by = 0.1)
 
   y = y[1:length(x)]
 
@@ -2074,12 +2074,12 @@
   b <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = col, pch = c(15, 17), panel = mypanel, cex = 0.8)
   c <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = col, pch = 19, cex = 0.5)
 
-  pic = xyplot(y ~ x, type="n", xlim = c(0, maxB), ylim = c(0, maxF), xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+  pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
 				main="Kobe plot") + 
-		layer_(panel.xblocks(x, x < Blim, col = rgb(1, 0, 0, alpha = 0.5), block.y = Flim)) +
-		layer_(panel.xblocks(x, x < Blim, col = rgb(1, 1, 0, alpha = 0.5), block.y = Flim, vjust = Flim)) +
-		layer_(panel.xblocks(x, x >= Blim, col = rgb(1, 1, 0, alpha = 0.5), block.y = Flim)) +
-		layer_(panel.xblocks(x, x >= Blim, col = rgb(0, 1, 0, alpha = 0.5), block.y = Flim, vjust = Flim)) +
+		layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
+		layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
+		layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
+		layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
 		as.layer(b)+
 		as.layer(c)
 
