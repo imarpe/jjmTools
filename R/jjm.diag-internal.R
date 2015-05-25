@@ -1699,8 +1699,8 @@
                   # LANDINGS
                   if(panel.number() == 2){
                     panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey90")
-                    panel.lines(x[point], jjm.out$msy_mt[,8], lwd = 4, 
-                                col = adjustcolor("blue", alpha.f = alpha.f))
+#                     panel.lines(x[point], jjm.out$msy_mt[,8], lwd = 4, 
+#                                 col = adjustcolor("blue", alpha.f = alpha.f))
                   }
                   
                   # Recruitment

@@ -36,41 +36,41 @@
 }
 
 
-.combineModels <- function(...){
+.combineModels = function(...){
   
-  modelList <- list(...)
+  modelList = list(...)
   
   for(i in modelList)
     if(class(i) != "jjm.output")
       stop("Objects must be of class 'jjm.output'.")
   
-  modelList <- c(...)
+  modelList = c(...)
   
   # Remove repeated models from modelList 
-  modelList2 <- modelList
+  modelList2 = modelList
   for(i in seq_along(modelList[-length(modelList)]))
     for(j in seq(from = i + 1, to = length(modelList)))
       if(identical(modelList[[i]], modelList[[j]]))
-        modelList2[[j]] <- NULL
+        modelList2[[j]] = NULL
   
-  modelList <- modelList2; rm("modelList2")
+  modelList = modelList2; rm("modelList2")
   
-  modelNames <- NULL
+  modelNames = NULL
     for(j in seq_along(modelList)){
-      modelNames <- c(modelNames, modelList[[j]]$info$output$model)
+      modelNames = c(modelNames, modelList[[j]]$info$output$model)
     }
     
   # Models
-  models <- list()
+  models = list()
   for(i in seq_along(modelList)){
-    models[[i]] <- modelList[[i]][c("info", "output", "data")]
+    models[[i]] = modelList[[i]][c("info", "output", "data")]
   }
   
-  names(models) <- modelNames
+  names(models) = modelNames
 
   output = models 
 
-  class(output) <- c("jjm.output")
+  class(output) = c("jjm.output")
   
   return(output)
 

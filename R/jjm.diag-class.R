@@ -22,20 +22,20 @@ print.jjm.diag = function(x, ...) {
 
 summary.jjm.diag = function(object,...) {
   
-  namesPlots <- names(object[[1]]$info)[-1]
+  namesPlots = names(object[[1]]$info)[-1]
   
-  output <- lapply(namesPlots, .getResume, object = object[[1]])
+  output = lapply(namesPlots, .getResume, object = object[[1]])
   
-  names(output) <- namesPlots
+  names(output) = namesPlots
   
-  class(output) <- "summary.jjm.diag"
+  class(output) = "summary.jjm.diag"
   
   return(output)  
 }
 
-print.summary.jjm.diag <- function(x, ...) {
+print.summary.jjm.diag = function(x, ...) {
   
-  class(x) <- "list"
+  class(x) = "list"
   
   cat("\nDetailed Input Plots:\n\n")
   
@@ -48,10 +48,10 @@ print.summary.jjm.diag <- function(x, ...) {
   return(invisible())
 }
 
-plot.jjm.diag <- function(x, what = c("input", "output"), pdf = FALSE, file = NULL, ...) 
+plot.jjm.diag = function(x, what = c("input", "output"), pdf = FALSE, file = NULL, ...) 
                           #var=NULL, fleet=NULL, ...)
 {
-  what <- tolower(what)
+  what = tolower(what)
   
   if(!all(!is.na(match(what, c("input", "output")))))
     stop("Incorrect values for parameter 'what'.")
