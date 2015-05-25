@@ -1,32 +1,32 @@
 
 # Internal functions of diagnostic ----------------------------------------
-.createDataFrame <- function(data, years, class){
-  dims  <- dim(data)
-  res   <- data.frame(year = rep(years, dims[2]), data = c(data), class = rep(class, each = dims[1]))
+.createDataFrame = function(data, years, class){
+  dims  = dim(data)
+  res   = data.frame(year = rep(years, dims[2]), data = c(data), class = rep(class, each = dims[1]))
   return(res)}
 
-.bubbles         <- function(x, data, bub.scale = 2.5, col = c("black", "black"),...){
-  dots <- list(...)
-  dots$data <- data
-  dots$cex <- bub.scale*(abs(data$resids)/max(abs(data$resids), na.rm = TRUE)) + bub.scale*0.1
-  dots$col <- ifelse(data$resids > 0, col[1], col[2])
-  dots$pch <- ifelse(data$resids>0, 19, 1)
-  dots$panel <- function(x, y, ..., cex, subscripts){
+.bubbles         = function(x, data, bub.scale = 2.5, col = c("black", "black"),...){
+  dots = list(...)
+  dots$data = data
+  dots$cex = bub.scale*(abs(data$resids)/max(abs(data$resids), na.rm = TRUE)) + bub.scale*0.1
+  dots$col = ifelse(data$resids > 0, col[1], col[2])
+  dots$pch = ifelse(data$resids>0, 19, 1)
+  dots$panel = function(x, y, ..., cex, subscripts){
     panel.grid(h = -1, v = -1)
     panel.xyplot(x, y, cex = cex[subscripts], ...)
   }
-  call.list <- c(x = x, dots)
-  ans <- do.call("xyplot", call.list)
+  call.list = c(x = x, dots)
+  ans = do.call("xyplot", call.list)
   ans
 }
 
-.ac   <- function(x) {return(as.character(x))}
-.an   <- function(x) {return(as.numeric(x))}
-.anf  <- function(x) {return(as.numeric(as.character(x)))}
+.ac   = function(x) {return(as.character(x))}
+.an   = function(x) {return(as.numeric(x))}
+.anf  = function(x) {return(as.numeric(as.character(x)))}
 
-.setOutputNames <- function(out){
+.setOutputNames = function(out){
   
-  names(out)     <- c("Years", "Total Fishing mortality", "Total biomass no Fishing", "SSB no fishing", "Total biomass",
+  names(out)     = c("Years", "Total Fishing mortality", "Total biomass no Fishing", "SSB no fishing", "Total biomass",
                       "SSB in the future under scenario 1", "SSB in the future under scenario 2",
                       "SSB in the future under scenario 3", "SSB in the future under scenario 4",
                       "SSB in the future under scenario 5", "Catch in the future under scenario 1",
@@ -83,25 +83,25 @@
                       "Weight at age in survey 9", "EffN_Survey_1", "EffN_Survey_4")
   return(out)}
 
-.readYPR <- function(fileName){
+.readYPR = function(fileName){
   if(!file.exists(fileName)) {
     x = rep(NA, 501)
     jjm.ypr = data.frame(F=x, SSB=x, Yld=x, Recruit=x, SPR=x, B=x)
     return(jjm.ypr)
   }
   
-  jjm.ypr            <- read.table(fileName, sep = " ", skip = 4, header = TRUE, fill = TRUE)
-  jjm.ypr[1,]        <- jjm.ypr[1, c(1, 8, 2, 3, 4, 5, 6, 7)]
-  colnames(jjm.ypr)  <- c("F", "X", "SSB", "Yld", "Recruit", "SPR", "B", "X2")
-  jjm.ypr            <- jjm.ypr[,-grep("X", colnames(jjm.ypr))]
+  jjm.ypr            = read.table(fileName, sep = " ", skip = 4, header = TRUE, fill = TRUE)
+  jjm.ypr[1,]        = jjm.ypr[1, c(1, 8, 2, 3, 4, 5, 6, 7)]
+  colnames(jjm.ypr)  = c("F", "X", "SSB", "Yld", "Recruit", "SPR", "B", "X2")
+  jjm.ypr            = jjm.ypr[,-grep("X", colnames(jjm.ypr))]
   return(jjm.ypr)
 }
 
 # Function that have not been used
-.plot.bubbles    <- function(x, xlab = " ", ylab = " ", main = " ", factx = 0, facty = 0, amplify = 1){
-  my.col <- c("white", " ", "black")
-  xval <- c(col(x)) + factx
-  yval <- c(row(x)) + facty
+.plot.bubbles    = function(x, xlab = " ", ylab = " ", main = " ", factx = 0, facty = 0, amplify = 1){
+  my.col = c("white", " ", "black")
+  xval = c(col(x)) + factx
+  yval = c(row(x)) + facty
   
   # area of bubble is proportional to value.
   plot(x = xval, y = yval, cex = amplify*c(sqrt(abs(x/pi))), xlab = xlab, ylab = ylab, main = main,
@@ -112,61 +112,61 @@
 }
 
 # Function that have not been used
-.check.zero      <- function(x){
+.check.zero      = function(x){
   ## checks if there are zeros and replaces them with 1.
-  x[x == 0] <- 1
+  x[x == 0] = 1
   return(x)
 }
 
 # .diagnostic function -----------------------------------------------------
-.diagnostics <- function(jjm.info, jjm.out, jjm.in){
+.diagnostics = function(jjm.info, jjm.out, jjm.in, Bref, Fref){
   
   # Get model name
-  model <- jjm.info$model
-  #jjm.out <- jjm.out
+  model = jjm.info$model
+  #jjm.out = jjm.out
   
   #- Generic attributes of the stock assessment
-  Nfleets   <- length(c(jjm.out$Fshry_names))
-  Nsurveys  <- length(c(jjm.out$Index_names))
-  ages      <- jjm.in$ages[1]:jjm.in$ages[2]
-  lengths   <- jjm.in$lengths[1]:jjm.in$lengths[2]
+  Nfleets   = length(c(jjm.out$Fshry_names))
+  Nsurveys  = length(c(jjm.out$Index_names))
+  ages      = jjm.in$ages[1]:jjm.in$ages[2]
+  lengths   = jjm.in$lengths[1]:jjm.in$lengths[2]
   
   #- Get the age-structured fleets and length-structured fleets out
   if(length(grep("pobs_fsh_", names(jjm.out))) > 0){
-    ageFleets <- unlist(strsplit(names(jjm.out)[grep("pobs_fsh_", names(jjm.out))], split = "_"))
-    ageFleets <- ageFleets[seq(3, length(ageFleets), 3)]
-  } else { ageFleets <- 0}
+    ageFleets = unlist(strsplit(names(jjm.out)[grep("pobs_fsh_", names(jjm.out))], split = "_"))
+    ageFleets = ageFleets[seq(3, length(ageFleets), 3)]
+  } else { ageFleets = 0}
   
   if(length(grep("pobs_len_fsh_", names(jjm.out))) > 0){
-    lgtFleets <- unlist(strsplit(names(jjm.out)[grep("pobs_len_fsh_", names(jjm.out))], split = "_"))
-    lgtFleets <- lgtFleets[seq(4, length(lgtFleets), 4)]
-  } else {lgtFleets <- 0}
+    lgtFleets = unlist(strsplit(names(jjm.out)[grep("pobs_len_fsh_", names(jjm.out))], split = "_"))
+    lgtFleets = lgtFleets[seq(4, length(lgtFleets), 4)]
+  } else {lgtFleets = 0}
   
   #- Get the age-structured surveys and length-structured surveys out
   if(length(grep("pobs_ind_", names(jjm.out))) > 0){
-    ageSurveys <- unlist(strsplit(names(jjm.out)[grep("pobs_ind_", names(jjm.out))], "_"))
-    ageSurveys <- ageSurveys[seq(3, length(ageSurveys), 3)]
-  } else {ageSurveys <- 0}
+    ageSurveys = unlist(strsplit(names(jjm.out)[grep("pobs_ind_", names(jjm.out))], "_"))
+    ageSurveys = ageSurveys[seq(3, length(ageSurveys), 3)]
+  } else {ageSurveys = 0}
   
   if(length(grep("pobs_len_ind_", names(jjm.out))) > 0){
-    lgtSurveys <- unlist(strsplit(names(jjm.out)[grep("pobs_len_ind_", names(jjm.out))], "_"))
-    lgtSurveys <- lgtSurveys[seq(4, length(lgtSurveys), 4)]
-  } else {lgtSurveys <- 0}
+    lgtSurveys = unlist(strsplit(names(jjm.out)[grep("pobs_len_ind_", names(jjm.out))], "_"))
+    lgtSurveys = lgtSurveys[seq(4, length(lgtSurveys), 4)]
+  } else {lgtSurveys = 0}
   
   
   # Plots of the INPUT data
-  allPlots <- list()
+  allPlots = list()
   
-  inputPlots <- list()
+  inputPlots = list()
   
   # 1: Weight in the fishery by fleet
-  inputPlots$weightFishery <- .input_weightFisheryFUN(Nfleets, jjm.out, ages,
+  inputPlots$weightFishery = .input_weightFisheryFUN(Nfleets, jjm.out, ages,
                                                       lwd = 1, xlab = "Years", ylab = "Weight",
                                                       main = "Weight at age in the fishery",
                                                       scales = list(alternating = 3))
   
   # 2: Weight at age in the survey
-  inputPlots$weightAge <- .input_weightAgeFUN(Nsurveys, jjm.out, ages,
+  inputPlots$weightAge = .input_weightAgeFUN(Nsurveys, jjm.out, ages,
                                               type = "l", lwd = 1,
                                               xlab = "Years", ylab = "Weight", main = "Weight at age in the survey",
                                               auto.key = list(space = "right", points = FALSE, lines = TRUE, type = "b"),
@@ -174,7 +174,7 @@
   
   
   # 3: Weight by cohort in the fleet  
-  inputPlots$weightByCohortFleet <- .input_weightByCohortFleetFUN(Nfleets, jjm.out, ages,
+  inputPlots$weightByCohortFleet = .input_weightByCohortFleetFUN(Nfleets, jjm.out, ages,
                                                                   type = "b", lwd = 1, pch = 19, cex = 0.6,
                                                                   xlab = "Age", ylab = "Weight",
                                                                   main = "Weight at age by cohort in the fleet",
@@ -183,7 +183,7 @@
                                                                   scales = list(alternating = 3))
   
   # 4: Weight by cohort in the survey  
-  inputPlots$weightByCohortSurvey <- .input_weightByCohortSurveyFUN(Nsurveys, jjm.out, ages,
+  inputPlots$weightByCohortSurvey = .input_weightByCohortSurveyFUN(Nsurveys, jjm.out, ages,
                                                                     type = "l", lwd = 1, pch = 19, cex = 0.6,
                                                                     xlab = "Age", ylab = "Weight",
                                                                     main = "Weight at age by cohort in the survey",
@@ -193,23 +193,23 @@
   
   # 5: Age composition of the catch
   if(.an(ageFleets)[1] != 0){
-    inputPlots$ageFleets1 <- .input_ageFleetsFUN(jjm.in, ageFleets, ages,
+    inputPlots$ageFleets1 = .input_ageFleetsFUN(jjm.in, ageFleets, ages,
                                                  main = "Age composition in fleets", 
                                                  as.table = TRUE, ylab = "Proportion at age")    
     
-    cols <- rev(heat.colors(11))
-    inputPlots$ageFleets2 <- .input_ageFleets2FUN(jjm.in, ageFleets, cols, ages,
+    cols = rev(heat.colors(11))
+    inputPlots$ageFleets2 = .input_ageFleets2FUN(jjm.in, ageFleets, cols, ages,
                                                   main = "Age composition in fleets",
                                                   zlab = "", ylab = "")    
     
-    cols       <- rainbow(length(ages))
-    inputPlots$ageFleetsPlots <- .input_ageFleetsPlotsFUN(jjm.in, ages, cols, ageFleets,
+    cols       = rainbow(length(ages))
+    inputPlots$ageFleetsPlots = .input_ageFleetsPlotsFUN(jjm.in, ages, cols, ageFleets,
                                                           xlab = "Age", ylab = "Proportion at age")
   }
   
   # 6: Age composition of the survey
   if(length(which(jjm.in$Inumageyears > 0)) > 0){
-    inputPlots$ageCompositionSurvey1 <- .input_ageCompositionSurvey1FUN(jjm.in, ages,
+    inputPlots$ageCompositionSurvey1 = .input_ageCompositionSurvey1FUN(jjm.in, ages,
                                                                         scales = list(rotation = 90,
                                                                                       alternating = 3,
                                                                                       y = list(axs = "i")),
@@ -218,63 +218,63 @@
                                                                         main = "Age composition in surveys", 
                                                                         ylab = "Proportion at age")
     
-    cols  <- rev(heat.colors(11))
-    inputPlots$ageCompositionSurvey2 <- .input_ageCompositionSurvey2FUN(jjm.in, cols, ages,
+    cols  = rev(heat.colors(11))
+    inputPlots$ageCompositionSurvey2 = .input_ageCompositionSurvey2FUN(jjm.in, cols, ages,
                                                                         main = "Age composition in surveys",
                                                                         zlab = "", ylab = "",
                                                                         scales = list(rotation = 90, alternating = 3))
   }
   
   # 7: Weight in the population
-  inputPlots$weightPopulation <- .input_weightPopulationFUN(jjm.in, ages,
+  inputPlots$weightPopulation = .input_weightPopulationFUN(jjm.in, ages,
                                                             xlab = "Age", ylab = "Weight (kg)",
                                                             main = "Weight in the stock")
   
   # 8: Maturity at age in the population  
-  inputPlots$maturityPopulation <- .input_maturityPopulationFUN(jjm.in, ages,
+  inputPlots$maturityPopulation = .input_maturityPopulationFUN(jjm.in, ages,
                                                                 xlab = "Age", ylab = "Proportion mature",
                                                                 main = "Maturity in the stock")
   
   # 9: Length composition of the catch
   if(.an(lgtFleets)[1] != 0){
-    cols  <- rev(heat.colors(11))
-    inputPlots$lengthComposition1 <- .input_lengthComposition1FUN(cols, lgtFleets, jjm.in, lengths,
+    cols  = rev(heat.colors(11))
+    inputPlots$lengthComposition1 = .input_lengthComposition1FUN(cols, lgtFleets, jjm.in, lengths,
                                                                   zlab = "", ylab = "")    
     
-    inputPlots$lengthComposition2 <- .input_lengthComposition2FUN(lgtFleets, jjm.in, lengths,
+    inputPlots$lengthComposition2 = .input_lengthComposition2FUN(lgtFleets, jjm.in, lengths,
                                                                   xlab = "Length", ylab = "Proportion at length")
   }
   
   # Plots of the fit of the catch data
-  outPlots <- list()
+  outPlots = list()
   
   # 9a: Trend in catch
-  outPlots$totalCatch <- .fit_totalCatchFUN(Nfleets, jjm.out,
+  outPlots$totalCatch = .fit_totalCatchFUN(Nfleets, jjm.out,
                                             xlab = "Years", ylab = "Catch in kt", main = "Total catch", 
                                             scales = list(y = list(axs = "i")))
   
   #9b: trends in catch by fleet as polygon
   if(Nfleets > 1){
-    outPlots$totalCatchByFleet <- .fit_totalCatchByFleetFUN(jjm.out, Nfleets,
+    outPlots$totalCatchByFleet = .fit_totalCatchByFleetFUN(jjm.out, Nfleets,
                                                             xlab = "Years", ylab = "Catch by fleet in kt", 
                                                             main = "Total catch by fleet",
                                                             scales=list(y = list(axs = "i")))
   }
   
   # 10: Log residual total catch by fleet
-  outPlots$catchResidualsByFleet <- .fit_catchResidualsByFleetFUN(Nfleets, jjm.out,
+  outPlots$catchResidualsByFleet = .fit_catchResidualsByFleetFUN(Nfleets, jjm.out,
                                                                   xlab = "Years", ylab = "Residuals", 
                                                                   main = "Catch residuals by fleet", 
                                                                   lwd = 3, cex.axis = 1.2, font = 2)
   
   # 11: Absolute residual catch by fleet
-  outPlots$absoluteResidualCatchByFleet <- .fit_absoluteResidualCatchByFleetFUN(Nfleets, jjm.out,
+  outPlots$absoluteResidualCatchByFleet = .fit_absoluteResidualCatchByFleetFUN(Nfleets, jjm.out,
                                                                                 scales = list(y = list(draw = FALSE), 
                                                                                               alternating = 3))
   
   # 12a: Proportions catch by age modelled and observed
   if(.an(ageFleets)[1] != 0){        
-    outPlots$residualsCatchAtAgeByFleet <- .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages,
+    outPlots$residualsCatchAtAgeByFleet = .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages,
                                                                               xlab = "Years", ylab = "Absolute residual catch", 
                                                                               main = "Absolute residual catch by fleet",
                                                                               scales = list(alternating = 3))
@@ -282,7 +282,7 @@
   
   # 12b: Proportions catch by length modelled and observed
   if(.an(lgtFleets)[1] != 0){    
-    outPlots$residualsCatchAtLengthByFleet <- .fit_residualsCatchAtLengthByFleetFUN(lgtFleets, jjm.out, lengths, Nfleets,
+    outPlots$residualsCatchAtLengthByFleet = .fit_residualsCatchAtLengthByFleetFUN(lgtFleets, jjm.out, lengths, Nfleets,
                                                                                     xlab = "Years", ylab = "Age", 
                                                                                     main = "Residuals catch-at-age by fleet",
                                                                                     scales = list(alternating = 3))
@@ -291,20 +291,20 @@
   # 13a: Fitted age by year by fleet
   
   if(.an(ageFleets)[1] != 0){
-    outPlots$ageFitsCatch <- .fit_ageFitsCatchFUN(ageFleets, jjm.out, ages,
+    outPlots$ageFitsCatch = .fit_ageFitsCatchFUN(ageFleets, jjm.out, ages,
                                                   xlab = "Age", ylab = "Proportion at age", 
                                                   scales = list(alternating = 3))
   }
   
   # 13b: Fitted length by year by fleet
   if(.an(lgtFleets)[1] != 0){
-    outPlots$lengthFitsCatch <- .fit_lengthFitsCatchFUN(lgtFleets, jjm.out, lengths,
+    outPlots$lengthFitsCatch = .fit_lengthFitsCatchFUN(lgtFleets, jjm.out, lengths,
                                                         xlab = "Length", ylab = "Proportion at length")
   }
   
   # 14: Absolute catch by fleet modelled and observed
-  cols  <- rainbow(11)  
-  outPlots$predictedObservedCatchesByFleet <- .fit_predictedObservedCatchesByFleetFUN(Nfleets, cols, jjm.out,
+  cols  = rainbow(11)  
+  outPlots$predictedObservedCatchesByFleet = .fit_predictedObservedCatchesByFleetFUN(Nfleets, cols, jjm.out,
                                                                                       main = "Predicted and observed catches by fleet",
                                                                                       xlab = "Years", ylab = "Thousand tonnes")
   
@@ -313,7 +313,7 @@
   #-----------------------------------------------------------------------------
   
   # 15: Standardized indices observed with error and modelled  
-  outPlots$predictedObservedIndices <- .fit_predictedObservedIndicesFUN(Nsurveys, jjm.out,
+  outPlots$predictedObservedIndices = .fit_predictedObservedIndicesFUN(Nsurveys, jjm.out,
                                                                         main = "Predicted and observed indices",
                                                                         xlab = "Years", ylab = "Normalized index value", 
                                                                         ylim = c(-0.2, 2),
@@ -321,21 +321,21 @@
   
   # 15b: Fitted age by year by survey
   if(.an(ageSurveys)[1] != 0){
-    outPlots$ageFitsSurvey <- .fit_ageFitsSurveyFUN(ageSurveys, jjm.out, ages, ageFleets,
+    outPlots$ageFitsSurvey = .fit_ageFitsSurveyFUN(ageSurveys, jjm.out, ages, ageFleets,
                                                     xlab = "Age", ylab = "Proportion at age", 
                                                     scales = list(alternating = 3))
   }
   
   # 16: Log residuals in survey
-  cols  <- rainbow(length(ages))  
-  outPlots$standardizedSurveyResiduals <- .fit_standardizedSurveyResidualsFUN(Nsurveys, jjm.out, cols,
+  cols  = rainbow(length(ages))  
+  outPlots$standardizedSurveyResiduals = .fit_standardizedSurveyResidualsFUN(Nsurveys, jjm.out, cols,
                                                                               xlab = "Years", ylab = "Log residuals", 
                                                                               main = "Standardized survey residuals",
                                                                               lwd = 3, cex.axis = 1.2, font = 2,
                                                                               scales = list(y = list(draw = FALSE)))
   
   # 16b: standard deviation of time series variances
-  outPlots$sdPerInputSeries <- .fit_sdPerInputSeriesFUN(jjm.out,
+  outPlots$sdPerInputSeries = .fit_sdPerInputSeriesFUN(jjm.out,
                                                         main = "SD per input series", ylab = "SD", xlab = "Years",
                                                         scales = list(alternating = 3))
   
@@ -343,51 +343,51 @@
   #- Plots of selectivity in fleet and survey + F's
   #-----------------------------------------------------------------------------  
   # 17: Selectivity at age in the fleet
-  outPlots$selectivityFisheryByPentad <- .fit_selectivityFisheryByPentadFUN(Nfleets, jjm.out, ages,
+  outPlots$selectivityFisheryByPentad = .fit_selectivityFisheryByPentadFUN(Nfleets, jjm.out, ages,
                                                                             scale = list(alternating = FALSE),
                                                                             main = "Selectivity of the Fishery by Pentad",
                                                                             xlab = "Age", ylab = "Selectivity")
   
   # 18: selecitivity at age in the survey
-  outPlots$selectivitySurveyByPentad <- .fit_selectivitySurveyByPentadFUN(Nsurveys, jjm.out, ages,
+  outPlots$selectivitySurveyByPentad = .fit_selectivitySurveyByPentadFUN(Nsurveys, jjm.out, ages,
                                                                           scale = list(alternating = FALSE),
                                                                           main = "Selectivity of the survey by Pentad",
                                                                           xlab = "Age", ylab = "Selectivity")
   
   # 19a: F at age
-  cols  <- rev(heat.colors(11))  
-  outPlots$fAtAGe <- .fit_fAtAGeFUN(jjm.out, ages, cols,
+  cols  = rev(heat.colors(11))  
+  outPlots$fAtAGe = .fit_fAtAGeFUN(jjm.out, ages, cols,
                                     xlab = "Age", ylab = "Years", main = "F at age")
   
   # 19b: Prop F at age
-  cols  <- rainbow(length(ages))
-  outPlots$fProportionAtAGe <- .fit_fProportionAtAGeFUN(jjm.out, ages, cols,
+  cols  = rainbow(length(ages))
+  outPlots$fProportionAtAGe = .fit_fProportionAtAGeFUN(jjm.out, ages, cols,
                                                         xlab = "Years", ylab = "Proportion of F at age", 
                                                         main = "F proportion at age",
                                                         ylim = c(0, 1), scales = list(y = list(axs = "i")))
   
   #19b: N at age
-  cols <- rev(heat.colors(11))  
-  outPlots$nAtAGe <- .fit_nAtAGeFUN(jjm.out, cols,
+  cols = rev(heat.colors(11))  
+  outPlots$nAtAGe = .fit_nAtAGeFUN(jjm.out, cols,
                                     xlab = "Age", ylab = "Years", main = "N at age")
   
   #19c: Prop N at age
-  cols  <- rainbow(length(ages))
-  outPlots$nProportionAtAGe <- .fit_nProportionAtAGeFUN(jjm.out, cols, ages,
+  cols  = rainbow(length(ages))
+  outPlots$nProportionAtAGe = .fit_nProportionAtAGeFUN(jjm.out, cols, ages,
                                                         xlab = "Years", ylab = "Proportion of N at age", 
                                                         main = "Proportion at age",
                                                         ylim = c(0, 1), scales = list(y = list(axs = "i")))
   
   #20: Fisheries mean age  
   if(.an(ageFleets)[1] != 0){
-    outPlots$fisheryMeanAge <- .fit_fisheryMeanAgeFUN(jjm.out, ageFleets,
+    outPlots$fisheryMeanAge = .fit_fisheryMeanAgeFUN(jjm.out, ageFleets,
                                                       lwd = 3, lty = c(1, 3), col = 1,
                                                       ylab = "Age", xlab = "Years", main = "Fishery mean age")
   } 
   
   #20: Fisheries mean length  
   if(.an(lgtFleets)[1] != 0){
-    outPlots$fisheryMeanLength <- .fit_fisheryMeanLengthFUN(lgtFleets, jjm.out,
+    outPlots$fisheryMeanLength = .fit_fisheryMeanLengthFUN(lgtFleets, jjm.out,
                                                             lwd = 3, lty = c(1, 3), col = 1,
                                                             ylab = "Length (cm)", xlab = "Years", 
                                                             main = "Fishery mean length")
@@ -395,7 +395,7 @@
   
   #21: Survey mean age
   if(.an(ageFleets)[1] != 0){
-    outPlots$surveyMeanAge <- .fit_surveyMeanAgeFUN(Nsurveys, jjm.out,
+    outPlots$surveyMeanAge = .fit_surveyMeanAgeFUN(Nsurveys, jjm.out,
                                                     lwd = 3, lty = c(1, 3), col = 1,
                                                     ylab = "Age", xlab = "Years", main = "Survey mean age",
                                                     scales = list(alternating = 3))
@@ -405,19 +405,19 @@
   #- Plots of stock summary
   #-----------------------------------------------------------------------------
   # 22a: summary sheet with SSB, R, F and Biomass and Catch
-  outPlots$summarySheet <- .fit_summarySheetFUN(jjm.out,
+  outPlots$summarySheet = .fit_summarySheetFUN(jjm.out,
                                                 main = NA,
                                                 scales = list(alternating = 1, y = list(relation = "free", rot = 0),
                                                               axs = "i"))
   
   # 22b: Summary sheet 2
-  outPlots$summarySheet2 <- .fit_summarySheet2FUN(jjm.out,
+  outPlots$summarySheet2 = .fit_summarySheet2FUN(jjm.out,
                                                   main = NA, 
                                                   scales = list(alternating = 1, y = list(relation = "free", rot = 0),
                                                                 axs = "i"))
   
   # 22b Uncertainties of key parameters
-  outPlots$uncertaintyKeyParams <- .fit_uncertaintyKeyParamsFUN(jjm.out,
+  outPlots$uncertaintyKeyParams = .fit_uncertaintyKeyParamsFUN(jjm.out,
                                                                 auto.key = list(space = "right", 
                                                                                 points = FALSE, 
                                                                                 lines = FALSE, 
@@ -426,73 +426,75 @@
                                                                 main = "Uncertainty of key parameters")
   
   # 23: Mature - immature ratio
-  cols  <- rainbow(length(ages))
-  outPlots$matureInmatureFishes <- .fit_matureInmatureFishesFUN(jjm.out, 
+  cols  = rainbow(length(ages))
+  outPlots$matureInmatureFishes = .fit_matureInmatureFishesFUN(jjm.out, 
                                                                 lwd = 3, lty = c(1, 3), col = 1,
                                                                 ylab = "Biomass in kt", xlab = "Years", 
                                                                 main = "Mature - Immature fish")
   
   # 24: Stock-recruitment
-  outPlots$stockRecruitment <- .fit_stockRecruitmentFUN(jjm.out, cols,
+  outPlots$stockRecruitment = .fit_stockRecruitmentFUN(jjm.out, cols,
                                                         ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
                                                         main = "Stock Recruitment")
   
   # 25: SSB not fished over SSB fished
-  outPlots$fishedUnfishedBiomass <- .fit_fishedUnfishedBiomassFUN(jjm.out,
+  outPlots$fishedUnfishedBiomass = .fit_fishedUnfishedBiomassFUN(jjm.out,
                                                                   ylab = "Total biomass", xlab = "Years", 
                                                                   main = "Fished vs. unfished biomass",
                                                                   col = c(1, 1), lwd = 3, lty = c(1, 3))
   
   # Plots of catch and ssb projections
-  #projectionsPlots <- list()
+  #projectionsPlots = list()
   
   # 25: SSB projections
-  outPlots$ssbPrediction <- .projections_ssbPredictionFUN(jjm.out,
+  outPlots$ssbPrediction = .projections_ssbPredictionFUN(jjm.out,
                                                                   ylab = "Spawning Stock Biomass", xlab = "Years", 
                                                                   main = "SSB prediction")
   
   # 26: Catch projections    
-  outPlots$catchPrediction <- .projections_catchPredictionFUN(jjm.out,
+  outPlots$catchPrediction = .projections_catchPredictionFUN(jjm.out,
                                                                       ylab = "Catch", xlab = "Years", 
                                                                       main = "Catch prediction")
   
   
-  # Plots of yield per recruit and yield biomass
-  #yprPlots <- list()
+  # Plots of yield per recruit and yield biomass and kobe plot
+  #yprPlots = list()
   
-  outPlots$yieldSsbPerRecruit <- .ypr_yieldSsbPerRecruitFUN(jjm.out,
+  outPlots$yieldSsbPerRecruit = .ypr_yieldSsbPerRecruitFUN(jjm.out,
                                                             main = "Yield and spawing stock biomass per recruit",
                                                             xlab = "Fishing mortality", ylab = "Spawing biomass / Yield per recruit",
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
   
+  outPlots$kobePlot = .kobe2(jjm.out, Bref, Fref)
+  
   # Join all plots
-  plotTree <- list(model = model, data = names(inputPlots), output = names(outPlots))
+  plotTree = list(model = model, data = names(inputPlots), output = names(outPlots))
             #       projections = names(projectionsPlots), ypr = names(yprPlots))
-  allPlots <- list(info = plotTree, data = inputPlots, output = outPlots)
+  allPlots = list(info = plotTree, data = inputPlots, output = outPlots)
 					#, projections = projectionsPlots, ypr = yprPlots,
                     # )
   
-  class(allPlots) <- "jjm.diag"
+  class(allPlots) = "jjm.diag"
   
   return(allPlots)
 }
 
 
 # Plots of diagnostic function --------------------------------------------
-.input_weightFisheryFUN <- function(Nfleets, jjm.out, ages, ...)
+.input_weightFisheryFUN = function(Nfleets, jjm.out, ages, ...)
 {
   for(iFleet in 1:Nfleets){
-    res <- .createDataFrame(jjm.out[[paste("wt_fsh_", iFleet, sep = "")]][,-1], jjm.out$Yr, ages)
+    res = .createDataFrame(jjm.out[[paste("wt_fsh_", iFleet, sep = "")]][,-1], jjm.out$Yr, ages)
     
     if(iFleet == 1)
-      tot <- cbind(res, c(jjm.out$Fshry_names[iFleet]))
+      tot = cbind(res, c(jjm.out$Fshry_names[iFleet]))
     
     if(iFleet != 1)
-      tot <- rbind(tot,cbind(res,c(jjm.out$Fshry_names[iFleet])))
+      tot = rbind(tot,cbind(res,c(jjm.out$Fshry_names[iFleet])))
   }
-  colnames(tot) <- c("year","data","age","fleet"); res <- tot
+  colnames(tot) = c("year","data","age","fleet"); res = tot
   
-  pic <- xyplot(data~year|fleet, data = res, groups = age,
+  pic = xyplot(data~year|fleet, data = res, groups = age,
                 type = "l",
                 auto.key = list(space = "right", points = FALSE, lines = TRUE, type = "b"),
                 par.settings = list(superpose.symbol = list(pch = as.character(ages), cex = 1)),
@@ -501,41 +503,41 @@
   return(pic)
 }
 
-.input_weightAgeFUN <- function(Nsurveys, jjm.out, ages, ...)
+.input_weightAgeFUN = function(Nsurveys, jjm.out, ages, ...)
 {
   for(iSurvey in 1:Nsurveys){
-    res <- .createDataFrame(jjm.out[[paste("wt_ind_", iSurvey, sep = "")]][,-1],jjm.out$Yr, ages)
+    res = .createDataFrame(jjm.out[[paste("wt_ind_", iSurvey, sep = "")]][,-1],jjm.out$Yr, ages)
     
     if(iSurvey == 1)
-      tot <- cbind(res, c(jjm.out$Index_names[iSurvey]))
+      tot = cbind(res, c(jjm.out$Index_names[iSurvey]))
     
     if(iSurvey != 1)
-      tot <- rbind(tot, cbind(res, c(jjm.out$Index_names[iSurvey])))
+      tot = rbind(tot, cbind(res, c(jjm.out$Index_names[iSurvey])))
   }
-  colnames(tot) <- c("year","data","age","survey"); res <- tot
+  colnames(tot) = c("year","data","age","survey"); res = tot
   
-  pic <- xyplot(data~year|survey, data = res, groups = age,
+  pic = xyplot(data~year|survey, data = res, groups = age,
                 par.settings = list(superpose.symbol = list(pch = as.character(ages), cex = 1)), ...)
   
   return(pic)
 }
 
-.input_weightByCohortFleetFUN <- function(Nfleets, jjm.out, ages, ...)
+.input_weightByCohortFleetFUN = function(Nfleets, jjm.out, ages, ...)
 {
   for(iFleet in 1:Nfleets){
-    res <- .createDataFrame(jjm.out[[paste("wt_fsh_", iFleet, sep = "")]][,-1], jjm.out$Yr, ages)
+    res = .createDataFrame(jjm.out[[paste("wt_fsh_", iFleet, sep = "")]][,-1], jjm.out$Yr, ages)
     
     if(iFleet == 1)
-      tot <- cbind(res, c(jjm.out$Fshry_names[iFleet]))
+      tot = cbind(res, c(jjm.out$Fshry_names[iFleet]))
     
     if(iFleet != 1)
-      tot <- rbind(tot, cbind(res, c(jjm.out$Fshry_names[iFleet])))
+      tot = rbind(tot, cbind(res, c(jjm.out$Fshry_names[iFleet])))
   }
-  colnames(tot) <- c("year","data","age","fleet"); res <- tot
-  res$cohort <- res$year - res$age
-  yrs <- sort(rev(jjm.out$Yr)[1:13])
+  colnames(tot) = c("year","data","age","fleet"); res = tot
+  res$cohort = res$year - res$age
+  yrs = sort(rev(jjm.out$Yr)[1:13])
   
-  pic <- xyplot(data ~ age|fleet, data = subset(res, cohort%in%yrs), groups = cohort,
+  pic = xyplot(data ~ age|fleet, data = subset(res, cohort%in%yrs), groups = cohort,
                 par.settings = list(superpose.symbol = list(pch = .ac(ages), cex = 1)),
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
@@ -545,20 +547,20 @@
   return(pic)
 }
 
-.input_weightByCohortSurveyFUN <- function(Nsurveys, jjm.out, ages, ...)
+.input_weightByCohortSurveyFUN = function(Nsurveys, jjm.out, ages, ...)
 {
   for(iSurvey in 1:Nsurveys){
-    res <- .createDataFrame(get("jjm.out")[[paste("wt_ind_",iSurvey,sep="")]][,-1],jjm.out$Yr,ages)
-    if(iSurvey == 1) tot <- cbind(res,c(jjm.out$Index_names[iSurvey]))
-    if(iSurvey != 1) tot <- rbind(tot,cbind(res,c(jjm.out$Index_names[iSurvey])))
+    res = .createDataFrame(get("jjm.out")[[paste("wt_ind_",iSurvey,sep="")]][,-1],jjm.out$Yr,ages)
+    if(iSurvey == 1) tot = cbind(res,c(jjm.out$Index_names[iSurvey]))
+    if(iSurvey != 1) tot = rbind(tot,cbind(res,c(jjm.out$Index_names[iSurvey])))
   }
-  colnames(tot) <- c("year","data","age","survey"); res <- tot
-  res$cohort <- res$year - res$age
+  colnames(tot) = c("year","data","age","survey"); res = tot
+  res$cohort = res$year - res$age
   
-  yrs <- sort(rev(jjm.out$Yr)[1:13])
+  yrs = sort(rev(jjm.out$Yr)[1:13])
   
   
-  pic <- xyplot(data ~ age|survey, data = subset(res, cohort %in% yrs), groups = cohort,
+  pic = xyplot(data ~ age|survey, data = subset(res, cohort %in% yrs), groups = cohort,
                 par.settings = list(superpose.symbol = list(pch = as.character(ages), cex = 1)),                
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
@@ -568,27 +570,27 @@
   return(pic)
 }
 
-.input_ageFleetsFUN <- function(jjm.in, ageFleets, ages, ...)
+.input_ageFleetsFUN = function(jjm.in, ageFleets, ages, ...)
 {
   for(iFleet in .an(ageFleets)){
-    res <- .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
+    res = .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
                                   apply(jjm.in$Fagecomp[,,iFleet], 1, sum, na.rm = T), "/"),
                             jjm.in$years[1]:jjm.in$years[2],
                             ages)
     
-    res <- cbind(res, jjm.in$Fnames[iFleet])
+    res = cbind(res, jjm.in$Fnames[iFleet])
     
     if(iFleet == .an(ageFleets)[1])
-      tot <- res
+      tot = res
     
     if(iFleet != .an(ageFleets)[1])
-      tot <- rbind(tot,res)
+      tot = rbind(tot,res)
   }
   
-  colnames(tot) <- c("year","data","age","fleet"); res <- tot
-  yrs           <- rev(sort(unique(res$year)))[1:10]
+  colnames(tot) = c("year","data","age","fleet"); res = tot
+  yrs           = rev(sort(unique(res$year)))[1:10]
   
-  pic <- barchart(data ~ age | fleet* as.factor(year), data = subset(res, year %in% yrs),
+  pic = barchart(data ~ age | fleet* as.factor(year), data = subset(res, year %in% yrs),
                   scales = list(rotation = 90, alternating = 3, y = list(axs = "i")), horizontal = FALSE,
                   groups = fleet, strip = FALSE, strip.left = strip.custom(style = 1), reverse.rows = TRUE,
                   panel = function(...){
@@ -599,92 +601,92 @@
   return(pic)
 }
 
-.input_ageFleets2FUN <- function(jjm.in, ageFleets, cols, ages, ...)
+.input_ageFleets2FUN = function(jjm.in, ageFleets, cols, ages, ...)
 {
   for(iFleet in .an(ageFleets)){
-    res <- .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
+    res = .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
                                   apply(jjm.in$Fagecomp[,,iFleet], 1, sum, na.rm = T), "/"),
                             jjm.in$years[1]:jjm.in$years[2],
                             ages)
     
-    res <- cbind(res, jjm.in$Fnames[iFleet])
+    res = cbind(res, jjm.in$Fnames[iFleet])
     
     if(iFleet == .an(ageFleets)[1])
-      tot <- res
+      tot = res
     
     if(iFleet != .an(ageFleets)[1])
-      tot <- rbind(tot,res)
+      tot = rbind(tot,res)
   }
   
-  colnames(tot) <- c("year","data","age","fleet"); res <- tot
+  colnames(tot) = c("year","data","age","fleet"); res = tot
   
-  pic <- levelplot(data ~ age*year | fleet, data = res, col.regions = cols, cuts = 10,
+  pic = levelplot(data ~ age*year | fleet, data = res, col.regions = cols, cuts = 10,
                    colorkey = TRUE, layout = c(length(ageFleets), 1), ...)
   
   return(pic)
 }
 
-.input_ageFleetsPlotsFUN <- function(jjm.in, ages, cols, ageFleets, ...)
+.input_ageFleetsPlotsFUN = function(jjm.in, ages, cols, ageFleets, ...)
 {
   for(iFleet in .an(ageFleets)){
-    res <- .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
+    res = .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
                                   apply(jjm.in$Fagecomp[,,iFleet], 1, sum, na.rm = TRUE), "/"),
                             jjm.in$years[1]:jjm.in$years[2],
                             ages)
     
-    res <- cbind(res, jjm.in$Fnames[iFleet])
+    res = cbind(res, jjm.in$Fnames[iFleet])
     
     if(iFleet == .an(ageFleets)[1])
-      tot <- res
+      tot = res
     
     if(iFleet != .an(ageFleets)[1])
-      tot <- rbind(tot,res)
+      tot = rbind(tot,res)
   }
   
-  colnames(tot) <- c("year","data","age","fleet"); res <- tot
+  colnames(tot) = c("year","data","age","fleet"); res = tot
   
-  res$cohort <- (res$year - res$age) %% length(ages) + 1
-  ageFleetsPlots <- list()
+  res$cohort = (res$year - res$age) %% length(ages) + 1
+  ageFleetsPlots = list()
   for(iFleet in unique(res$fleet)){
-    tmpres <- subset(res, fleet == iFleet)
-    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] <- 0
+    tmpres = subset(res, fleet == iFleet)
+    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] = 0
     
-    pic <- xyplot(data ~ age | as.factor(year), data = tmpres,
+    pic = xyplot(data ~ age | as.factor(year), data = tmpres,
                   main = paste("Age composition in fleets", iFleet),
                   as.table = TRUE,
                   panel = function(x,y){
-                    yr      <- names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
-                    colidx  <- tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
+                    yr      = names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
+                    colidx  = tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
                     panel.barchart(x, y, horizontal = FALSE, origin = 0, box.width = 1,
                                    col = cols[tmpres$cohort[colidx]])
                   }, ...)
     
-    ageFleetsPlots[[iFleet]] <- pic
+    ageFleetsPlots[[iFleet]] = pic
   }
   
   return(ageFleetsPlots)
 }
 
-.input_ageCompositionSurvey1FUN <- function(jjm.in, ages, ...)
+.input_ageCompositionSurvey1FUN = function(jjm.in, ages, ...)
 {
   for(iSurvey in which(jjm.in$Inumageyears>0)){
-    res <- .createDataFrame(sweep(jjm.in$Ipropage[,,iSurvey], 1,
+    res = .createDataFrame(sweep(jjm.in$Ipropage[,,iSurvey], 1,
                                   apply(jjm.in$Ipropage[,,iSurvey], 1, sum, na.rm = TRUE), "/"),
                             jjm.in$years[1]:jjm.in$years[2], ages)
-    res <- cbind(res, jjm.in$Inames[iSurvey])
+    res = cbind(res, jjm.in$Inames[iSurvey])
     
-    yrs <- rev(sort(unique(res$year)))[1:10]
+    yrs = rev(sort(unique(res$year)))[1:10]
     
     if(iSurvey == 1)
-      tot <- res
+      tot = res
     
     if(iSurvey != 1)
-      tot <- rbind(tot, res)
+      tot = rbind(tot, res)
   }
   
-  colnames(tot) <- c("year", "data", "age", "survey"); res <- tot
+  colnames(tot) = c("year", "data", "age", "survey"); res = tot
   
-  pic <- barchart(data ~ age | survey * as.factor(year), data = subset(res, year %in% yrs),
+  pic = barchart(data ~ age | survey * as.factor(year), data = subset(res, year %in% yrs),
                   
                   groups = survey, 
                   reverse.rows = TRUE,
@@ -697,36 +699,36 @@
   return(pic)
 }
 
-.input_ageCompositionSurvey2FUN <- function(jjm.in, cols, ages, ...)
+.input_ageCompositionSurvey2FUN = function(jjm.in, cols, ages, ...)
 {
   for(iSurvey in which(jjm.in$Inumageyears > 0)){
-    res <- .createDataFrame(sweep(jjm.in$Ipropage[,,iSurvey], 1,
+    res = .createDataFrame(sweep(jjm.in$Ipropage[,,iSurvey], 1,
                                   apply(jjm.in$Ipropage[,,iSurvey], 1, sum, na.rm = TRUE), "/"),
                             jjm.in$years[1]:jjm.in$years[2], ages)
-    res <- cbind(res, jjm.in$Inames[iSurvey])
+    res = cbind(res, jjm.in$Inames[iSurvey])
     
-    yrs <- rev(sort(unique(res$year)))[1:10]
+    yrs = rev(sort(unique(res$year)))[1:10]
     
     if(iSurvey == 1)
-      tot <- res
+      tot = res
     
     if(iSurvey != 1)
-      tot <- rbind(tot, res)
+      tot = rbind(tot, res)
   }
   
-  colnames(tot) <- c("year", "data", "age", "survey"); res <- tot
+  colnames(tot) = c("year", "data", "age", "survey"); res = tot
   
-  pic <- levelplot(data ~ age*year | survey, data = res,
+  pic = levelplot(data ~ age*year | survey, data = res,
                    col.regions = cols, cuts = 10,
                    colorkey = TRUE, as.table = FALSE, ...)
   
   return(pic)
 }
 
-.input_weightPopulationFUN <- function(jjm.in, ages, ...)
+.input_weightPopulationFUN = function(jjm.in, ages, ...)
 {
-  res <- data.frame(year = 1, data = jjm.in$Pwtatage, age = ages)
-  pic <- xyplot(weight~age, data = res,
+  res = data.frame(year = 1, data = jjm.in$Pwtatage, age = ages)
+  pic = xyplot(weight~age, data = res,
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
                   panel.xyplot(..., type = "b", pch = 19, cex = 0.6, lwd = 2, col = 1)
@@ -735,10 +737,10 @@
   return(pic)
 }
 
-.input_maturityPopulationFUN <- function(jjm.in, ages, ...)
+.input_maturityPopulationFUN = function(jjm.in, ages, ...)
 {
-  res <- data.frame(year = 1, data = jjm.in$Pmatatage, age = ages)
-  pic <- xyplot(maturity~age, data = res,
+  res = data.frame(year = 1, data = jjm.in$Pmatatage, age = ages)
+  pic = xyplot(maturity~age, data = res,
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
                   panel.xyplot(..., type = "b", pch = 19, cex = 0.6, lwd = 2, col = 1)
@@ -747,91 +749,91 @@
   return(pic)
 }
 
-.input_lengthComposition1FUN <- function(cols, lgtFleets, jjm.in, lengths, ...)
+.input_lengthComposition1FUN = function(cols, lgtFleets, jjm.in, lengths, ...)
 {
   for(iFleet in .an(lgtFleets)){
-    res <- .createDataFrame(sweep(jjm.in$Flengthcomp[,,iFleet], 1,
+    res = .createDataFrame(sweep(jjm.in$Flengthcomp[,,iFleet], 1,
                                   apply(jjm.in$Flengthcomp[,,iFleet], 1, sum, na.rm = TRUE), "/"),
                             jjm.in$years[1]:jjm.in$years[2], lengths)
-    res <- cbind(res, jjm.in$Fnames[iFleet])
+    res = cbind(res, jjm.in$Fnames[iFleet])
     
     if(iFleet == .an(lgtFleets)[1])
-      tot <- res
+      tot = res
     
     if(iFleet != .an(lgtFleets)[1]) 
-      tot <- rbind(tot, res)
+      tot = rbind(tot, res)
   }
-  colnames(tot) <- c("year", "data", "length", "fleet"); res <- tot
+  colnames(tot) = c("year", "data", "length", "fleet"); res = tot
   
-  lengthComposition1 <- list()
+  lengthComposition1 = list()
   for(iFleet in unique(tot$fleet)){
-    pic <- levelplot(data ~ length*year | fleet, data = subset(tot, fleet == iFleet), as.table = TRUE,
+    pic = levelplot(data ~ length*year | fleet, data = subset(tot, fleet == iFleet), as.table = TRUE,
                      col.regions = cols, cuts = 10,
                      main = paste("Length composition in fleet", iFleet),
                      colorkey = TRUE, ...)
     
-    lengthComposition1[[iFleet]] <- pic
+    lengthComposition1[[iFleet]] = pic
   }
   
   return(lengthComposition1)
 }
 
-.input_lengthComposition2FUN <- function(lgtFleets, jjm.in, lengths, ...)
+.input_lengthComposition2FUN = function(lgtFleets, jjm.in, lengths, ...)
 {
   for(iFleet in .an(lgtFleets)){
-    res <- .createDataFrame(sweep(jjm.in$Flengthcomp[,,iFleet], 1,
+    res = .createDataFrame(sweep(jjm.in$Flengthcomp[,,iFleet], 1,
                                   apply(jjm.in$Flengthcomp[,,iFleet], 1, sum, na.rm = TRUE), "/"),
                             jjm.in$years[1]:jjm.in$years[2], lengths)
-    res <- cbind(res, jjm.in$Fnames[iFleet])
+    res = cbind(res, jjm.in$Fnames[iFleet])
     
     if(iFleet == .an(lgtFleets)[1])
-      tot <- res
+      tot = res
     
     if(iFleet != .an(lgtFleets)[1]) 
-      tot <- rbind(tot, res)
+      tot = rbind(tot, res)
   }
-  colnames(tot) <- c("year", "data", "length", "fleet"); res <- tot
+  colnames(tot) = c("year", "data", "length", "fleet"); res = tot
   
-  tot$cohort <- (tot$year - tot$length) %% length(lengths) + 1
-  lengthComposition2 <- list()
+  tot$cohort = (tot$year - tot$length) %% length(lengths) + 1
+  lengthComposition2 = list()
   for(iFleet in unique(tot$fleet)){
-    tmpres <- subset(tot, fleet == iFleet)
+    tmpres = subset(tot, fleet == iFleet)
     
-    pic <- xyplot(data ~ length | as.factor(year), data = tmpres,
+    pic = xyplot(data ~ length | as.factor(year), data = tmpres,
                   main = paste("Length composition in fleets", iFleet),
                   as.table = TRUE,
                   panel = function(x, y){
-                    yr      <- names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
-                    colidx  <- tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
+                    yr      = names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
+                    colidx  = tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
                     panel.barchart(x, y, horizontal = FALSE, origin = 0, box.width = 1, col = tmpres$cohort[colidx],
                                    border = 'transparent')
                   }, ...)
     
-    lengthComposition2[[iFleet]] <- pic
+    lengthComposition2[[iFleet]] = pic
   }
   
   return(lengthComposition2)
 }
 
-.fit_totalCatchFUN <- function(Nfleets, jjm.out, ...)
+.fit_totalCatchFUN = function(Nfleets, jjm.out, ...)
 {
   for(iFleet in 1:Nfleets){
-    res <- cbind(jjm.out$Yr, jjm.out[[paste("Obs_catch_", iFleet, sep = "")]])
+    res = cbind(jjm.out$Yr, jjm.out[[paste("Obs_catch_", iFleet, sep = "")]])
     
-    if(Nfleets == 1) res <- cbind(res, jjm.out$Fshry_names[iFleet])
-    if(Nfleets > 1) res <- cbind(res, jjm.out$Fshry_names[iFleet, 1])
-    if(iFleet == 1) tot <- res
-    if(iFleet != 1) tot <- rbind(tot, res)
+    if(Nfleets == 1) res = cbind(res, jjm.out$Fshry_names[iFleet])
+    if(Nfleets > 1) res = cbind(res, jjm.out$Fshry_names[iFleet, 1])
+    if(iFleet == 1) tot = res
+    if(iFleet != 1) tot = rbind(tot, res)
   }
-  colnames(tot) <- c("year", "catch", "fleet"); res <- data.frame(tot)
-  res$catch <- as.numeric(as.character(res$catch))
+  colnames(tot) = c("year", "catch", "fleet"); res = data.frame(tot)
+  res$catch = as.numeric(as.character(res$catch))
   
-  totcatch <- numeric()
+  totcatch = numeric()
   for(iYr in sort(unique(res$year))){
-    totcatch[which(iYr == sort(unique(res$year)))] <- sum(subset(res, year == iYr)$catch)
+    totcatch[which(iYr == sort(unique(res$year)))] = sum(subset(res, year == iYr)$catch)
   }
   
-  pic <- xyplot(totcatch~jjm.out$Yr,
+  pic = xyplot(totcatch~jjm.out$Yr,
                 
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
@@ -841,33 +843,33 @@
   return(pic)
 }
 
-.fit_totalCatchByFleetFUN <- function(jjm.out, Nfleets, ...)
+.fit_totalCatchByFleetFUN = function(jjm.out, Nfleets, ...)
 {
   for(iFleet in 1:Nfleets){
-    res <- cbind(jjm.out$Yr, jjm.out[[paste("Obs_catch_", iFleet, sep = "")]])
+    res = cbind(jjm.out$Yr, jjm.out[[paste("Obs_catch_", iFleet, sep = "")]])
     
-    if(Nfleets == 1) res <- cbind(res, jjm.out$Fshry_names[iFleet])
-    if(Nfleets > 1) res <- cbind(res, jjm.out$Fshry_names[iFleet, 1])
-    if(iFleet == 1) tot <- res
-    if(iFleet != 1) tot <- rbind(tot, res)
+    if(Nfleets == 1) res = cbind(res, jjm.out$Fshry_names[iFleet])
+    if(Nfleets > 1) res = cbind(res, jjm.out$Fshry_names[iFleet, 1])
+    if(iFleet == 1) tot = res
+    if(iFleet != 1) tot = rbind(tot, res)
   }
-  colnames(tot) <- c("year", "catch", "fleet"); res <- data.frame(tot)
-  res$catch <- as.numeric(as.character(res$catch))
+  colnames(tot) = c("year", "catch", "fleet"); res = data.frame(tot)
+  res$catch = as.numeric(as.character(res$catch))
   
-  res$year <- .an(.ac(res$year))
+  res$year = .an(.ac(res$year))
   
   for(iFleet in 2:Nfleets){
-    idx <- which(res$fleet == jjm.out$Fshry_names[iFleet])
-    res[idx,"catch"] <- subset(res, fleet == jjm.out$Fshry_names[iFleet])$catch +
+    idx = which(res$fleet == jjm.out$Fshry_names[iFleet])
+    res[idx,"catch"] = subset(res, fleet == jjm.out$Fshry_names[iFleet])$catch +
       subset(res, fleet == jjm.out$Fshry_names[iFleet - 1])$catch
   }
   
-  pic <- xyplot(catch ~ year, data = res, groups = fleet,
+  pic = xyplot(catch ~ year, data = res, groups = fleet,
                 type = "l",
                 auto.key = list(space = "right", points = FALSE, lines = FALSE, col = 1:Nfleets),
                 panel = function(...){
-                  lst <- list(...)
-                  idx <- mapply(seq,
+                  lst = list(...)
+                  idx = mapply(seq,
                                 from = seq(1, length(lst$y), length(lst$y)/4),
                                 to = seq(1, length(lst$y), length(lst$y)/4) + (length(lst$y)/4 - 1))
                   panel.grid(h = -1, v = -1)
@@ -883,30 +885,30 @@
   return(pic)
 }
 
-.fit_catchResidualsByFleetFUN <- function(Nfleets, jjm.out, ...)
+.fit_catchResidualsByFleetFUN = function(Nfleets, jjm.out, ...)
 {
   for(iFleet in 1:Nfleets){
-    res <- data.frame(year = jjm.out$Yr, obs = jjm.out[[paste("Obs_catch_", iFleet, sep = "")]],
+    res = data.frame(year = jjm.out$Yr, obs = jjm.out[[paste("Obs_catch_", iFleet, sep = "")]],
                       model = jjm.out[[paste("Pred_catch_", iFleet, sep = "")]], fleet = jjm.out$Fshry_names[iFleet])
     
-    if(iFleet == 1) tot <- res
-    if(iFleet != 1) tot <- rbind(tot, res)
+    if(iFleet == 1) tot = res
+    if(iFleet != 1) tot = rbind(tot, res)
   }
-  tot$obs[tot$obs<=0]   <- NA
-  tot$obs[tot$model<=0] <- NA
-  res                   <- tot
-  resids                <- log(res$obs + 1) - log(res$model + 1); res$resids <- resids
-  scalar                <- 3/max(resids, na.rm = TRUE)
-  residRange            <- range(resids, na.rm = TRUE)
-  ikey                  <- simpleKey(text = .ac(round(seq(residRange[1], residRange[2], length.out = 6), 2)),
+  tot$obs[tot$obs<=0]   = NA
+  tot$obs[tot$model<=0] = NA
+  res                   = tot
+  resids                = log(res$obs + 1) - log(res$model + 1); res$resids = resids
+  scalar                = 3/max(resids, na.rm = TRUE)
+  residRange            = range(resids, na.rm = TRUE)
+  ikey                  = simpleKey(text = .ac(round(seq(residRange[1], residRange[2], length.out = 6), 2)),
                                      points = TRUE, lines = FALSE, columns = 2)
-  ikey$points$cex       <- abs(round(seq(residRange[1], residRange[2], length.out = 6), 2))*scalar
-  ikey$points$col       <- 1
-  ikey$points$pch       <- ifelse(test = round(seq(residRange[1], residRange[2], length.out = 6), 2) > 0,
+  ikey$points$cex       = abs(round(seq(residRange[1], residRange[2], length.out = 6), 2))*scalar
+  ikey$points$col       = 1
+  ikey$points$pch       = ifelse(test = round(seq(residRange[1], residRange[2], length.out = 6), 2) > 0,
                                   yes = 19, no = 1)
   
   
-  pic <- xyplot(resids*scalar ~ year | as.factor(fleet), data = res,
+  pic = xyplot(resids*scalar ~ year | as.factor(fleet), data = res,
                 prepanel = function(...) {list(ylim = c(1, 1))},
                 layout = c(1, Nfleets),
                 type = "p", key = ikey,
@@ -919,20 +921,20 @@
   return(pic)
 }
 
-.fit_absoluteResidualCatchByFleetFUN <- function(Nfleets, jjm.out, ...)
+.fit_absoluteResidualCatchByFleetFUN = function(Nfleets, jjm.out, ...)
 {
   for(iFleet in 1:Nfleets){
-    res <- data.frame(year = jjm.out$Yr, obs = jjm.out[[paste("Obs_catch_", iFleet, sep = "")]],
+    res = data.frame(year = jjm.out$Yr, obs = jjm.out[[paste("Obs_catch_", iFleet, sep = "")]],
                       model = jjm.out[[paste("Pred_catch_", iFleet, sep = "")]], fleet = jjm.out$Fshry_names[iFleet])
     
-    if(iFleet == 1) tot <- res
-    if(iFleet != 1) tot <- rbind(tot, res)
+    if(iFleet == 1) tot = res
+    if(iFleet != 1) tot = rbind(tot, res)
   }
-  tot$obs[tot$obs <= 0]   <- NA
-  tot$obs[tot$model <= 0] <- NA
-  res                   <- tot
+  tot$obs[tot$obs <= 0]   = NA
+  tot$obs[tot$model <= 0] = NA
+  res                   = tot
   
-  pic <- xyplot(model - obs ~ year | fleet, data = res, allow.multiple = TRUE,
+  pic = xyplot(model - obs ~ year | fleet, data = res, allow.multiple = TRUE,
                 panel = function(...){
                   panel.grid(h = -1, v = -1, lty = 3)
                   panel.barchart(..., horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
@@ -941,237 +943,237 @@
   return(pic)
 }
 
-.fit_residualsCatchAtAgeByFleetFUN <- function(ageFleets, jjm.out, ages, ...)
+.fit_residualsCatchAtAgeByFleetFUN = function(ageFleets, jjm.out, ages, ...)
 {
   for(iFleet in .an(ageFleets)){
-    obs <- .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
+    obs = .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
                             jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,1], ages)
-    mod <- .createDataFrame(jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,-1],
+    mod = .createDataFrame(jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,-1],
                             jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,1], ages)
     
-    if(iFleet == .an(ageFleets)[1]) tot <- cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet, 1], nrow(obs)))
-    if(iFleet != .an(ageFleets)[1]) tot <- rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
+    if(iFleet == .an(ageFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet, 1], nrow(obs)))
+    if(iFleet != .an(ageFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
   }
-  colnames(tot)   <- c("year","obs","age","model","fleet")
-  res             <- tot
+  colnames(tot)   = c("year","obs","age","model","fleet")
+  res             = tot
   
-  resids          <- log(res$obs + 1) - log(res$model + 1)
-  res$resids      <- resids
-  scalar          <- 3/max(resids,na.rm=T)
-  residRange      <- range(resids,na.rm=T)
-  ikey            <- simpleKey(text=as.character(round(seq(residRange[1],residRange[2],length.out=6),2)),
+  resids          = log(res$obs + 1) - log(res$model + 1)
+  res$resids      = resids
+  scalar          = 3/max(resids,na.rm=T)
+  residRange      = range(resids,na.rm=T)
+  ikey            = simpleKey(text=as.character(round(seq(residRange[1],residRange[2],length.out=6),2)),
                                points=T,lines=F,columns = 2)
-  ikey$points$cex <- abs(round(seq(residRange[1],residRange[2],length.out=6),2))*scalar
-  ikey$points$col <- 1
-  ikey$points$pch <- ifelse(round(seq(residRange[1],residRange[2],length.out=6),2)>0,19,1)
+  ikey$points$cex = abs(round(seq(residRange[1],residRange[2],length.out=6),2))*scalar
+  ikey$points$col = 1
+  ikey$points$pch = ifelse(round(seq(residRange[1],residRange[2],length.out=6),2)>0,19,1)
   
-  pic <- .bubbles(age ~ year|fleet, data = res, allow.multiple = TRUE,
+  pic = .bubbles(age ~ year|fleet, data = res, allow.multiple = TRUE,
                   key = ikey, ...)
   
   return(pic)
 }
 
-.fit_residualsCatchAtLengthByFleetFUN <- function(lgtFleets, jjm.out, lengths, Nfleets, ...)
+.fit_residualsCatchAtLengthByFleetFUN = function(lgtFleets, jjm.out, lengths, Nfleets, ...)
 {
   for(iFleet in .an(lgtFleets)){
-    obs <- .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1], 
+    obs = .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1], 
                             jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,1], lengths)
-    mod <- .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
+    mod = .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
                             jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,1], lengths)
     
     if(Nfleets == 1){
-      if(iFleet == .an(lgtFleets)[1]) tot <- cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs)))
-      if(iFleet != .an(lgtFleets)[1]) tot <- rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs))))
+      if(iFleet == .an(lgtFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs)))
+      if(iFleet != .an(lgtFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs))))
     }
     if(Nfleets != 1){
-      if(iFleet == .an(lgtFleets)[1]) tot <- cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs)))
-      if(iFleet != .an(lgtFleets)[1]) tot <- rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
+      if(iFleet == .an(lgtFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs)))
+      if(iFleet != .an(lgtFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
     }
   }
-  colnames(tot)   <- c("year", "obs", "length", "model", "fleet")
-  res             <- tot
+  colnames(tot)   = c("year", "obs", "length", "model", "fleet")
+  res             = tot
   
-  resids          <- log(res$obs + 1) - log(res$model + 1)
-  res$resids      <- resids
-  scalar          <- 3/max(resids, na.rm = TRUE)
-  residRange      <- range(resids, na.rm = TRUE)
-  ikey            <- simpleKey(text = .ac(round(seq(residRange[1], residRange[2], length.out = 6), 2)),
+  resids          = log(res$obs + 1) - log(res$model + 1)
+  res$resids      = resids
+  scalar          = 3/max(resids, na.rm = TRUE)
+  residRange      = range(resids, na.rm = TRUE)
+  ikey            = simpleKey(text = .ac(round(seq(residRange[1], residRange[2], length.out = 6), 2)),
                                points = TRUE, lines = FALSE, columns = 2)
-  ikey$points$cex <- abs(round(seq(residRange[1], residRange[2], length.out = 6), 2))*scalar
-  ikey$points$col <- 1
-  ikey$points$pch <- ifelse(test = round(seq(residRange[1], residRange[2], length.out = 6),2) > 0, yes = 19, no = 1)
+  ikey$points$cex = abs(round(seq(residRange[1], residRange[2], length.out = 6), 2))*scalar
+  ikey$points$col = 1
+  ikey$points$pch = ifelse(test = round(seq(residRange[1], residRange[2], length.out = 6),2) > 0, yes = 19, no = 1)
   
-  pic <- .bubbles(length ~ year|fleet, data = res, allow.multiple = TRUE,
+  pic = .bubbles(length ~ year|fleet, data = res, allow.multiple = TRUE,
                   key = ikey, ...)
   
   return(pic)
 }
 
-.fit_ageFitsCatchFUN <- function(ageFleets, jjm.out, ages, ...)
+.fit_ageFitsCatchFUN = function(ageFleets, jjm.out, ages, ...)
 {
   for(iFleet in .an(ageFleets)){
-    obs <- .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
+    obs = .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
                             jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,1], ages)
-    mod <- .createDataFrame(jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,-1],
+    mod = .createDataFrame(jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,-1],
                             jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,1], ages)
     
     if(iFleet == .an(ageFleets)[1]){
-      x <- cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
-      colnames(x) <- c("year", "data", "age", "class", "fleet")
+      x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
+      colnames(x) = c("year", "data", "age", "class", "fleet")
       
-      y <- cbind(mod, rep("model", nrow(mod)), jjm.out$Fshry_names[iFleet])
-      colnames(y) <- c("year", "data", "age", "class", "fleet")
+      y = cbind(mod, rep("model", nrow(mod)), jjm.out$Fshry_names[iFleet])
+      colnames(y) = c("year", "data", "age", "class", "fleet")
       
-      tot <- rbind(x,y)
+      tot = rbind(x,y)
     }
     
     if(iFleet != .an(ageFleets)[1]){
-      x <- cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
-      colnames(x) <- c("year", "data", "age", "class", "fleet")
+      x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
+      colnames(x) = c("year", "data", "age", "class", "fleet")
       
-      y <- cbind(mod, rep("model", nrow(mod)), jjm.out$Fshry_names[iFleet])
-      colnames(y) <- c("year", "data", "age", "class", "fleet")
+      y = cbind(mod, rep("model", nrow(mod)), jjm.out$Fshry_names[iFleet])
+      colnames(y) = c("year", "data", "age", "class", "fleet")
       
-      res <- rbind(x,y)
-      tot <- rbind(tot,res)
+      res = rbind(x,y)
+      tot = rbind(tot,res)
     }
   }
-  res <- tot
-  res$cohort <- (res$year - res$age) %% length(ages) + 1
+  res = tot
+  res$cohort = (res$year - res$age) %% length(ages) + 1
   
-  ikey          <- simpleKey(text = c("Observed", "Predicted"),
+  ikey          = simpleKey(text = c("Observed", "Predicted"),
                              points = TRUE, lines = FALSE, rect = TRUE, columns = 2)
-  ikey$rectangles$alpha <- c(1, 0)
-  ikey$rectangles$col   <- "white"
-  ikey$rectangles$lty   <- c(1, 0)
-  ikey$points$pch       <- c(-1, 19)
-  ikey$points$col       <- c("white", "black")
-  ikey$points$cex       <- c(0, 1.1)
+  ikey$rectangles$alpha = c(1, 0)
+  ikey$rectangles$col   = "white"
+  ikey$rectangles$lty   = c(1, 0)
+  ikey$points$pch       = c(-1, 19)
+  ikey$points$col       = c("white", "black")
+  ikey$points$cex       = c(0, 1.1)
   
-  cols  <- rainbow(length(ages))
-  ageFitsCatch <- list()
+  cols  = rainbow(length(ages))
+  ageFitsCatch = list()
   for(iFleet in c(jjm.out$Fshry_names)[.an(ageFleets)]){
-    tmpres  <- subset(res, fleet == iFleet)
-    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] <- 0
+    tmpres  = subset(res, fleet == iFleet)
+    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] = 0
     
-    pic <- xyplot(data ~ age | factor(year), data = tmpres,
+    pic = xyplot(data ~ age | factor(year), data = tmpres,
                   groups = class,
                   main = paste("Age fits", iFleet),
                   key = ikey,
                   as.table = TRUE,
                   panel = function(x, y){
-                    idx     <- mapply(seq, from = seq(1, length(y), length(ages)),
+                    idx     = mapply(seq, from = seq(1, length(y), length(ages)),
                                       to = seq(1, length(y), length(ages)) + (length(ages) - 1))
-                    first   <- c(idx[,seq(from = 1, to = dim(idx)[2], by = 3)])
-                    second  <- c(idx[,seq(from = 2, to = dim(idx)[2], by = 3)])
-                    #cols <- tmpres$cohort[which(is.na(pmatch(tmpres$data,y))==F & is.na(pmatch(tmpres$age,x))==F)]
-                    yr      <- names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
-                    colidx  <- tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
+                    first   = c(idx[,seq(from = 1, to = dim(idx)[2], by = 3)])
+                    second  = c(idx[,seq(from = 2, to = dim(idx)[2], by = 3)])
+                    #cols = tmpres$cohort[which(is.na(pmatch(tmpres$data,y))==F & is.na(pmatch(tmpres$age,x))==F)]
+                    yr      = names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
+                    colidx  = tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
                     panel.barchart(x[first], y[first], horizontal = FALSE, origin = 0, box.width = 1, col = cols[colidx])
                     panel.points(x[second], y[second], pch = 19, col = 1, cex = 0.5)
                   }, ...)
     
-    ageFitsCatch[[iFleet]] <- pic
+    ageFitsCatch[[iFleet]] = pic
   }
   
   return(ageFitsCatch)
 }
 
-.fit_lengthFitsCatchFUN <- function(lgtFleets, jjm.out, lengths, ...)
+.fit_lengthFitsCatchFUN = function(lgtFleets, jjm.out, lengths, ...)
 {
   for(iFleet in .an(lgtFleets)){
-    obs <- .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1],
+    obs = .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1],
                             jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,1], lengths)
-    mod <- .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
+    mod = .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
                             jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,1], lengths)
     
     if(iFleet == .an(lgtFleets)[1]){
-      x <- cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
-      colnames(x) <- c("year", "data", "length", "class", "fleet")
+      x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
+      colnames(x) = c("year", "data", "length", "class", "fleet")
       
-      y <- cbind(mod, rep("model", nrow(mod)), jjm.out$Fshry_names[iFleet])
-      colnames(y) <- c("year", "data", "length", "class", "fleet")
+      y = cbind(mod, rep("model", nrow(mod)), jjm.out$Fshry_names[iFleet])
+      colnames(y) = c("year", "data", "length", "class", "fleet")
       
-      tot <- rbind(x, y)
+      tot = rbind(x, y)
     }
     
     if(iFleet != .an(lgtFleets)[1]){
-      x <- cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
-      colnames(x) <- c("year", "data", "length", "class", "fleet")
+      x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
+      colnames(x) = c("year", "data", "length", "class", "fleet")
       
-      y <- cbind(mod, rep("model", nrow(mod)), jjm.out$Fshry_names[iFleet])
-      colnames(y) <- c("year", "data", "length", "class", "fleet")
+      y = cbind(mod, rep("model", nrow(mod)), jjm.out$Fshry_names[iFleet])
+      colnames(y) = c("year", "data", "length", "class", "fleet")
       
-      res <- rbind(x, y)
-      tot <- rbind(tot, res)
+      res = rbind(x, y)
+      tot = rbind(tot, res)
     }
   }
-  res <- tot
-  res$cohort <- res$length
+  res = tot
+  res$cohort = res$length
   
-  ikey                  <- simpleKey(text = c("Observed", "Predicted"),
+  ikey                  = simpleKey(text = c("Observed", "Predicted"),
                                      points = TRUE, lines = FALSE, rect = TRUE, columns = 2)
-  ikey$rectangles$alpha <- c(1, 0)
-  ikey$rectangles$col   <- "white"
-  ikey$rectangles$lty   <- c(1, 0)
-  ikey$points$pch       <- c(-1, 19)
-  ikey$points$col       <- c("white", "black")
-  ikey$points$cex       <- c(0, 1.1)
+  ikey$rectangles$alpha = c(1, 0)
+  ikey$rectangles$col   = "white"
+  ikey$rectangles$lty   = c(1, 0)
+  ikey$points$pch       = c(-1, 19)
+  ikey$points$col       = c("white", "black")
+  ikey$points$cex       = c(0, 1.1)
   
-  cols  <- rainbow(length(lengths))
-  lengthFitsCatch <- list()
+  cols  = rainbow(length(lengths))
+  lengthFitsCatch = list()
   for(iFleet in c(jjm.out$Fshry_names)[.an(lgtFleets)]){
-    tmpres  <- subset(res, fleet == iFleet)
-    pic <- xyplot(data ~ length | factor(year), data = tmpres,
+    tmpres  = subset(res, fleet == iFleet)
+    pic = xyplot(data ~ length | factor(year), data = tmpres,
                   groups = class,
                   main = paste("Length fits", iFleet),
                   key = ikey,
                   as.table = TRUE,
                   panel = function(x,y){
-                    idx     <- mapply(seq, from = seq(1, length(y), length(lengths)),
+                    idx     = mapply(seq, from = seq(1, length(y), length(lengths)),
                                       to = (seq(from = 1, to = length(y), by = length(lengths)) + length(lengths) - 1))
-                    first   <- c(idx[,seq(1, dim(idx)[2], 3)])
-                    second  <- c(idx[,seq(2, dim(idx)[2], 3)])
-                    #cols <- tmpres$cohort[which(is.na(pmatch(tmpres$data,y))==F & is.na(pmatch(tmpres$age,x))==F)]
-                    yr      <- names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
-                    colidx  <- tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
+                    first   = c(idx[,seq(1, dim(idx)[2], 3)])
+                    second  = c(idx[,seq(2, dim(idx)[2], 3)])
+                    #cols = tmpres$cohort[which(is.na(pmatch(tmpres$data,y))==F & is.na(pmatch(tmpres$age,x))==F)]
+                    yr      = names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
+                    colidx  = tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
                     panel.barchart(x[first], y[first], horizontal = FALSE, origin = 0, box.width = 1, col = cols[colidx])
                     panel.points(x[second], y[second], col = 1, pch = 19, cex = 0.25)
                   }, ...)
     
-    lengthFitsCatch[[iFleet]] <- pic
+    lengthFitsCatch[[iFleet]] = pic
   }
   
   return(lengthFitsCatch)
 }
 
-.fit_predictedObservedCatchesByFleetFUN <- function(Nfleets, cols, jjm.out, ...)
+.fit_predictedObservedCatchesByFleetFUN = function(Nfleets, cols, jjm.out, ...)
 {
   for(iFleet in 1:Nfleets){
-    res <- data.frame(year = jjm.out$Yr,obs = jjm.out[[paste("Obs_catch_", iFleet,sep="")]],
+    res = data.frame(year = jjm.out$Yr,obs = jjm.out[[paste("Obs_catch_", iFleet,sep="")]],
                       model = jjm.out[[paste("Pred_catch_", iFleet, sep = "")]],
                       fleet = jjm.out$Fshry_names[iFleet])
     
-    if(iFleet == 1) tot <- rbind(cbind(res$year, res$obs, .ac(res$fleet), rep("obs", nrow(res))),
+    if(iFleet == 1) tot = rbind(cbind(res$year, res$obs, .ac(res$fleet), rep("obs", nrow(res))),
                                  cbind(res$year, res$model, .ac(res$fleet), rep("model", nrow(res))))
-    if(iFleet != 1) tot <- rbind(tot, rbind(cbind(res$year, res$obs, .ac(res$fleet), rep("obs",nrow(res))),
+    if(iFleet != 1) tot = rbind(tot, rbind(cbind(res$year, res$obs, .ac(res$fleet), rep("obs",nrow(res))),
                                             cbind(res$year, res$model, .ac(res$fleet), rep("model", nrow(res)))))
   }
-  colnames(tot) <- c("year", "data", "fleet", "classing")
-  res <- data.frame(tot, stringsAsFactors = FALSE)
-  res$year <- .an(.ac(res$year))
-  res$data <- .an(.ac(res$data))
+  colnames(tot) = c("year", "data", "fleet", "classing")
+  res = data.frame(tot, stringsAsFactors = FALSE)
+  res$year = .an(.ac(res$year))
+  res$data = .an(.ac(res$data))
   
-  ikey                  <- simpleKey(text = c("Observed","Predicted"),
+  ikey                  = simpleKey(text = c("Observed","Predicted"),
                                      points = FALSE, lines = TRUE, rect = TRUE, columns = 2)
-  ikey$rectangles$alpha <- c(1,0)
-  ikey$rectangles$col   <- "grey"
-  ikey$rectangles$lty   <- c(1,0)
-  ikey$lines$lty        <- c(0,1)
-  ikey$lines$col        <- 1
-  ikey$lines$lwd        <- 3
+  ikey$rectangles$alpha = c(1,0)
+  ikey$rectangles$col   = "grey"
+  ikey$rectangles$lty   = c(1,0)
+  ikey$lines$lty        = c(0,1)
+  ikey$lines$col        = 1
+  ikey$lines$lwd        = 3
   
-  pic <- xyplot(data ~ year | as.factor(fleet), data = res,
+  pic = xyplot(data ~ year | as.factor(fleet), data = res,
                 groups = as.factor(classing),
                 key = ikey,
                 panel = function(x, y){
@@ -1185,61 +1187,61 @@
   return(pic)
 }
 
-.fit_predictedObservedIndicesFUN <- function(Nsurveys, jjm.out, ...)
+.fit_predictedObservedIndicesFUN = function(Nsurveys, jjm.out, ...)
 {
   for(iSurvey in 1:Nsurveys){
     if(any(jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey,sep="")]][,1] == TRUE)){
-      addToDF <- jjm.out$Yr[which(!jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1])]
-      addToDF <- as.data.frame(rbind(cbind(addToDF, NA, "model"), 
+      addToDF = jjm.out$Yr[which(!jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1])]
+      addToDF = as.data.frame(rbind(cbind(addToDF, NA, "model"), 
                                      cbind(addToDF, NA, "obs"),
                                      cbind(addToDF, NA, "sd"),
                                      cbind(addToDF, NA, "stdres"),
                                      cbind(addToDF, NA, "lstdres")))
-      colnames(addToDF) <- c("year", "data", "class")
-      addToDF$year <- .an(.ac(addToDF$year))
-      addToDF$data <- .an(.ac(addToDF$data))
-      addToDF$class <- .ac(addToDF$class)
+      colnames(addToDF) = c("year", "data", "class")
+      addToDF$year = .an(.ac(addToDF$year))
+      addToDF$data = .an(.ac(addToDF$data))
+      addToDF$class = .ac(addToDF$class)
     }
     
-    res <- .createDataFrame(jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,-1],
+    res = .createDataFrame(jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,-1],
                             jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1],
                             c("obs", "model", "sd", "stdres", "lstdres"))
-    res$class <- .ac(res$class)
-    res$data  <- res$data/max(subset(res, class %in% c("model", "obs", "sd"))$data, na.rm = TRUE)
-    resSort   <- rbind(res, addToDF)
-    resSort   <- orderBy(~year + class, data = resSort)
+    res$class = .ac(res$class)
+    res$data  = res$data/max(subset(res, class %in% c("model", "obs", "sd"))$data, na.rm = TRUE)
+    resSort   = rbind(res, addToDF)
+    resSort   = orderBy(~year + class, data = resSort)
     
     if(iSurvey == 1)
-      tot   <- cbind(resSort, rep(jjm.out$Index_names[iSurvey, 1], nrow(resSort)))
+      tot   = cbind(resSort, rep(jjm.out$Index_names[iSurvey, 1], nrow(resSort)))
     
     if(iSurvey != 1){
-      res2  <- cbind(resSort, rep(jjm.out$Index_names[iSurvey, 1], nrow(resSort)))
-      tot   <- rbind(tot, res2)
+      res2  = cbind(resSort, rep(jjm.out$Index_names[iSurvey, 1], nrow(resSort)))
+      tot   = rbind(tot, res2)
     }
   }
   
-  colnames(tot)               <- c("year", "data", "classing", "surveys")
-  tot                         <- tot[duplicated(paste(tot$year, tot$classing, tot$surveys)) == FALSE,]
-  tot$data[which(tot$data<0)] <- NA
-  res                         <- tot
+  colnames(tot)               = c("year", "data", "classing", "surveys")
+  tot                         = tot[duplicated(paste(tot$year, tot$classing, tot$surveys)) == FALSE,]
+  tot$data[which(tot$data<0)] = NA
+  res                         = tot
   
-  ikey            <- simpleKey(text = c("Observed", "Predicted"), points = TRUE, lines = TRUE, columns = 2)
+  ikey            = simpleKey(text = c("Observed", "Predicted"), points = TRUE, lines = TRUE, columns = 2)
   
-  ikey$lines$lty  <- c(0, 1)
-  ikey$lines$lwd  <- c(0, 2)
-  ikey$lines$col  <- c(0, 1)
-  ikey$points$pch <- c(19, -1)
-  ikey$points$col <- c("grey", "white")
-  ikey$points$cex <- 0.9
+  ikey$lines$lty  = c(0, 1)
+  ikey$lines$lwd  = c(0, 2)
+  ikey$lines$col  = c(0, 1)
+  ikey$points$pch = c(19, -1)
+  ikey$points$col = c("grey", "white")
+  ikey$points$cex = 0.9
   
-  pic <- xyplot(data ~ year|as.factor(surveys), data = subset(res, classing %in% c("obs", "model", "sd")),
+  pic = xyplot(data ~ year|as.factor(surveys), data = subset(res, classing %in% c("obs", "model", "sd")),
                 groups = classing,
                 key = ikey,
                 panel = function(...){
-                  tmp     <- list(...)
-                  first   <- which(tmp$groups[1:length(tmp$x)] == "model")
-                  second  <- which(tmp$groups[1:length(tmp$x)] == "obs")
-                  third   <- which(tmp$groups[1:length(tmp$x)] == "sd")
+                  tmp     = list(...)
+                  first   = which(tmp$groups[1:length(tmp$x)] == "model")
+                  second  = which(tmp$groups[1:length(tmp$x)] == "obs")
+                  third   = which(tmp$groups[1:length(tmp$x)] == "sd")
                   panel.grid(h = -1, v = -1)
                   panel.xyplot(tmp$x[first], tmp$y[first], type = "l", col = "black", lwd = 3)
                   panel.points(tmp$x[second], tmp$y[second], col = "grey", pch = 19, cex = 0.6)
@@ -1251,124 +1253,124 @@
   return(pic)
 }
 
-.fit_ageFitsSurveyFUN <- function(ageSurveys, jjm.out, ages, ageFleets, ...)
+.fit_ageFitsSurveyFUN = function(ageSurveys, jjm.out, ages, ageFleets, ...)
 {
   for(iSurvey in .an(ageSurveys)){
-    obs <- .createDataFrame(jjm.out[[paste("pobs_ind_", iSurvey, sep = "")]][,-1],
+    obs = .createDataFrame(jjm.out[[paste("pobs_ind_", iSurvey, sep = "")]][,-1],
                             jjm.out[[paste("pobs_ind_", iSurvey, sep = "")]][,1], ages)
-    mod <- .createDataFrame(jjm.out[[paste("phat_ind_", iSurvey, sep = "")]][,-1], 
+    mod = .createDataFrame(jjm.out[[paste("phat_ind_", iSurvey, sep = "")]][,-1], 
                             jjm.out[[paste("phat_ind_", iSurvey, sep = "")]][,1], ages)
     
     if(iSurvey == .an(ageSurveys)[1]){
-      x <- cbind(obs, rep("obs", nrow(obs)), jjm.out$Index_names[iSurvey])
-      colnames(x) <- c("year", "data", "age", "class", "survey")
+      x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Index_names[iSurvey])
+      colnames(x) = c("year", "data", "age", "class", "survey")
       
-      y <- cbind(mod, rep("model", nrow(mod)), jjm.out$Index_names[iSurvey])
-      colnames(y) <- c("year", "data", "age", "class", "survey")
+      y = cbind(mod, rep("model", nrow(mod)), jjm.out$Index_names[iSurvey])
+      colnames(y) = c("year", "data", "age", "class", "survey")
       
-      tot <- rbind(x, y)
+      tot = rbind(x, y)
     }
     
     if(iSurvey != .an(ageSurveys)[1]){
-      x <- cbind(obs, rep("obs", nrow(obs)), jjm.out$Index_names[iSurvey])
-      colnames(x) <- c("year", "data", "age", "class", "survey")
+      x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Index_names[iSurvey])
+      colnames(x) = c("year", "data", "age", "class", "survey")
       
-      y <- cbind(mod, rep("model", nrow(mod)), jjm.out$Index_names[iSurvey])
-      colnames(y) <- c("year", "data", "age", "class", "survey")
+      y = cbind(mod, rep("model", nrow(mod)), jjm.out$Index_names[iSurvey])
+      colnames(y) = c("year", "data", "age", "class", "survey")
       
-      res <- rbind(x, y)
-      tot <- rbind(tot, res)
+      res = rbind(x, y)
+      tot = rbind(tot, res)
     }
   }
-  res <- tot
-  res$cohort <- (res$year - res$age) %% length(ages) + 1
+  res = tot
+  res$cohort = (res$year - res$age) %% length(ages) + 1
   
-  ikey                  <- simpleKey(text = c("Observed","Predicted"),
+  ikey                  = simpleKey(text = c("Observed","Predicted"),
                                      points = TRUE, lines = FALSE, rect = TRUE, columns = 2)
-  ikey$rectangles$alpha <- c(1, 0)
-  ikey$rectangles$col   <- "white"
-  ikey$rectangles$lty   <- c(1, 0)
-  ikey$points$pch       <- c(-1, 19)
-  ikey$points$col       <- c("white", "black")
-  ikey$points$cex       <- c(0, 1.1)
+  ikey$rectangles$alpha = c(1, 0)
+  ikey$rectangles$col   = "white"
+  ikey$rectangles$lty   = c(1, 0)
+  ikey$points$pch       = c(-1, 19)
+  ikey$points$col       = c("white", "black")
+  ikey$points$cex       = c(0, 1.1)
   
-  cols  <- rainbow(length(ages))
-  ageFitsSurvey <- list()
+  cols  = rainbow(length(ages))
+  ageFitsSurvey = list()
   for(iSurvey in c(jjm.out$Index_names)[.an(ageFleets)]){
-    tmpres <- subset(res, survey == iSurvey)
-    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] <- 0
+    tmpres = subset(res, survey == iSurvey)
+    tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] = 0
     
     if(nrow(tmpres) > 0)
-      pic <- xyplot(data ~ age | factor(year), data = tmpres,
+      pic = xyplot(data ~ age | factor(year), data = tmpres,
                     groups = class,
                     main = paste("Age fits", iSurvey),
                     key = ikey,
                     as.table = TRUE,
                     panel = function(x, y){
-                      idx     <- mapply(seq, from = seq(1, length(y), length(ages)),
+                      idx     = mapply(seq, from = seq(1, length(y), length(ages)),
                                         to = seq(from = 1, to = length(y), by = length(ages)) + (length(ages) - 1))
-                      first   <- c(idx[,seq(from = 1, to = dim(idx)[2], by = 3)])
-                      second  <- c(idx[,seq(from = 2, to = dim(idx)[2], by = 3)])
-                      yr      <- names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
-                      colidx  <- tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
+                      first   = c(idx[,seq(from = 1, to = dim(idx)[2], by = 3)])
+                      second  = c(idx[,seq(from = 2, to = dim(idx)[2], by = 3)])
+                      yr      = names(which.max(table(tmpres$year[which(tmpres$data %in% y)])))
+                      colidx  = tmpres$cohort[which(tmpres$data %in% y & tmpres$year == .an(yr))]
                       panel.barchart(x[first], y[first], horizontal = FALSE, origin = 0, box.width = 1, col = cols[colidx])
                       panel.points(x[second], y[second], pch = 19, col = 1, cex = 0.5)
                     }, ...) else NULL
     
-    ageFitsSurvey[[iSurvey]] <- pic
+    ageFitsSurvey[[iSurvey]] = pic
   }
   
   return(ageFitsSurvey)
 }
 
-.fit_standardizedSurveyResidualsFUN <- function(Nsurveys, jjm.out, cols, ...)
+.fit_standardizedSurveyResidualsFUN = function(Nsurveys, jjm.out, cols, ...)
 {
   for(iSurvey in 1:Nsurveys){
     if(any(jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1] == FALSE)){
-      addToDF <- jjm.out$Yr[which(!jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1])]
-      addToDF <- data.frame(year = addToDF, obs = NA, model = NA, sd = NA, stdres = NA, lstdres = NA)
-      colnames(addToDF) <- c("year", "obs", "model", "sd", "stdres", "lstdres")
-      addToDF$year <- .an(.ac(addToDF$year))
+      addToDF = jjm.out$Yr[which(!jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1])]
+      addToDF = data.frame(year = addToDF, obs = NA, model = NA, sd = NA, stdres = NA, lstdres = NA)
+      colnames(addToDF) = c("year", "obs", "model", "sd", "stdres", "lstdres")
+      addToDF$year = .an(.ac(addToDF$year))
     }
     
-    res <- .createDataFrame(jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,-1],
+    res = .createDataFrame(jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,-1],
                             jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1],
                             c("obs", "model", "sd", "stdres", "lstdres"))
-    res <- cbind(subset(res, class == "obs")[,1:2], 
+    res = cbind(subset(res, class == "obs")[,1:2], 
                  subset(res, class == "model")$data,
                  subset(res, class == "sd")$data,
                  subset(res, class == "stdres")$data,
                  subset(res, class == "lstdres")$data)
-    colnames(res) <- c("year", "obs", "model", "sd", "stdres", "lstdres")
-    res <- rbind(res, addToDF)
-    res <- orderBy(~year, data = res)
+    colnames(res) = c("year", "obs", "model", "sd", "stdres", "lstdres")
+    res = rbind(res, addToDF)
+    res = orderBy(~year, data = res)
     
     if(iSurvey == 1) 
-      tot <- cbind(res, rep(jjm.out$Index_names[iSurvey, 1], nrow(res)))
+      tot = cbind(res, rep(jjm.out$Index_names[iSurvey, 1], nrow(res)))
     
     if(iSurvey != 1){
-      res2  <- cbind(res, rep(jjm.out$Index_names[iSurvey, 1], nrow(res)))
-      tot   <- rbind(tot, res2)
+      res2  = cbind(res, rep(jjm.out$Index_names[iSurvey, 1], nrow(res)))
+      tot   = rbind(tot, res2)
     }
   }
   
-  colnames(tot)           <- c("year", "obs", "model", "sd", "stdres", "lstdres", "survey")
-  tot                     <- tot[duplicated(paste(tot$year, tot$survey) == FALSE),]
-  tot$obs[tot$obs < 0]    <- NA
-  tot$obs[tot$model < 0]  <- NA
-  tot$obs[tot$sd < 0]     <- NA
-  res                     <- tot
-  scalar                  <- 3/max(abs(res$lstdres), na.rm = TRUE)
-  resRange                <- range(res$lstdres, na.rm = TRUE)
-  ikey                    <- simpleKey(text = .ac(round(seq(resRange[1], resRange[2], length.out = 6), 2)),
+  colnames(tot)           = c("year", "obs", "model", "sd", "stdres", "lstdres", "survey")
+  tot                     = tot[duplicated(paste(tot$year, tot$survey) == FALSE),]
+  tot$obs[tot$obs < 0]    = NA
+  tot$obs[tot$model < 0]  = NA
+  tot$obs[tot$sd < 0]     = NA
+  res                     = tot
+  scalar                  = 3/max(abs(res$lstdres), na.rm = TRUE)
+  resRange                = range(res$lstdres, na.rm = TRUE)
+  ikey                    = simpleKey(text = .ac(round(seq(resRange[1], resRange[2], length.out = 6), 2)),
                                        points = TRUE, lines = FALSE, columns = 2)
-  ikey$points$cex         <- abs(round(seq(resRange[1], resRange[2], length.out = 6), 2))*scalar
-  ikey$points$col         <- 1
-  ikey$points$pch         <- ifelse(test = round(seq(resRange[1], resRange[2], length.out = 6), 2) > 0,
+  ikey$points$cex         = abs(round(seq(resRange[1], resRange[2], length.out = 6), 2))*scalar
+  ikey$points$col         = 1
+  ikey$points$pch         = ifelse(test = round(seq(resRange[1], resRange[2], length.out = 6), 2) > 0,
                                     yes = 19, no = 1)
   
   
-  pic <- xyplot(lstdres*scalar ~ year | as.factor(survey), data = res,
+  pic = xyplot(lstdres*scalar ~ year | as.factor(survey), data = res,
                 prepanel = function(...) {list(ylim = c(1, 1))},
                 layout = c(1, Nsurveys),
                 type = "p", col = cols, 
@@ -1382,36 +1384,36 @@
   return(pic)
 }
 
-.fit_sdPerInputSeriesFUN <- function(jjm.out, ...)
+.fit_sdPerInputSeriesFUN = function(jjm.out, ...)
 {
   for(iSDnr in names(jjm.out)[grep("sdnr", names(jjm.out))]){
-    dat <- jjm.out[[iSDnr]]
+    dat = jjm.out[[iSDnr]]
     if(length(grep("age", iSDnr)) > 0 & length(grep("fsh", iSDnr)) > 0)
-      iName <- paste("SD_age_", jjm.out$Fshry_names[.an(substr(iSDnr, nchar(iSDnr), nchar(iSDnr)))], sep = "")
+      iName = paste("SD_age_", jjm.out$Fshry_names[.an(substr(iSDnr, nchar(iSDnr), nchar(iSDnr)))], sep = "")
     
     if(length(grep("length", iSDnr)) > 0 & length(grep("fsh", iSDnr)) > 0)
-      iName <- paste("SD_length_", jjm.out$Fshry_names[.an(substr(iSDnr, nchar(iSDnr), nchar(iSDnr)))], sep = "")
+      iName = paste("SD_length_", jjm.out$Fshry_names[.an(substr(iSDnr, nchar(iSDnr), nchar(iSDnr)))], sep = "")
     
     if(length(grep("age", iSDnr)) > 0 & length(grep("ind", iSDnr)) > 0)
-      iName <- paste("SD_age_", jjm.out$Index_names[.an(substr(iSDnr, nchar(iSDnr), nchar(iSDnr)))], sep = "")
+      iName = paste("SD_age_", jjm.out$Index_names[.an(substr(iSDnr, nchar(iSDnr), nchar(iSDnr)))], sep = "")
     
     if(length(grep("length",iSDnr)) > 0 & length(grep("ind", iSDnr)) > 0) 
-      iName <- paste("SD_length_", jjm.out$Index_names[.an(substr(iSDnr, nchar(iSDnr), nchar(iSDnr)))], sep = "")
+      iName = paste("SD_length_", jjm.out$Index_names[.an(substr(iSDnr, nchar(iSDnr), nchar(iSDnr)))], sep = "")
     
     if(iSDnr == names(jjm.out)[grep("sdnr", names(jjm.out))][1]){
-      totdat <- cbind(dat, iName)
+      totdat = cbind(dat, iName)
     }else {
-      totdat <- rbind(totdat, cbind(dat, iName))
+      totdat = rbind(totdat, cbind(dat, iName))
     }
   }
   
-  totdat            <- as.data.frame(totdat)
-  colnames(totdat)  <- c("year", "data", "class")
-  totdat$year       <- .an(.ac(totdat$year))
-  totdat$data       <- .an(.ac(totdat$data))
-  res <- totdat
+  totdat            = as.data.frame(totdat)
+  colnames(totdat)  = c("year", "data", "class")
+  totdat$year       = .an(.ac(totdat$year))
+  totdat$data       = .an(.ac(totdat$data))
+  res = totdat
   
-  pic <- xyplot(data ~ year | class, data = res, type = "h",
+  pic = xyplot(data ~ year | class, data = res, type = "h",
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
                   panel.abline(h = 1, col = "blue", lty = 3)
@@ -1421,63 +1423,63 @@
   return(pic)
 }
 
-.fit_selectivityFisheryByPentadFUN <- function(Nfleets, jjm.out, ages, ...)
+.fit_selectivityFisheryByPentadFUN = function(Nfleets, jjm.out, ages, ...)
 {
   for(iFleet in 1:Nfleets){
-    res <- .createDataFrame(jjm.out[[paste("sel_fsh_", iFleet, sep = "")]][,-c(1,2)], jjm.out$Yr, ages)
-    res <- cbind(res, jjm.out$Fshry_names[iFleet])
+    res = .createDataFrame(jjm.out[[paste("sel_fsh_", iFleet, sep = "")]][,-c(1,2)], jjm.out$Yr, ages)
+    res = cbind(res, jjm.out$Fshry_names[iFleet])
     
-    if(iFleet == 1) tot <- res
-    if(iFleet != 1) tot <- rbind(tot, res)
+    if(iFleet == 1) tot = res
+    if(iFleet != 1) tot = rbind(tot, res)
   }
-  colnames(tot) <- c("year", "data", "age", "fleet"); res <- tot
+  colnames(tot) = c("year", "data", "age", "fleet"); res = tot
   
-  res$cohort <- res$year - res$age
-  pic <- xyplot(data ~ age|sprintf("%i's", floor((year + 2)/5)*5) * fleet, data = res,
+  res$cohort = res$year - res$age
+  pic = xyplot(data ~ age|sprintf("%i's", floor((year + 2)/5)*5) * fleet, data = res,
                 groups = year, type = "l", as.table = TRUE, ...)
   
   return(pic)
 }
 
-.fit_selectivitySurveyByPentadFUN <- function(Nsurveys, jjm.out, ages, ...)
+.fit_selectivitySurveyByPentadFUN = function(Nsurveys, jjm.out, ages, ...)
 {
   for(iSurvey in 1:Nsurveys){
-    res <- .createDataFrame(jjm.out[[paste("sel_ind_", iSurvey, sep = "")]][,-c(1,2)], jjm.out$Yr, ages)
-    res <- cbind(res, jjm.out$Index_names[iSurvey])
+    res = .createDataFrame(jjm.out[[paste("sel_ind_", iSurvey, sep = "")]][,-c(1,2)], jjm.out$Yr, ages)
+    res = cbind(res, jjm.out$Index_names[iSurvey])
     
-    if(iSurvey == 1) tot <- res
-    if(iSurvey != 1) tot <- rbind(tot, res)
+    if(iSurvey == 1) tot = res
+    if(iSurvey != 1) tot = rbind(tot, res)
   }
-  colnames(tot) <- c("year", "data", "age", "survey"); res <- tot
+  colnames(tot) = c("year", "data", "age", "survey"); res = tot
   
-  res$cohort <- res$year - res$age
-  pic <- xyplot(data ~ age|sprintf("%i's",floor((year+2)/5)*5) * survey, data = res,
+  res$cohort = res$year - res$age
+  pic = xyplot(data ~ age|sprintf("%i's",floor((year+2)/5)*5) * survey, data = res,
                 groups = year, type = "l", as.table = TRUE, ...)
   
   return(pic)
 }
 
-.fit_fAtAGeFUN <- function(jjm.out, ages, cols, ...)
+.fit_fAtAGeFUN = function(jjm.out, ages, cols, ...)
 {
-  res <- jjm.out$TotF
-  dimnames(res) <- list(Years = jjm.out$Yr, Age = ages)
+  res = jjm.out$TotF
+  dimnames(res) = list(Years = jjm.out$Yr, Age = ages)
   
-  pic <- levelplot(t(res), col.regions = cols, cuts = 10, ...)
+  pic = levelplot(t(res), col.regions = cols, cuts = 10, ...)
   
   return(pic)
 }
 
-.fit_fProportionAtAGeFUN <- function(jjm.out, ages, cols, ...)
+.fit_fProportionAtAGeFUN = function(jjm.out, ages, cols, ...)
 {
-  res <- .createDataFrame(t(apply(sweep(jjm.out$TotF, 1, rowSums(jjm.out$TotF), "/"), 1, cumsum)),
+  res = .createDataFrame(t(apply(sweep(jjm.out$TotF, 1, rowSums(jjm.out$TotF), "/"), 1, cumsum)),
                           jjm.out$N[,1], class = ages)
   
-  pic <- xyplot(data ~ year, data = res, groups = class,
+  pic = xyplot(data ~ year, data = res, groups = class,
                 type = "l",
                 auto.key = list(space = "right", points = FALSE, lines = FALSE, col = cols, cex = 1.2),
                 panel = function(...){
-                  lst <- list(...)
-                  idx <- mapply(seq, from = seq(1, length(lst$y), length(lst$y)/length(ages)),
+                  lst = list(...)
+                  idx = mapply(seq, from = seq(1, length(lst$y), length(lst$y)/length(ages)),
                                 to = seq(1, length(lst$y),
                                          length(lst$y)/length(ages)) + (length(lst$y)/length(ages) - 1))
                   panel.grid(h = -1, v = -1)
@@ -1492,25 +1494,25 @@
   return(pic)
 }
 
-.fit_nAtAGeFUN <- function(jjm.out, cols, ...)
+.fit_nAtAGeFUN = function(jjm.out, cols, ...)
 {
-  res <- .createDataFrame(jjm.out$N[,-1], jjm.out$N[,1], rep("Ns", prod(dim(jjm.out$N[,-1]))))
-  pic <- levelplot(t(jjm.out$N[,-1]), col.regions = cols, cuts = 10, ...)
+  res = .createDataFrame(jjm.out$N[,-1], jjm.out$N[,1], rep("Ns", prod(dim(jjm.out$N[,-1]))))
+  pic = levelplot(t(jjm.out$N[,-1]), col.regions = cols, cuts = 10, ...)
   
   return(pic)
 }
 
-.fit_nProportionAtAGeFUN <- function(jjm.out, cols, ages, ...)
+.fit_nProportionAtAGeFUN = function(jjm.out, cols, ages, ...)
 {
-  res <- .createDataFrame(t(apply(sweep(jjm.out$N[,-1], 1, rowSums(jjm.out$N[,-1]), "/"), 1, cumsum)),
+  res = .createDataFrame(t(apply(sweep(jjm.out$N[,-1], 1, rowSums(jjm.out$N[,-1]), "/"), 1, cumsum)),
                           jjm.out$N[,1], class = ages)
   
-  pic <- xyplot(data ~ year, data = res, groups = class,
+  pic = xyplot(data ~ year, data = res, groups = class,
                 type = "l", 
                 auto.key = list(space = "right", points = FALSE, lines = FALSE, col = cols, cex = 1.2),
                 panel = function(...){
-                  lst <- list(...)
-                  idx <- mapply(seq, from = seq(1, length(lst$y), length(lst$y)/length(ages)),
+                  lst = list(...)
+                  idx = mapply(seq, from = seq(1, length(lst$y), length(lst$y)/length(ages)),
                                 to = seq(1, length(lst$y), length(lst$y)/length(ages)) + (length(lst$y)/length(ages) - 1))
                   panel.grid(h = -1, v = -1)
                   panel.xyplot(..., col = "white")
@@ -1524,41 +1526,41 @@
   return(pic)
 }
 
-.fit_fisheryMeanAgeFUN <- function(jjm.out, ageFleets, ...)
+.fit_fisheryMeanAgeFUN = function(jjm.out, ageFleets, ...)
 {
   for(iFleet in .an(ageFleets)){
-    res <- data.frame(jjm.out[[paste("EffN_Fsh_", iFleet, sep = "")]][,c(1, 4, 5, 7, 8)])
-    colnames(res) <- c("Year", "Obs", "Model", "Obs5", "Obs95")
+    res = data.frame(jjm.out[[paste("EffN_Fsh_", iFleet, sep = "")]][,c(1, 4, 5, 7, 8)])
+    colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
     
     for(i in 2:5){
-      tot <- data.frame(cbind(res[,1], res[,i]))
-      tot$class <- names(res)[i]
-      tot$Fleet <- jjm.out$Fshry_names[iFleet]
-      if(iFleet == .an(ageFleets)[1] & i == 2) total <- tot
-      if(iFleet != .an(ageFleets)[1] | i != 2) total <- rbind(total, tot)
+      tot = data.frame(cbind(res[,1], res[,i]))
+      tot$class = names(res)[i]
+      tot$Fleet = jjm.out$Fshry_names[iFleet]
+      if(iFleet == .an(ageFleets)[1] & i == 2) total = tot
+      if(iFleet != .an(ageFleets)[1] | i != 2) total = rbind(total, tot)
     }
   }
-  colnames(total) <- c("year", "data", "class", "fleet")
+  colnames(total) = c("year", "data", "class", "fleet")
   
-  ikey            <- simpleKey(text = c("Observed", "Modelled"),
+  ikey            = simpleKey(text = c("Observed", "Modelled"),
                                points = TRUE, lines = TRUE, columns = 2)
-  ikey$lines$col  <- c("white","black")
-  ikey$lines$lwd  <- c(0, 2)
-  ikey$lines$lty  <- c(0, 1)
-  ikey$lines$pch  <- c(0, 0)
-  ikey$points$pch <- c(16, 0)
-  ikey$points$col <- c("grey", "white")
+  ikey$lines$col  = c("white","black")
+  ikey$lines$lwd  = c(0, 2)
+  ikey$lines$lty  = c(0, 1)
+  ikey$lines$pch  = c(0, 0)
+  ikey$points$pch = c(16, 0)
+  ikey$points$col = c("grey", "white")
   
-  pic <- xyplot(data ~ year | fleet, data = total,
+  pic = xyplot(data ~ year | fleet, data = total,
                 type = "l", key = ikey,
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
-                  idx <- mapply(seq(length(x)/4, length(x), length.out = 4) - length(x)/4 + 1,
+                  idx = mapply(seq(length(x)/4, length(x), length.out = 4) - length(x)/4 + 1,
                                 seq(length(x)/4, length(x), length.out = 4), FUN = seq)
-                  obs   <- idx[,1]
-                  mod   <- idx[,2]
-                  obs5  <- idx[,3]
-                  obs95 <- idx[,4]
+                  obs   = idx[,1]
+                  mod   = idx[,2]
+                  obs5  = idx[,3]
+                  obs95 = idx[,4]
                   
                   panel.xyplot(x[obs], y[obs], type = "p", col = "grey", pch = 19, cex = 0.6)
                   panel.segments(x[obs], y[obs5], x[obs], y[obs95])
@@ -1568,42 +1570,42 @@
   return(pic)
 }
 
-.fit_fisheryMeanLengthFUN <- function(lgtFleets, jjm.out, ...)
+.fit_fisheryMeanLengthFUN = function(lgtFleets, jjm.out, ...)
 {
   for(iFleet in .an(lgtFleets)){
-    res <- data.frame(jjm.out[[paste("EffN_Length_Fsh_", iFleet, sep = "")]][,c(1, 4, 5, 7, 8)])
-    colnames(res) <- c("Year", "Obs", "Model", "Obs5", "Obs95")
+    res = data.frame(jjm.out[[paste("EffN_Length_Fsh_", iFleet, sep = "")]][,c(1, 4, 5, 7, 8)])
+    colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
     
     for(i in 2:5){
-      tot <- data.frame(cbind(res[,1], res[,i]))
-      tot$class <- names(res)[i]
-      tot$Fleet <- jjm.out$Fshry_names[iFleet]
+      tot = data.frame(cbind(res[,1], res[,i]))
+      tot$class = names(res)[i]
+      tot$Fleet = jjm.out$Fshry_names[iFleet]
       
-      if(iFleet == .an(lgtFleets)[1] & i == 2) total <- tot
-      if(iFleet != .an(lgtFleets)[1] | i != 2) total <- rbind(total, tot)
+      if(iFleet == .an(lgtFleets)[1] & i == 2) total = tot
+      if(iFleet != .an(lgtFleets)[1] | i != 2) total = rbind(total, tot)
     }
   }
-  colnames(total) <- c("year", "data", "class", "fleet")
+  colnames(total) = c("year", "data", "class", "fleet")
   
-  ikey           <- simpleKey(text = c("Observed", "Modelled"),
+  ikey           = simpleKey(text = c("Observed", "Modelled"),
                               points = TRUE, lines = TRUE, columns = 2)
-  ikey$lines$col <- c("white", "black")
-  ikey$lines$lwd <- c(0, 2)
-  ikey$lines$lty <- c(0, 1)
-  ikey$lines$pch <- c(0, 0)
-  ikey$points$pch<- c(16, 0)
-  ikey$points$col<- c("grey", "white")
+  ikey$lines$col = c("white", "black")
+  ikey$lines$lwd = c(0, 2)
+  ikey$lines$lty = c(0, 1)
+  ikey$lines$pch = c(0, 0)
+  ikey$points$pch= c(16, 0)
+  ikey$points$col= c("grey", "white")
   
-  pic <- xyplot(data ~ year | fleet, data = total,
+  pic = xyplot(data ~ year | fleet, data = total,
                 type = "l", key = ikey,
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
-                  idx <- mapply(seq(length(x)/4, length(x), length.out = 4) - length(x)/4 + 1,
+                  idx = mapply(seq(length(x)/4, length(x), length.out = 4) - length(x)/4 + 1,
                                 seq(length(x)/4, length(x), length.out = 4), FUN = seq)
-                  obs   <- idx[,1]
-                  mod   <- idx[,2]
-                  obs5  <- idx[,3]
-                  obs95 <- idx[,4]
+                  obs   = idx[,1]
+                  mod   = idx[,2]
+                  obs5  = idx[,3]
+                  obs95 = idx[,4]
                   panel.xyplot(x[obs], y[obs], type = "p", col = "grey", pch = 19, cex = 0.6)
                   panel.segments(x[obs], y[obs5], x[obs], y[obs95])
                   panel.xyplot(x[obs], y[mod], type = "l", lwd = 2, col = "black")
@@ -1612,43 +1614,43 @@
   return(pic)
 }
 
-.fit_surveyMeanAgeFUN <- function(Nsurveys, jjm.out, ...)
+.fit_surveyMeanAgeFUN = function(Nsurveys, jjm.out, ...)
 {
   for(iSurvey in 1:Nsurveys){
-    res <- data.frame(jjm.out[[paste("EffN_Survey_", iSurvey, sep = "")]][,c(1, 4, 5, 7, 8)])
+    res = data.frame(jjm.out[[paste("EffN_Survey_", iSurvey, sep = "")]][,c(1, 4, 5, 7, 8)])
     if(nrow(res) > 1){
-      colnames(res) <- c("Year", "Obs", "Model", "Obs5", "Obs95")
+      colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
       
       for(i in 2:5){
-        tot <- data.frame(cbind(res[,1], res[,i]))
-        tot$class <- names(res)[i]
-        tot$Survey <- jjm.out$Index_names[iSurvey]
-        if(iSurvey == 1 & i == 2) total <- tot
-        if(iSurvey != 1 | i != 2) total <- rbind(total, tot)
+        tot = data.frame(cbind(res[,1], res[,i]))
+        tot$class = names(res)[i]
+        tot$Survey = jjm.out$Index_names[iSurvey]
+        if(iSurvey == 1 & i == 2) total = tot
+        if(iSurvey != 1 | i != 2) total = rbind(total, tot)
       }
     }
   }
-  colnames(total) <- c("year", "data", "class", "survey")
+  colnames(total) = c("year", "data", "class", "survey")
   
-  ikey           <- simpleKey(text = c("Observed", "Modelled"),
+  ikey           = simpleKey(text = c("Observed", "Modelled"),
                               points = TRUE, lines = TRUE, columns = 2)
-  ikey$lines$col <- c("white", "black")
-  ikey$lines$lwd <- c(0, 2)
-  ikey$lines$lty <- c(0, 1)
-  ikey$lines$pch <- c(0, 0)
-  ikey$points$pch<- c(16, 0)
-  ikey$points$col<- c("grey", "white")
+  ikey$lines$col = c("white", "black")
+  ikey$lines$lwd = c(0, 2)
+  ikey$lines$lty = c(0, 1)
+  ikey$lines$pch = c(0, 0)
+  ikey$points$pch= c(16, 0)
+  ikey$points$col= c("grey", "white")
   
-  pic <- xyplot(data ~ year | survey, data = total,
+  pic = xyplot(data ~ year | survey, data = total,
                 type = "l", key = ikey,
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
-                  idx <- mapply(seq(length(x)/4, length(x), length.out = 4) - length(x)/4 + 1,
+                  idx = mapply(seq(length(x)/4, length(x), length.out = 4) - length(x)/4 + 1,
                                 seq(length(x)/4, length(x), length.out = 4),FUN = seq)
-                  obs   <- idx[,1]
-                  mod   <- idx[,2]
-                  obs5  <- idx[,3]
-                  obs95 <- idx[,4]
+                  obs   = idx[,1]
+                  mod   = idx[,2]
+                  obs5  = idx[,3]
+                  obs95 = idx[,4]
                   
                   panel.xyplot(x[obs], y[obs], type = "p", col = "grey", pch = 19, cex = 0.6)
                   panel.segments(x[obs], y[obs5], x[obs], y[obs95])
@@ -1659,12 +1661,12 @@
 }
 
 
-.fit_summarySheetFUN <- function(jjm.out, ...)
+.fit_summarySheetFUN = function(jjm.out, ...)
 {
-  TotCatch <- 0
+  TotCatch = 0
   for(iFlt in grep("Obs_catch_", names(jjm.out)))
-    TotCatch    <- jjm.out[[iFlt]] + TotCatch
-  summaryData <- rbind(cbind(jjm.out$Yr, jjm.out$R[,-1], "Recruitment"),
+    TotCatch    = jjm.out[[iFlt]] + TotCatch
+  summaryData = rbind(cbind(jjm.out$Yr, jjm.out$R[,-1], "Recruitment"),
                        cbind(jjm.out$Yr, TotCatch, TotCatch, TotCatch, TotCatch, "Landings"),
                        cbind(jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), 1],
                              jjm.out$SSB[which(jjm.out$SSB[,1] %in% jjm.out$Yr), -1], "SSB"),
@@ -1672,27 +1674,27 @@
                                                rowMeans(jjm.out$TotF[,-1]), rowMeans(jjm.out$TotF[,-1])),
                              "Fishing mortality"))
   
-  summaryData <- rbind(cbind(summaryData[,c(1:2, 6)], "point"),
+  summaryData = rbind(cbind(summaryData[,c(1:2, 6)], "point"),
                        cbind(summaryData[,c(1, 4, 6)], "lower"),
                        cbind(summaryData[,c(1, 5, 6)], "upper"))
   
-  colnames(summaryData) <- c("year", "data", "class", "estim")
-  summaryData <- data.frame(summaryData, stringsAsFactors = FALSE)
-  summaryData$year <- as.integer(summaryData$year)
-  summaryData$data <- as.numeric(summaryData$data)
+  colnames(summaryData) = c("year", "data", "class", "estim")
+  summaryData = data.frame(summaryData, stringsAsFactors = FALSE)
+  summaryData$year = as.integer(summaryData$year)
+  summaryData$data = as.numeric(summaryData$data)
   
-  summaryData$class <- factor(summaryData$class, levels = unique(summaryData$class))
+  summaryData$class = factor(summaryData$class, levels = unique(summaryData$class))
   
-  alpha.f <- 0.5
+  alpha.f = 0.5
   
-  pic <- xyplot(data ~ year | class, data = summaryData, groups = class,
+  pic = xyplot(data ~ year | class, data = summaryData, groups = class,
                 prepanel = function(...) {list(ylim = range(pretty(c(0, 1.1*list(...)$y))))},
                 layout = c(2, 2),
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
-                  point <- 1:length(jjm.out$Yr)
-                  lower <- (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
-                  upper <- (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
+                  point = 1:length(jjm.out$Yr)
+                  lower = (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
+                  upper = (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
                   
                   # LANDINGS
                   if(panel.number() == 2){
@@ -1727,13 +1729,13 @@
 }
 
 
-.fit_summarySheet2FUN <- function(jjm.out, ...)
+.fit_summarySheet2FUN = function(jjm.out, ...)
 {
-  TotCatch <- 0
+  TotCatch = 0
   for(iFlt in grep("Obs_catch_", names(jjm.out)))
-    TotCatch    <- jjm.out[[iFlt]] + TotCatch
+    TotCatch    = jjm.out[[iFlt]] + TotCatch
   
-  summaryData <- rbind(cbind(jjm.out$Yr, jjm.out$TotBiom[,-1], "Total biomass"),
+  summaryData = rbind(cbind(jjm.out$Yr, jjm.out$TotBiom[,-1], "Total biomass"),
                        cbind(jjm.out$Yr, cbind(rowMeans(jjm.out$TotF[,-1]), 
                                                rowMeans(jjm.out$TotF[,-1]), 
                                                rowMeans(jjm.out$TotF[,-1]), 
@@ -1741,28 +1743,28 @@
                        cbind(jjm.out$Yr, jjm.out$R[,-1], "Recruitment"),
                        cbind(jjm.out$Yr, jjm.out$TotBiom_NoFish[,-1], "Unfished biomass"))
   
-  summaryData <- rbind(cbind(summaryData[,c(1:2, 6)], "point"), 
+  summaryData = rbind(cbind(summaryData[,c(1:2, 6)], "point"), 
                        cbind(summaryData[,c(1, 4, 6)], "lower"),
                        cbind(summaryData[,c(1, 5, 6)], "upper"))
   
-  colnames(summaryData) <- c("year", "data", "class", "estim")
-  summaryData <- data.frame(summaryData, stringsAsFactors = FALSE)
-  summaryData$class <- factor(summaryData$class, ordered = FALSE,
+  colnames(summaryData) = c("year", "data", "class", "estim")
+  summaryData = data.frame(summaryData, stringsAsFactors = FALSE)
+  summaryData$class = factor(summaryData$class, ordered = FALSE,
                               levels = c("Unfished biomass", "Recruitment", "Fishing mortality", "Total biomass"))
-  summaryData$year <- as.integer(summaryData$year)
-  summaryData$data <- as.numeric(summaryData$data)
+  summaryData$year = as.integer(summaryData$year)
+  summaryData$data = as.numeric(summaryData$data)
   
-  alpha.f <- 0.45
+  alpha.f = 0.45
   
-  pic <- xyplot(data ~ year | class, data = summaryData,
+  pic = xyplot(data ~ year | class, data = summaryData,
                 groups = class,
                 prepanel = function(...) {list(ylim = range(pretty(c(0, 1.1*list(...)$y))))},
                 layout = c(1, 4),
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
-                  point <- 1:length(jjm.out$Yr)
-                  lower <- (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
-                  upper <- (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
+                  point = 1:length(jjm.out$Yr)
+                  lower = (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
+                  upper = (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
                   
                   # Unfished biomass
                   if(panel.number() == 1){
@@ -1794,43 +1796,43 @@
   return(pic)
 }
 
-.fit_uncertaintyKeyParamsFUN <- function(jjm.out, ...)
+.fit_uncertaintyKeyParamsFUN = function(jjm.out, ...)
 {
-  res <- rbind(data.frame(CV = jjm.out$SSB[,3]/jjm.out$SSB[,2], years = jjm.out$SSB[,1], class = "SSB"),
+  res = rbind(data.frame(CV = jjm.out$SSB[,3]/jjm.out$SSB[,2], years = jjm.out$SSB[,1], class = "SSB"),
                data.frame(CV = jjm.out$TotBiom[,3]/jjm.out$TotBiom[,2], years = jjm.out$TotBiom[,1], class = "TSB"),
                data.frame(CV = jjm.out$R[,3]/jjm.out$R[,2], years = jjm.out$R[,1], class = "R"))
   
-  pic <- xyplot(CV ~ years, data = res, groups = class,
+  pic = xyplot(CV ~ years, data = res, groups = class,
                 
                 type = "l", ...)
   
   return(pic)
 }
 
-.fit_matureInmatureFishesFUN <- function(jjm.out, ...)
+.fit_matureInmatureFishesFUN = function(jjm.out, ...)
 {
-  N   <- jjm.out$N[,-1]
-  Mat <- jjm.out$mature_a
-  Wt  <- jjm.out$wt_a_pop
+  N   = jjm.out$N[,-1]
+  Mat = jjm.out$mature_a
+  Wt  = jjm.out$wt_a_pop
   
-  MatureBiom <- rowSums(sweep(N, 2, Mat*Wt, "*"))
-  ImmatureBiom <- rowSums(sweep(N, 2, (1 - Mat)*Wt, "*"))
+  MatureBiom = rowSums(sweep(N, 2, Mat*Wt, "*"))
+  ImmatureBiom = rowSums(sweep(N, 2, (1 - Mat)*Wt, "*"))
   
-  res <- data.frame(rbind(cbind(jjm.out$Yr, MatureBiom, "Mature"),
+  res = data.frame(rbind(cbind(jjm.out$Yr, MatureBiom, "Mature"),
                           cbind(jjm.out$Yr, ImmatureBiom, "Immature")), stringsAsFactors = FALSE)
-  colnames(res) <- c("year", "data", "classing")
-  res$data <- as.numeric(res$data)
-  res$year <- as.integer(res$year)
-  res$classing <- as.factor(res$classing)
+  colnames(res) = c("year", "data", "classing")
+  res$data = as.numeric(res$data)
+  res$year = as.integer(res$year)
+  res$classing = as.factor(res$classing)
   
-  ikey           <- simpleKey(text = c("Mature", "Immature"),
+  ikey           = simpleKey(text = c("Mature", "Immature"),
                               points = FALSE, lines = TRUE, columns = 2)
-  ikey$lines$col <- 1
-  ikey$lines$lwd <- 3
-  ikey$lines$lty <- c(3, 1)
-  ikey$points$col <- "white"
+  ikey$lines$col = 1
+  ikey$lines$lwd = 3
+  ikey$lines$lty = c(3, 1)
+  ikey$points$col = "white"
   
-  pic <- xyplot(data ~ year, data = res, groups = classing,
+  pic = xyplot(data ~ year, data = res, groups = classing,
                 type = "l", key = ikey,
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
@@ -1840,34 +1842,34 @@
   return(pic)
 }
 
-.fit_stockRecruitmentFUN <- function(jjm.out, cols, ...)
+.fit_stockRecruitmentFUN = function(jjm.out, cols, ...)
 {
-  res1 <- data.frame(jjm.out[["Stock_Rec"]][,c(2, 4)])
-  res1 <- res1[1:(nrow(res1) - 1),]
-  res1$class <- "observed"
+  res1 = data.frame(jjm.out[["Stock_Rec"]][,c(2, 4)])
+  res1 = res1[1:(nrow(res1) - 1),]
+  res1$class = "observed"
   
-  res2 <- data.frame(jjm.out[["stock_Rec_Curve"]])
-  res2 <- res2[1:(nrow(res2) - 1),]
-  res2$class <- "modelled"
+  res2 = data.frame(jjm.out[["stock_Rec_Curve"]])
+  res2 = res2[1:(nrow(res2) - 1),]
+  res2$class = "modelled"
   
-  res  <- rbind(res1, res2)
-  colnames(res) <- c("SSB", "Rec", "class")
+  res  = rbind(res1, res2)
+  colnames(res) = c("SSB", "Rec", "class")
   
-  ikey           <- simpleKey(text = c("Observed", "Modelled"),
+  ikey           = simpleKey(text = c("Observed", "Modelled"),
                               points = TRUE, lines = TRUE, columns = 2)
-  ikey$lines$col <- c(1, rev(cols)[1])
-  ikey$lines$lwd <- c(2, 3)
-  ikey$lines$lty <- c(3, 2)
+  ikey$lines$col = c(1, rev(cols)[1])
+  ikey$lines$lwd = c(2, 3)
+  ikey$lines$lty = c(3, 2)
   
-  ikey$points$pch <- c(19, 0)
-  ikey$points$col <- c("darkgrey", "white")
+  ikey$points$pch = c(19, 0)
+  ikey$points$col = c("darkgrey", "white")
   
-  pic <- xyplot(Rec ~ SSB, data = res, groups = class,
+  pic = xyplot(Rec ~ SSB, data = res, groups = class,
                 key = ikey,
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
-                  idxobs <- which(res$SSB %in% x & res$class == "observed")
-                  idxmod <- which(res$SSB %in% x & res$class == "modelled")
+                  idxobs = which(res$SSB %in% x & res$class == "observed")
+                  idxmod = which(res$SSB %in% x & res$class == "modelled")
                   panel.xyplot(x[idxobs], y[idxobs], type = "l", lwd = 3, col = 1, lty = 3)
                   panel.points(x[idxobs], y[idxobs], type = "p", cex = 0.6, pch = 19, col = "darkgrey")
                   panel.xyplot(x[idxmod], y[idxmod], type = "l", lwd = 5, col = rev(cols)[1], lty = 2)
@@ -1876,23 +1878,23 @@
   return(pic)
 }
 
-.fit_fishedUnfishedBiomassFUN <- function(jjm.out, ...)
+.fit_fishedUnfishedBiomassFUN = function(jjm.out, ...)
 {
-  BnoFish <- jjm.out$TotBiom_NoFish[,2]
-  BFish   <- jjm.out$TotBiom[,2]
-  res     <- as.data.frame(rbind(cbind(jjm.out$TotBiom[,1], BnoFish, "notfished"),
+  BnoFish = jjm.out$TotBiom_NoFish[,2]
+  BFish   = jjm.out$TotBiom[,2]
+  res     = as.data.frame(rbind(cbind(jjm.out$TotBiom[,1], BnoFish, "notfished"),
                                  cbind(jjm.out$TotBiom[,1], BFish, "fished")), stringsAsFactors = FALSE)
-  colnames(res) <- c("year", "data", "class")
-  res$data      <- .an(res$data)
-  res$year      <- .an(res$year)
+  colnames(res) = c("year", "data", "class")
+  res$data      = .an(res$data)
+  res$year      = .an(res$year)
   
-  ikey           <- simpleKey(text = c("Fished", "Unfished"),
+  ikey           = simpleKey(text = c("Fished", "Unfished"),
                               points = FALSE, lines = TRUE, columns = 2)
-  ikey$lines$col <- c(1, 1)
-  ikey$lines$lwd <- c(2, 2)
-  ikey$lines$lty <- c(1, 3)
+  ikey$lines$col = c(1, 1)
+  ikey$lines$lwd = c(2, 2)
+  ikey$lines$lty = c(1, 3)
   
-  pic <- xyplot(data ~ year, data = res, groups = class,
+  pic = xyplot(data ~ year, data = res, groups = class,
                 key = ikey, type = "l",
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
@@ -1902,60 +1904,60 @@
   return(pic)
 }
 
-.projections_ssbPredictionFUN <- function(jjm.out, ...)
+.projections_ssbPredictionFUN = function(jjm.out, ...)
 {
-  Nfutscen  <- length(grep("SSB_fut_", names(jjm.out)))
-  scenarios <- c("F2012 SQ", "F2012 0.75x", "F2012 0.5x", "F2012 0.25x", "F2012 0x")[1:Nfutscen]
+  Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
+  scenarios = c("F2012 SQ", "F2012 0.75x", "F2012 0.5x", "F2012 0.25x", "F2012 0x")[1:Nfutscen]
   
   for(iScen in 1:length(scenarios)){
-    idx <- nrow(get("jjm.out")[["SSB"]][,c(1, 2, 4, 5)])
-    tot <- rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2, 4, 5)],
+    idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2, 4, 5)])
+    tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2, 4, 5)],
                  get("jjm.out")[[paste("SSB_fut_", iScen, sep = "")]][,c(1, 2, 4, 5)])
-    colnames(tot) <- c("year", "SSB", "SSB5", "SSB95")
+    colnames(tot) = c("year", "SSB", "SSB5", "SSB95")
     
     for(i in 2:4){
       if(iScen == 1 & i == 2){
-        totres <- data.frame(cbind(tot[,1], tot[,2]))
-        totres$class <- colnames(tot)[i]
-        totres$scenario <- scenarios[iScen]
+        totres = data.frame(cbind(tot[,1], tot[,2]))
+        totres$class = colnames(tot)[i]
+        totres$scenario = scenarios[iScen]
       }
       if(iScen != 1 | i != 2){
-        res <- data.frame(cbind(tot[,1], tot[,i]))
-        res$class <- colnames(tot)[i]
-        res$scenario <- scenarios[iScen]
-        totres <- rbind(totres, res)
+        res = data.frame(cbind(tot[,1], tot[,i]))
+        res$class = colnames(tot)[i]
+        res$scenario = scenarios[iScen]
+        totres = rbind(totres, res)
       }
     }
   }
-  colnames(totres) <- c("year", "data", "class", "scenario")
+  colnames(totres) = c("year", "data", "class", "scenario")
   
-  ikey           <- simpleKey(text = scenarios, points = FALSE, lines = TRUE, columns = 2)
-  ikey$lines$col <- 1:length(scenarios)
-  ikey$lines$lwd <- 4
-  ikey$lines$lty <- 1
+  ikey           = simpleKey(text = scenarios, points = FALSE, lines = TRUE, columns = 2)
+  ikey$lines$col = 1:length(scenarios)
+  ikey$lines$lwd = 4
+  ikey$lines$lty = 1
   
-  pic <- xyplot(data ~ year, data = totres, type = "l", groups = scenario,
+  pic = xyplot(data ~ year, data = totres, type = "l", groups = scenario,
                 xlim = c(2000, max(totres$year)),
 #                 key = ikey,
                 prepanel = function(...) {list(ylim = c(0, max(totres$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
-                  idx <- mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
+                  idx = mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
                                 seq(length(x)/Nfutscen, length(x), length.out = Nfutscen), FUN = seq)
-                  idx2 <- mapply(seq(length(idx[,1])/3, length(idx[,1]), length.out = 3) - length(idx[,1])/3 + 1,
+                  idx2 = mapply(seq(length(idx[,1])/3, length(idx[,1]), length.out = 3) - length(idx[,1])/3 + 1,
                                  seq(length(idx[,1])/3, length(idx[,1]), length.out = 3), FUN = seq)
                   
                   for(iScen in 2:Nfutscen){
                     panel.xyplot(x[idx[,iScen][idx2[,1]]], y[idx[,iScen][idx2[,1]]], type = "l", col = iScen, lwd = 3)
-                    iCol  <- col2rgb(iScen)
-                    iCol  <- rgb(iCol[1]/255, iCol[2]/255, iCol[3]/255, 0.25)
+                    iCol  = col2rgb(iScen)
+                    iCol  = rgb(iCol[1]/255, iCol[2]/255, iCol[3]/255, 0.25)
                     panel.polygon(c(x[idx[,iScen][idx2[,2]]], rev(x[idx[,iScen][idx2[,3]]])),
                                   c(y[idx[,iScen][idx2[,2]]], rev(y[idx[,iScen][idx2[,3]]])), col = iCol, border = iCol)
                     panel.lines(x[idx[,iScen][idx2[,1]]], y[idx[,iScen][idx2[,1]]], col = iScen, lwd = 3)
                   }
                   panel.xyplot(x[idx[,1][idx2[,1]]], y[idx[,1][idx2[,1]]], type = "l", col = 1, lwd = 4)
-                  iCol  <- col2rgb(1)
-                  iCol  <- rgb(iCol[1]/255, iCol[2]/255, iCol[3]/255, 0.15)
+                  iCol  = col2rgb(1)
+                  iCol  = rgb(iCol[1]/255, iCol[2]/255, iCol[3]/255, 0.15)
                   panel.polygon(c(x[idx[,1][idx2[,2]]], rev(x[idx[,1][idx2[,3]]])),
                                 c(y[idx[,1][idx2[,2]]], rev(y[idx[,1][idx2[,3]]])), col = iCol, border = iCol)
                   panel.lines(x[idx[,1][idx2[,1]]], y[idx[,1][idx2[,1]]], col = 1, lwd = 4)
@@ -1964,46 +1966,46 @@
   return(pic)
 }
 
-.projections_catchPredictionFUN <- function(jjm.out, ...)
+.projections_catchPredictionFUN = function(jjm.out, ...)
 {
-  Nfutscen  <- length(grep("SSB_fut_", names(jjm.out)))
-  scenarios <- c("F2012 SQ", "F2012 0.75x", "F2012 0.5x", "F2012 0.25x", "F2012 0x")[1:Nfutscen]
+  Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
+  scenarios = c("F2012 SQ", "F2012 0.75x", "F2012 0.5x", "F2012 0.25x", "F2012 0x")[1:Nfutscen]
   
-  totCatch  <- 0
+  totCatch  = 0
   for(iFlt in grep("Obs_catch_", names(jjm.out)))
-    totCatch <- jjm.out[[iFlt]] + totCatch
+    totCatch = jjm.out[[iFlt]] + totCatch
   
-  totCatch  <- cbind(jjm.out$Yr, totCatch)
-  colnames(totCatch) <- c("year", "catch")
+  totCatch  = cbind(jjm.out$Yr, totCatch)
+  colnames(totCatch) = c("year", "catch")
   
   for(iScen in 1:length(scenarios)){
-    tot <- rbind(totCatch, jjm.out[[paste("Catch_fut_", iScen, sep = "")]])
-    colnames(tot) <- c("year", "catch")
+    tot = rbind(totCatch, jjm.out[[paste("Catch_fut_", iScen, sep = "")]])
+    colnames(tot) = c("year", "catch")
     if(iScen == 1){
-      totres <- data.frame(tot)
-      totres$scenario <- scenarios[iScen]
+      totres = data.frame(tot)
+      totres$scenario = scenarios[iScen]
     }else {
-      res <- data.frame(tot)
-      res$scenario <- scenarios[iScen]
-      totres  <- rbind(totres, res)
+      res = data.frame(tot)
+      res$scenario = scenarios[iScen]
+      totres  = rbind(totres, res)
     }
   }
   
-  colnames(totres) <- c("year", "data", "scenario")
+  colnames(totres) = c("year", "data", "scenario")
   
-  ikey           <- simpleKey(text=scenarios, points = FALSE, lines = TRUE, columns = 2)
-  ikey$lines$col <- 1:length(scenarios)
-  ikey$lines$lwd <- 4
-  ikey$lines$lty <- 1
+  ikey           = simpleKey(text=scenarios, points = FALSE, lines = TRUE, columns = 2)
+  ikey$lines$col = 1:length(scenarios)
+  ikey$lines$lwd = 4
+  ikey$lines$lty = 1
   
-  pic <- xyplot(data ~ year, data = totres, type = "l", groups = scenario,
+  pic = xyplot(data ~ year, data = totres, type = "l", groups = scenario,
                 key = ikey,
                 prepanel = function(...) {list(ylim = c(0, max(totres$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
-                  idx <- mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
+                  idx = mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
                                 seq(length(x)/Nfutscen, length(x), length.out = Nfutscen), FUN = seq)
-                  #scen1 <- idx[,1]; scen2 <- idx[,2]; scen3 <- idx[,3]; scen4 <- idx[,4]; scen5 <- idx[,5]
+                  #scen1 = idx[,1]; scen2 = idx[,2]; scen3 = idx[,3]; scen4 = idx[,4]; scen5 = idx[,5]
                   for(iScen in 2:Nfutscen) panel.xyplot(x[idx[,iScen]], y[idx[,iScen]], type = "l", col = iScen, lwd = 3)
                   panel.xyplot(x[idx[,1]], y[idx[,1]], type = "l", col = 1, lwd = 4)                  
                 }, ...)
@@ -2011,30 +2013,88 @@
   return(pic)
 }
 
-.ypr_yieldSsbPerRecruitFUN <- function(jjm.out, ...)
+.ypr_yieldSsbPerRecruitFUN = function(jjm.out, ...)
 {
   jjm.ypr = jjm.out$YPR
 
   if(is.null(jjm.ypr)) return(invisible(NULL))
-  res <- rbind(data.frame(cbind(jjm.ypr$F, jjm.ypr$SSB), class = "SSB"),
+  res = rbind(data.frame(cbind(jjm.ypr$F, jjm.ypr$SSB), class = "SSB"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$Yld), class = "Yield"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$Recruit), class = "Recruit"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$SPR), class = "SPR"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$B), class = "Biomass"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$Yld/jjm.ypr$Recruit), class = "YPR"),
                data.frame(cbind(jjm.ypr$F, jjm.ypr$SSB/jjm.ypr$Recruit), class = "SpawPR"))
-  colnames(res) <- c("F", "data", "class")
-  res           <- subset(res, class %in% c("YPR", "SpawPR"))
+  colnames(res) = c("F", "data", "class")
+  res           = subset(res, class %in% c("YPR", "SpawPR"))
   
-  pic <- xyplot(data ~ F | class, data = res, type = "l",
+  pic = xyplot(data ~ F | class, data = res, type = "l",
                 prepanel = function(...) {list(ylim = range(pretty(c(0, list(...)$y))))},
                 layout = c(1, 2),
                 panel = function(...){
-                  lst <- list(...)
+                  lst = list(...)
                   panel.grid(h = -1, v = -1)
                   if(panel.number() == 1) panel.xyplot(lst$x, lst$y, type = "l", lwd = 3, lty = 1, col = 1)
                   if(panel.number() == 2) panel.xyplot(lst$x, lst$y, type = "l", lwd = 3, lty = 1, col = 1)
                 }, ...)
   
   return(pic)
+}
+
+
+.kobe2 = function(jjm.out, Bref, Fref, ...) {
+
+  kob = jjm.out$msy_mt
+  
+  Blim = Bref
+  Flim = Fref
+  
+  col = "black"
+  
+  F_Fmsy = kob[,4]
+  B_Bmsy = kob[,13]
+  years  = kob[,1]
+  
+  n = length(B_Bmsy)
+      
+    xlim= range(pretty(c(0, B_Bmsy)))
+    ylim= range(pretty(c(0, F_Fmsy)))
+
+	plot.new()
+    plot.window(xlim=xlim, ylim=ylim, 
+			    xaxs="i", yaxs="i")
+    par(xpd = TRUE)
+    
+    ylim = par()$usr[3:4]
+    zero = ylim[1]
+    
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 165/255, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Bref, Bref),
+            y=c(zero, Fref, Fref, zero),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(Fref, ylim[2], ylim[2], Fref),
+            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
+            y=c(zero, Fref, Fref, zero),
+            col = rgb(0, 1, 0, alpha = 0.5), border=NA)
+    polygon(x=c(0, 0, Blim, Blim),
+            y=c(Flim, ylim[2], ylim[2], Flim),
+            col=rgb(1, 0, 0, alpha = 0.5), border=NA)
+ 
+    mtext(toExpress("F/F[msy]"), 2, line=2.5)
+    mtext(toExpress("B/B[msy]"), 1, line=2.5)
+    axis(1, las=1)
+    axis(2, las=2)
+    box()
+
+  text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels=range(years), cex=0.6,
+       adj=-0.2, col=col)
+  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
+  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
+  
+  return(pic)
+ 
 }

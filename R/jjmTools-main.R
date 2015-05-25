@@ -1,3 +1,4 @@
+
 # jjmTools package Rd file ------------------------------------------------
 #' @title Graphics and diagnostics tools for SPRFMO's Joint Jack Mackerel model.
 #' @name jjmTools-package
@@ -216,6 +217,3 @@ kobe = function(obj, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Fl
 	return(invisible())
   
  }
-
-
-
