@@ -1229,12 +1229,12 @@ if(Projections){
   cat("\n\tCopying output files...")
   
   # copy outputs to 'output' folder
-  file.copy(from="jjm.par",   to=.to(".par",   output, model))
-  file.copy(from="jjm.rep",   to=.to(".rep",   output, model))
-  file.copy(from="jjm.std",   to=.to(".std",   output, model))
-  file.copy(from="jjm.cor",   to=.to(".cor",   output, model))
-  file.copy(from="fprof.yld", to=.to(".yld",   output, model))
-  file.copy(from="for_r.rep", to=.to("_R.rep", output, model))
+  file.copy(from="jjm.par",   to=.to(".par",   output, model), overwrite = TRUE)
+  file.copy(from="jjm.rep",   to=.to(".rep",   output, model), overwrite = TRUE)
+  file.copy(from="jjm.std",   to=.to(".std",   output, model), overwrite = TRUE)
+  file.copy(from="jjm.cor",   to=.to(".cor",   output, model), overwrite = TRUE)
+  file.copy(from="fprof.yld", to=.to(".yld",   output, model), overwrite = TRUE)
+  file.copy(from="for_r.rep", to=.to("_R.rep", output, model), overwrite = TRUE)
   
   cat("\n\n")
   return(as.numeric(elapsed[3]))
