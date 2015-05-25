@@ -119,7 +119,7 @@
 }
 
 # .diagnostic function -----------------------------------------------------
-.diagnostics = function(jjm.info, jjm.out, jjm.in, Bref, Fref){
+.diagnostics = function(jjm.info, jjm.out, jjm.in, Bref = 1, Fref = 1){
   
   # Get model name
   model = jjm.info$model
@@ -465,8 +465,9 @@
                                                             xlab = "Fishing mortality", ylab = "Spawing biomass / Yield per recruit",
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
   
-  outPlots$kobePlot = .kobe2(jjm.out, Bref, Fref)
-  
+
+  outPlots$kobePlot <- .kobeFUN(jjm.out, Bref = 1, Fref = 1)
+
   # Join all plots
   plotTree = list(model = model, data = names(inputPlots), output = names(outPlots))
             #       projections = names(projectionsPlots), ypr = names(yprPlots))
@@ -2042,7 +2043,7 @@
 }
 
 
-.kobe2 = function(jjm.out, Bref, Fref, ...) {
+.kobeFUN = function(jjm.out, Bref = 1, Fref = 1) {
 
   kob = jjm.out$msy_mt
   
@@ -2060,41 +2061,28 @@
     xlim= range(pretty(c(0, B_Bmsy)))
     ylim= range(pretty(c(0, F_Fmsy)))
 
-	plot.new()
-    plot.window(xlim=xlim, ylim=ylim, 
-			    xaxs="i", yaxs="i")
-    par(xpd = TRUE)
-    
-    ylim = par()$usr[3:4]
-    zero = ylim[1]
-    
-    polygon(x=c(0, 0, Bref, Bref),
-            y=c(Fref, ylim[2], ylim[2], Fref),
-            col=rgb(1, 165/255, 0, alpha = 0.5), border=NA)
-    polygon(x=c(0, 0, Bref, Bref),
-            y=c(zero, Fref, Fref, zero),
-            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
-    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
-            y=c(Fref, ylim[2], ylim[2], Fref),
-            col=rgb(1, 1, 0, alpha = 0.5), border=NA)
-    polygon(x=c(Bref, Bref, xlim[2], xlim[2]),
-            y=c(zero, Fref, Fref, zero),
-            col = rgb(0, 1, 0, alpha = 0.5), border=NA)
-    polygon(x=c(0, 0, Blim, Blim),
-            y=c(Flim, ylim[2], ylim[2], Flim),
-            col=rgb(1, 0, 0, alpha = 0.5), border=NA)
- 
-    mtext(toExpress("F/F[msy]"), 2, line=2.5)
-    mtext(toExpress("B/B[msy]"), 1, line=2.5)
-    axis(1, las=1)
-    axis(2, las=2)
-    box()
+  x <- seq(0, max(xlim), by = 0.1)
+  y <- seq(0, max(ylim), by = 0.1)
 
-  text(B_Bmsy[c(1,n)] + 0.01, F_Fmsy[c(1,n)] + 0.1, labels=range(years), cex=0.6,
-       adj=-0.2, col=col)
-  lines(B_Bmsy, F_Fmsy, type="b", pch=19, cex=0.5, col=col)
-  points(B_Bmsy[c(1,n)], F_Fmsy[c(1,n)], pch=c(15, 17), col=col, cex=0.8)
-  
+  y = y[1:length(x)]
+
+  mypanel<-function(x,y,...){
+  panel.xyplot(x, y, ...)
+  panel.text(B_Bmsy[c(1,n)] + 0.05, F_Fmsy[c(1,n)] + 0.2, labels = range(years), cex = 0.8)
+  }
+
+  b <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = col, pch = c(15, 17), panel = mypanel, cex = 0.8)
+  c <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = col, pch = 19, cex = 0.5)
+
+  pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+				main="Kobe plot") + 
+		layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
+		layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
+		layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
+		layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
+		as.layer(b)+
+		as.layer(c)
+
   return(pic)
  
 }
