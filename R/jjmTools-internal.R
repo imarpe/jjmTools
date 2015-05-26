@@ -289,6 +289,12 @@ if(Projections){
 			Outs[[i]] = lstOuts[[i]]$output
 		}
 		
+		for(i in seq_along(lstOuts)){
+			xa = strsplit(Name[i], split = "_")
+			xb = paste0(xa[[i]][2:length(xa[[i]])], collapse = "") 
+			Name[i] = paste(xa[[i]][1], xb, sep = "_")
+		}
+
 		Fs = Fmult
 		Bp = BiomProj
 		Cp = CapProj
