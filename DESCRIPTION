@@ -13,11 +13,11 @@ Authors@R: c( person("Ricardo", "Oliveros-Ramos", email =
     Romero", role = "ctb"), person("Enrique", "Ramos-Vasquez", role = "ctb"))
 License: GPL-2
 Depends:
-    lattice,
     PBSadmb,
     RColorBrewer,
     doBy,
     doSNOW,
-    foreach
+    foreach,
+	latticeExtra
 LazyData: TRUE
 Encoding:  utf-8
