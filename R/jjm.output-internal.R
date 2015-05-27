@@ -4,7 +4,8 @@
                biomass     = "TotBiom",
                Ftot        = "Ftot",
                recruitment = "R",
-               ssb         = "SSB")
+               ssb         = "SSB",
+			   unBiom      = "TotBiom_NoFish")
   
   out = NULL
   
