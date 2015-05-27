@@ -1908,14 +1908,14 @@
                  countm = grep("Regime", unique(res$class))
                  idxmod = NULL
                  for(i in seq_along(idxobs)){
-                   if(i == 1) {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 2, pch = 19, col = "darkgrey")}
-                   else {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 2, pch = 19, col = rev(cols)[i-1])}
+                   if(i == 1) {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 1.5, pch = 19, col = "darkgrey")}
+                   else {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 1.5, pch = 19, col = rev(cols)[i-1])}
                  }
                  
                  for(i in seq_along(countm)){
                    namesid = paste("Regime", i, sep = "")
                    idxmod = which(res$SSB %in% x & res$class == namesid)
-                   panel.xyplot(x[idxmod], y[idxmod], type = "l", lwd = 5, col = rev(cols)[i], lty = 1)                
+                   panel.xyplot(x[idxmod], y[idxmod], type = "l", lwd = 4, col = rev(cols)[i], lty = 1)                
                  }
                },
                

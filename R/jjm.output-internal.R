@@ -5,7 +5,8 @@
                Ftot        = "Ftot",
                recruitment = "R",
                ssb         = "SSB",
-			   unBiom      = "TotBiom_NoFish")
+               noFishTB    = "TotBiom_NoFish"
+			   )
   
   out = NULL
   
