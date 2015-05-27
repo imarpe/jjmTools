@@ -1922,7 +1922,7 @@
                auto.key = list(title = "", 
                                text = labelLeg,
                                x = 0.85, y = 1, cex = 1.75,
-                               points = TRUE, border = FALSE, 
+                               points = FALSE, border = FALSE, 
                                lines = FALSE, col = labelCol), ...)
   
   return(pic)
