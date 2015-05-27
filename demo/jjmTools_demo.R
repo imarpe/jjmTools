@@ -2,7 +2,7 @@
 # Demo script ------------------------------------------------------------
 # jjmTools: Graphics and diagnostics libraries for SPRFMO's JJM mo -------
 # ------------------------------------------------------------------------
-
+require(latticeExtra)
 library(devtools)
 #install_github(repo="imarpe/jjmTools")
 library(jjmTools)
@@ -11,10 +11,10 @@ library(jjmTools)
 
 # Path of JJM repository (from current working directory)
 
-reposDir =  "D:/JMSR/JJM/SPRFMO/admb/"
+reposDir =  "D:/JMSR/JJM_OROP/Orop2015/"
 
 # Name of a model
-model = "mod0.0"
+model = "mod1.0n"
 
 # Names of models
 compareList = paste0("mod0.", 1:2)
