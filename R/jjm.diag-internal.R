@@ -466,7 +466,9 @@
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
   
 
-  outPlots$kobePlot <- .kobeFUN(jjm.out, Bref = 1, Fref = 1)
+  outPlots$kobePlot = .kobeFUN(jjm.out, Bref = 1, Fref = 1)
+  
+  outPlots$recDev = .recDevFUN(jjm.out, cols, breaks = 10)
 
   # Join all plots
   plotTree = list(model = model, data = names(inputPlots), output = names(outPlots))
@@ -2093,6 +2095,7 @@
 }
 
 
+
 .kobeFUN = function(jjm.out, Bref = 1, Fref = 1) {
 
   kob = jjm.out$msy_mt
@@ -2135,4 +2138,80 @@
 
   return(pic)
  
+}
+
+.recDevFUN = function(jjm.out, cols, breaks = 10, ...)
+{
+  
+  county = grep("SR_Curve_years_", names(jjm.out))
+  colyear = NULL
+  for(i in seq_along(county)){
+    namesy = paste("SR_Curve_years_", i, sep = "")
+    colyear[[i]] = jjm.out[[namesy]]
+  }
+  
+  seqYears = NULL
+  for(i in seq_along(colyear)){
+    seqYears[[i]] = seq(from = colyear[[i]][1], to = colyear[[i]][2], by = 1)
+  }
+  
+  res = data.frame(jjm.out[["rec_dev"]])
+  colnames(res) = c("year", "value")
+  
+  res$color = numeric(nrow(res))
+  for(i in seq_along(seqYears)){
+    res$color[which(res$year %in% seqYears[[i]])] = i
+  }
+  
+  res$class = character(nrow(res))
+  res$class[which(res$color==0)] = "Simulated"
+  for(i in unique(res$color[which(res$color!=0)])){
+    res$class[res$color == i] = paste("Regime", i, sep="")
+  }
+  
+  labelLeg = NULL
+  for(i in seq_along(colyear)){
+    labelLeg[1] = "Simulated"
+    labelLeg[i+1] = paste(colyear[[i]][1], " - ", colyear[[i]][2], sep = "")
+  }
+  
+  colBar = NULL
+  colBar[1] = "darkgrey"
+  colBar[seq_along(seqYears) + 1] = rev(cols)[seq_along(seqYears)]
+  colBar = colBar[order(unique(res$class))]
+  
+  labelCol = NULL
+  labelCol[1] = "darkgrey"
+  labelCol[seq_along(seqYears) + 1] = rev(cols)[seq_along(seqYears)]
+  
+  meandev = NULL
+  for(i in seq_along(county)){
+    meandev[i] = round(mean(res$value[res$col == i]),4)
+  }
+  
+  sddev = NULL
+  for(i in seq_along(county)){
+    sddev[i] = round(sd(res$value[res$col == i]),4)
+  }
+  
+  Bar = barchart(value ~ as.character(year), data = res, groups = class, horizontal = FALSE,
+                 origin = 0, col = colBar,  box.width = 1.25, ylab = "Deviation",
+                 par.settings = list(superpose.polygon = list(col = labelCol)),
+                 auto.key = list(title = "", 
+                                 text = labelLeg,
+                                 x = 0.9, y = 1, cex = 1.5,
+                                 points = FALSE, border = FALSE, 
+                                 lines = FALSE), ...)
+  
+  Hist = histogram(~value|class, data = res[res$class!="Simulated", ], groups = class,
+                   xlab = "Deviation", breaks = breaks,
+                   panel=function(x, col=colBar,...){
+                     panel.histogram(x,col=colBar[packet.number()],...)
+                   })
+  
+  
+  out = list(Bar = Bar, Hist = Hist, 
+             mean = meandev, sd = sddev)
+  
+  return(out)
 }
