@@ -2197,6 +2197,7 @@
   Bar = barchart(value ~ as.character(year), data = res, groups = class, horizontal = FALSE,
                  origin = 0, col = colBar,  box.width = 1.25, ylab = "Deviation",
                  par.settings = list(superpose.polygon = list(col = labelCol)),
+                 scales = (x = list(rot = 90)),
                  auto.key = list(title = "", 
                                  text = labelLeg,
                                  x = 0.85, y = 1, cex = 1.5,
