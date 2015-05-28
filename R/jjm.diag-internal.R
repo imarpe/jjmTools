@@ -2199,7 +2199,7 @@
                  par.settings = list(superpose.polygon = list(col = labelCol)),
                  auto.key = list(title = "", 
                                  text = labelLeg,
-                                 x = 0.9, y = 1, cex = 1.5,
+                                 x = 0.85, y = 1, cex = 1.5,
                                  points = FALSE, border = FALSE, 
                                  lines = FALSE), ...)
   
