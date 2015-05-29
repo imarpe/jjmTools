@@ -139,15 +139,21 @@ print.summary.jjm.output = function(x, ...) {
 
 
 plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
-      
   dataShape = .reshapeJJM(x, what = what)
+  
+  mtheme = standard.theme("pdf", color=TRUE)
+  mtheme$plot.line$lwd = 5
+  mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
     pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "",
                  ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
-                 auto.key = list(title = "", x = 0.8, y = 0.9, cex = 1.25,
-                                 points = FALSE, border = FALSE, 
-                                 lines = TRUE),
+                 xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
+                 auto.key = list(title = "", #x = 0.8, y = 0.9, cex = 1.25,
+                                 space = "right",
+                                 points = FALSE, border = FALSE,
+                                 lines = TRUE, lineheight = 3, size = 5),                
+                 par.settings=mtheme,
                  upper = dataShape$upper, lower = dataShape$lower,
                  panel = function(x, y, ...){
                    panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
@@ -156,6 +162,7 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
     )
   } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model, ylab = "",
                        ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
+                       xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
                        upper = dataShape$upper, lower = dataShape$lower,
                        panel = function(x, y, ...){
                          panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
