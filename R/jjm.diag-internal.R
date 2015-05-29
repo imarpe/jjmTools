@@ -1900,24 +1900,29 @@
   
   idxobs = list()
   pic = xyplot(Rec ~ SSB, data = res, groups = class,
-               panel = function(x, y){
+               panel = function(x, y, subscripts){
                  panel.grid(h = -1, v = -1)
                  
                  for(i in c(0, seq_along(seqYears))){
                    idxobs[[i+1]] = which(res$SSB %in% x & res$class == "Simulated" & res$col == i)
                  }
                  
+                 panel.text(x[res$class=="Simulated"], y[res$class=="Simulated"], labels=res$year[res$class=="Simulated"][subscripts], 
+                            cex = 1.25, pos = 3, offset = 1, srt = 0, adj = c(1,1))
+                 
                  countm = grep("Regime", unique(res$class))
                  idxmod = NULL
+                 
                  for(i in seq_along(idxobs)){
                    if(i == 1) {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 1.5, pch = 19, col = "darkgrey")}
                    else {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 1.5, pch = 19, col = rev(cols)[i-1])}
                  }
+                 print(idxobs)
                  
                  for(i in seq_along(countm)){
                    namesid = paste("Regime", i, sep = "")
                    idxmod = which(res$SSB %in% x & res$class == namesid)
-                   panel.xyplot(x[idxmod], y[idxmod], type = "l", lwd = 4, col = rev(cols)[i], lty = 1)                
+                   panel.xyplot(x[idxmod], y[idxmod], type = "l", lwd = 4, col = rev(cols)[i], lty = 1)                   
                  }
                },
                
