@@ -2144,7 +2144,7 @@
  
 }
 
-.recDevFUN = function(jjm.out, cols, breaks = 10, ...)
+.recDevFUN = function(jjm.out, cols, breaks = 5, ...)
 {
   
   county = grep("SR_Curve_years_", names(jjm.out))
@@ -2189,34 +2189,39 @@
   labelCol[seq_along(seqYears) + 1] = rev(cols)[seq_along(seqYears)]
   
   meandev = NULL
+  sddev = NULL
+  statsdev = list()
   for(i in seq_along(county)){
-    meandev[i] = round(mean(res$value[res$col == i]),4)
+    meandev[i] = mean(res$value[res$col == i])
+    sddev[i] = sd(res$value[res$col == i])
+    statsdev[[i]] = round(c(meandev[i], sddev[i]),4)
   }
   
-  sddev = NULL
-  for(i in seq_along(county)){
-    sddev[i] = round(sd(res$value[res$col == i]),4)
-  }
   
   Bar = barchart(value ~ as.character(year), data = res, groups = class, horizontal = FALSE,
-                 origin = 0, col = colBar,  box.width = 1.25, ylab = "Deviation",
+                 origin = 0, col = colBar,  box.width = 1, ylab = "Deviation",
                  par.settings = list(superpose.polygon = list(col = labelCol)),
                  scales = (x = list(rot = 90)),
-                 auto.key = list(title = "", 
+                 auto.key = list(title = "", space = "right",
                                  text = labelLeg,
                                  x = 0.85, y = 1, cex = 1.5,
                                  points = FALSE, border = FALSE, 
                                  lines = FALSE), ...)
   
   Hist = histogram(~value|class, data = res[res$class!="Simulated", ], groups = class,
-                   xlab = "Deviation", breaks = breaks,
-                   panel=function(x, col=colBar,...){
-                     panel.histogram(x,col=colBar[packet.number()],...)
+                   xlab = "Deviation", breaks = breaks, type = "density",
+                   panel=function(x, col = colBar,...){
+                     panel.histogram(x = x, ,col = colBar[packet.number()],...)
+                     panel.densityplot(x, darg = list(bw = 0.2, kernel = "gaussian"), 
+                                       col = "black", lwd = 2, ...)
+                     meanstat = round(mean(x),5)
+                     sdstat = round(sd(x),5)
+                     panel.text(x = 1.5, y = 0.8, labels = paste("mean = ", meanstat))
+                     panel.text(x = 1.5, y = 0.75, labels = paste("std = ", sdstat))
+                     
                    })
   
-  
-  out = list(Bar = Bar, Hist = Hist, 
-             mean = meandev, sd = sddev)
+  out = list(Bar = Bar, Hist = Hist)
   
   return(out)
-}
+} 
