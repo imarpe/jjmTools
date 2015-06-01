@@ -2197,7 +2197,6 @@
     statsdev[[i]] = round(c(meandev[i], sddev[i]),4)
   }
   
-  
   Bar = barchart(value ~ as.character(year), data = res, groups = class, horizontal = FALSE,
                  origin = 0, col = colBar,  box.width = 1, ylab = "Deviation",
                  par.settings = list(superpose.polygon = list(col = labelCol)),
@@ -2206,18 +2205,18 @@
                                  text = labelLeg,
                                  x = 0.85, y = 1, cex = 1.5,
                                  points = FALSE, border = FALSE, 
-                                 lines = FALSE), ...)
+                                 lines = FALSE))
   
-  Hist = histogram(~value|class, data = res[res$class!="Simulated", ], groups = class,
+  Hist = histogram(~value|class, data = res[res$class != "Simulated", ], groups = class,
                    xlab = "Deviation", breaks = breaks, type = "density",
-                   panel=function(x, col = colBar,...){
+                   panel = function(x, col = colBar,...){
                      panel.histogram(x = x, ,col = colBar[packet.number()],...)
-                     panel.densityplot(x, darg = list(bw = 0.2, kernel = "gaussian"), 
+                     panel.densityplot(x = x, darg = list(bw = 0.2, kernel = "gaussian"), 
                                        col = "black", lwd = 2, ...)
-                     meanstat = round(mean(x),5)
-                     sdstat = round(sd(x),5)
-                     panel.text(x = 1.5, y = 0.8, labels = paste("mean = ", meanstat))
-                     panel.text(x = 1.5, y = 0.75, labels = paste("std = ", sdstat))
+                     meanstat = round(mean(x),3)
+                     sdstat = round(sd(x),3)
+                     panel.text(x = 0.8*max(x), y = 0.85*max(density(res$value)[[2]]), labels = paste("mean = ", meanstat))
+                     panel.text(x = 0.8*max(x), y = 0.8*max(density(res$value)[[2]]), labels = paste("std = ", sdstat))
                      
                    })
   
