@@ -2154,17 +2154,12 @@
     colyear[[i]] = jjm.out[[namesy]]
   }
   
-  seqYears = NULL
-  for(i in seq_along(colyear)){
-    seqYears[[i]] = seq(from = colyear[[i]][1], to = rev(colyear[[i]])[1], by = 1)
-  }
-  
   res = data.frame(jjm.out[["rec_dev"]])
   colnames(res) = c("year", "value")
   
   res$color = numeric(nrow(res))
-  for(i in seq_along(seqYears)){
-    res$color[which(res$year %in% seqYears[[i]])] = i
+  for(i in seq_along(colyear)){
+    res$color[which(res$year %in% colyear[[i]])] = i
   }
   
   res$class = character(nrow(res))
@@ -2181,12 +2176,12 @@
   
   colBar = NULL
   colBar[1] = "darkgrey"
-  colBar[seq_along(seqYears) + 1] = rev(cols)[seq_along(seqYears)]
+  colBar[seq_along(colyear) + 1] = rev(cols)[seq_along(colyear)]
   colBar = colBar[order(unique(res$class))]
   
   labelCol = NULL
   labelCol[1] = "darkgrey"
-  labelCol[seq_along(seqYears) + 1] = rev(cols)[seq_along(seqYears)]
+  labelCol[seq_along(colyear) + 1] = rev(cols)[seq_along(colyear)]
   
   Bar = barchart(value ~ as.character(year), data = res, groups = class, horizontal = FALSE,
                  origin = 0, col = colBar,  box.width = 1, ylab = "Deviation",
