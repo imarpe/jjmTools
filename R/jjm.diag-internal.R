@@ -1855,20 +1855,14 @@
     colyear[[i]] = jjm.out[[namesy]]
   }
   
-  seqYears = NULL
-  for(i in seq_along(colyear)){
-    seqYears[[i]] = seq(from = colyear[[i]][1], to = colyear[[i]][2], by = 1)
-  }
-  
-  
   res1 = data.frame(jjm.out[["Stock_Rec"]][, c(2, 4)])
   res1$class = "Simulated"
   res1$year = jjm.out[["Stock_Rec"]][, 1]
   
   res1$color = numeric(nrow(res1))
-  for(i in seq_along(seqYears)){
-    res1$color[which(res1$year %in% seqYears[[i]])] = i
-    res1$color[which(res1$year %in% seqYears[[i]])] = i
+  for(i in seq_along(colyear)){
+    res1$color[which(res1$year %in% colyear[[i]])] = i
+    res1$color[which(res1$year %in% colyear[[i]])] = i
   }
   res1 = res1[1:(nrow(res1) - 1), ]
   
@@ -1891,19 +1885,19 @@
   labelLeg = NULL
   for(i in seq_along(colyear)){
     labelLeg[1] = "Simulated"
-    labelLeg[i+1] = paste(colyear[[i]][1], " - ", colyear[[i]][2], sep = "")
+    labelLeg[i+1] = paste(colyear[[i]][1], " - ", rev(colyear[[i]])[1], sep = "")
   }
   
   labelCol = NULL
   labelCol[1] = "darkgrey"
-  labelCol[seq_along(seqYears) + 1] = rev(cols)[seq_along(seqYears)]
+  labelCol[seq_along(colyear) + 1] = rev(cols)[seq_along(colyear)]
   
   idxobs = list()
   pic = xyplot(Rec ~ SSB, data = res, groups = class,
                panel = function(x, y, subscripts){
                  panel.grid(h = -1, v = -1)
                  
-                 for(i in c(0, seq_along(seqYears))){
+                 for(i in c(0, seq_along(colyear))){
                    idxobs[[i+1]] = which(res$SSB %in% x & res$class == "Simulated" & res$col == i)
                  }
                  
@@ -1917,7 +1911,8 @@
                    if(i == 1) {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 1.5, pch = 19, col = "darkgrey")}
                    else {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 1.5, pch = 19, col = rev(cols)[i-1])}
                  }
-                                  
+                 print(idxobs)
+                 
                  for(i in seq_along(countm)){
                    namesid = paste("Regime", i, sep = "")
                    idxmod = which(res$SSB %in% x & res$class == namesid)
@@ -1933,6 +1928,7 @@
   
   return(pic)
 }
+
 
 
 .fit_fishedUnfishedBiomassFUN = function(jjm.out, ...)
