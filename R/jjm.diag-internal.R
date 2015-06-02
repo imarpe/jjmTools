@@ -2156,7 +2156,7 @@
   
   seqYears = NULL
   for(i in seq_along(colyear)){
-    seqYears[[i]] = seq(from = colyear[[i]][1], to = colyear[[i]][2], by = 1)
+    seqYears[[i]] = seq(from = colyear[[i]][1], to = rev(colyear[[i]])[1], by = 1)
   }
   
   res = data.frame(jjm.out[["rec_dev"]])
@@ -2176,7 +2176,7 @@
   labelLeg = NULL
   for(i in seq_along(colyear)){
     labelLeg[1] = "Simulated"
-    labelLeg[i+1] = paste(colyear[[i]][1], " - ", colyear[[i]][2], sep = "")
+    labelLeg[i+1] = paste(colyear[[i]][1], " - ", rev(colyear[[i]])[1], sep = "")
   }
   
   colBar = NULL
@@ -2187,15 +2187,6 @@
   labelCol = NULL
   labelCol[1] = "darkgrey"
   labelCol[seq_along(seqYears) + 1] = rev(cols)[seq_along(seqYears)]
-  
-  meandev = NULL
-  sddev = NULL
-  statsdev = list()
-  for(i in seq_along(county)){
-    meandev[i] = mean(res$value[res$col == i])
-    sddev[i] = sd(res$value[res$col == i])
-    statsdev[[i]] = round(c(meandev[i], sddev[i]),4)
-  }
   
   Bar = barchart(value ~ as.character(year), data = res, groups = class, horizontal = FALSE,
                  origin = 0, col = colBar,  box.width = 1, ylab = "Deviation",
@@ -2215,9 +2206,10 @@
                                        col = "black", lwd = 2, ...)
                      meanstat = round(mean(x),3)
                      sdstat = round(sd(x),3)
-                     panel.text(x = 0.8*max(x), y = 0.85*max(density(res$value)[[2]]), labels = paste("mean = ", meanstat))
-                     panel.text(x = 0.8*max(x), y = 0.8*max(density(res$value)[[2]]), labels = paste("std = ", sdstat))
-                     
+                     sumdev = round(sum((x)^2),3)
+                     panel.text(x = 0.9*max(x), y = 0.85*max(density(res$value)[[2]]), labels = paste("mean = ", meanstat))
+                     panel.text(x = 0.9*max(x), y = 0.8*max(density(res$value)[[2]]), labels = paste("std = ", sdstat))
+                     panel.text(x = 0.9*max(x), y = 0.75*max(density(res$value)[[2]]), labels = paste("sumdev = ", sumdev))
                    })
   
   out = list(Bar = Bar, Hist = Hist)
