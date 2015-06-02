@@ -2140,7 +2140,7 @@
  
 }
 
-.recDevFUN = function(jjm.out, cols, breaks = 5, ...)
+.recDevFUN = function(jjm.out, cols, ...)
 {
   
   county = grep("SR_Curve_years_", names(jjm.out))
@@ -2190,17 +2190,19 @@
                                  lines = FALSE))
   
   Hist = histogram(~value|class, data = res[res$class != "Simulated", ], groups = class,
-                   xlab = "Deviation", breaks = breaks, type = "density",
+                   xlab = "Deviation", type = "density",
+                   ylim = c(0, 1.5*max(density(res$value[res$class != "Simulated"])[[2]])),
                    panel = function(x, col = colBar,...){
                      panel.histogram(x = x, ,col = colBar[packet.number()],...)
                      panel.densityplot(x = x, darg = list(bw = 0.2, kernel = "gaussian"), 
                                        col = "black", lwd = 2, ...)
                      meanstat = round(mean(x),3)
                      sdstat = round(sd(x),3)
-                     sumdev = round(sum((x)^2),3)
+                     ssqstat = format(sum((x)^2), digits =3)
+                     
                      panel.text(x = 0.9*max(x), y = 0.85*max(density(res$value)[[2]]), labels = paste("mean = ", meanstat))
                      panel.text(x = 0.9*max(x), y = 0.8*max(density(res$value)[[2]]), labels = paste("std = ", sdstat))
-                     panel.text(x = 0.9*max(x), y = 0.75*max(density(res$value)[[2]]), labels = paste("sumdev = ", sumdev))
+                     panel.text(x = 0.9*max(x), y = 0.75*max(density(res$value)[[2]]), labels = paste("ssq = ", ssqstat))
                    })
   
   out = list(Bar = Bar, Hist = Hist)
