@@ -1911,7 +1911,6 @@
                    if(i == 1) {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 1.5, pch = 19, col = "darkgrey")}
                    else {panel.points(x[idxobs[[i]]], y[idxobs[[i]]], type = "p", cex = 1.5, pch = 19, col = rev(cols)[i-1])}
                  }
-                 print(idxobs)
                  
                  for(i in seq_along(countm)){
                    namesid = paste("Regime", i, sep = "")
@@ -2198,11 +2197,12 @@
                                        col = "black", lwd = 2, ...)
                      meanstat = round(mean(x),3)
                      sdstat = round(sd(x),3)
-                     ssqstat = format(sum((x)^2), digits =3)
-                     
+                     ssqstat = round(sum((x)^2), digits =3)
+                     ssqtotal = round(sum((res$value[res$class != "Simulated"])^2), 3)
                      panel.text(x = 0.9*max(x), y = 0.85*max(density(res$value)[[2]]), labels = paste("mean = ", meanstat))
                      panel.text(x = 0.9*max(x), y = 0.8*max(density(res$value)[[2]]), labels = paste("std = ", sdstat))
                      panel.text(x = 0.9*max(x), y = 0.75*max(density(res$value)[[2]]), labels = paste("ssq = ", ssqstat))
+					 panel.text(x = 0.9*max(x), y = 0.7*max(density(res$value)[[2]]), labels = paste("ssqT = ", ssqtotal))
                    })
   
   out = list(Bar = Bar, Hist = Hist)
