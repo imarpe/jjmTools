@@ -146,7 +146,7 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, 
   mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "",
+    pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "", main = what,
                  ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                  xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
                  auto.key = list(title = "",
@@ -159,12 +159,13 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, 
                    panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                    panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
                    if(endvalue){
-                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(dataShape$mean)[1], pos=3, offset=1, cex=0.9,
-                           font = 2)
+                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                           font = 2, adj = 0)
                    }
                  }
     )
   } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model, ylab = "",
+                       main = what,
                        ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                        xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
                        upper = dataShape$upper, lower = dataShape$lower,
@@ -172,8 +173,8 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, 
                          panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
                          if(endvalue){
-                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(dataShape$mean)[1], pos=3, offset=1, cex=0.9,
-                                 font = 2)
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                                 font = 2, adj = 0)
                          }
                        })
   }
