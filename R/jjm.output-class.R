@@ -138,7 +138,7 @@ print.summary.jjm.output = function(x, ...) {
 
 
 
-plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
+plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, ...){
   dataShape = .reshapeJJM(x, what = what)
   
   mtheme = standard.theme("pdf", color=TRUE)
@@ -149,7 +149,7 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
     pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "",
                  ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                  xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
-                 auto.key = list(title = "", #x = 0.8, y = 0.9, cex = 1.25,
+                 auto.key = list(title = "",
                                  space = "right",
                                  points = FALSE, border = FALSE,
                                  lines = TRUE, lineheight = 3, size = 5),                
@@ -158,6 +158,10 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
                  panel = function(x, y, ...){
                    panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                    panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
+                   if(endvalue){
+                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(dataShape$mean)[1], pos=3, offset=1, cex=0.9,
+                           font = 2)
+                   }
                  }
     )
   } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model, ylab = "",
@@ -167,10 +171,13 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, ...){
                        panel = function(x, y, ...){
                          panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
+                         if(endvalue){
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(dataShape$mean)[1], pos=3, offset=1, cex=0.9,
+                                 font = 2)
+                         }
                        })
   }
   
   return(pic)
 }
-
 
