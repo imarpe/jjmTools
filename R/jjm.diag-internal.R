@@ -1799,6 +1799,74 @@
   return(pic)
 }
 
+.fit_summarySheet3FUN = function(jjm.out, ...)
+{
+  for(iFlt in grep("Obs_catch_", names(jjm.out)))
+    
+    summaryData = rbind(cbind(jjm.out$Yr, jjm.out$TotBiom[,-1], "Total biomass"),
+                        cbind(jjm.out$Yr, cbind(rowMeans(jjm.out$TotF[,-1]), 
+                                                rowMeans(jjm.out$TotF[,-1]), 
+                                                rowMeans(jjm.out$TotF[,-1]), 
+                                                rowMeans(jjm.out$TotF[,-1])), "Fishing mortality"),                  
+                        cbind(jjm.out$Yr, jjm.out$TotBiom_NoFish[,-1], "Unfished biomass"))
+  
+  summaryData = rbind(cbind(summaryData[,c(1:2, 6)], "point"), 
+                      cbind(summaryData[,c(1, 4, 6)], "lower"),
+                      cbind(summaryData[,c(1, 5, 6)], "upper"))
+  
+  colnames(summaryData) = c("year", "data", "class", "estim")
+  summaryData = data.frame(summaryData, stringsAsFactors = FALSE)
+  summaryData$class = factor(summaryData$class, ordered = FALSE,
+                             levels = c("Unfished biomass", "Total biomass", "Fishing mortality"))
+  summaryData$year = as.integer(summaryData$year)
+  summaryData$data = as.numeric(summaryData$data)
+  
+  alpha.f = 0.45
+  
+  pic1 = xyplot(data ~ year | class, data = summaryData,
+                groups = class,
+                prepanel = function(...) {list(ylim = range(pretty(c(0, 1.1*list(...)$y))))},
+                layout = c(3, 1),
+                panel = function(x, y){
+                  panel.grid(h = -1, v = -1)
+                  point = 1:length(jjm.out$Yr)
+                  lower = (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
+                  upper = (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
+                  
+                  # Total biomass
+                  if(panel.number() == 1){
+                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey",
+                                  border = NA)
+                    panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
+                  }
+                  
+                  
+                  # Unfished biomass
+                  if(panel.number() == 2){
+                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
+                    panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
+                  }
+                  
+                  
+                  # F
+                  if(panel.number() == 3){
+                    panel.barchart(x[point], y[point], horizontal = FALSE, origin = 0, box.width = 1, col = "grey")
+                    panel.segments(x[lower], y[lower], x[lower], y[upper]) 
+                  }
+                  
+                }, ...)
+  
+  pic2 = .fit_stockRecruitmentFUN(jjm.out, cols,
+                                  ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
+                                  main = "Stock Recruitment")
+  
+  pic3 = grid.arrange(pic1, pic2)
+  
+  return(pic3)
+}
+
+
+
 .fit_uncertaintyKeyParamsFUN = function(jjm.out, ...)
 {
   res = rbind(data.frame(CV = jjm.out$SSB[,3]/jjm.out$SSB[,2], years = jjm.out$SSB[,1], class = "SSB"),
@@ -1921,7 +1989,7 @@
                
                auto.key = list(title = "", 
                                text = labelLeg,
-                               x = 0.85, y = 1, cex = 1.75,
+                               x = 0.85, y = 1, cex = 1.25,
                                points = FALSE, border = FALSE, 
                                lines = FALSE, col = labelCol), ...)
   

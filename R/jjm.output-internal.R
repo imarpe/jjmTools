@@ -5,7 +5,8 @@
                ftot        = "Ftot",
                recruitment = "R",
                ssb         = "SSB",
-               noFishTB    = "TotBiom_NoFish"
+               noFishTB    = "TotBiom_NoFish",
+               all         = "All"
   )
   
   out = NULL
@@ -16,7 +17,8 @@
     jjm.out$Ftot = cbind(jjm.out$Yr, rowMeans(jjm.out$TotF[, -1]), 
                          apply(jjm.out$TotF[, -1], 1, sd), 
                          rowMeans(jjm.out$TotF[, -1]),
-                         rowMeans(jjm.out$TotF[, -1]))          
+                         rowMeans(jjm.out$TotF[, -1]))   
+  
     jjm.in  = x[[i]]$data
     jjm.ypr = x[[i]]$output$YPR
     model   = x[[i]]$info$output$model 
