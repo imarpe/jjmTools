@@ -18,6 +18,7 @@ Depends:
     doBy,
     doSNOW,
     foreach,
-	latticeExtra
+	latticeExtra,
+	gridExtra
 LazyData: TRUE
 Encoding:  utf-8

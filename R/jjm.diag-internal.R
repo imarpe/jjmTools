@@ -1856,7 +1856,7 @@
                   
                 }, ...)
   
-  pic2 = .fit_stockRecruitmentFUN(jjm.out, cols,
+  pic2 = .fit_stockRecruitmentFUN(jjm.out, cols, 
                                   ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
                                   main = "Stock Recruitment")
   
@@ -1916,6 +1916,7 @@
 .fit_stockRecruitmentFUN = function(jjm.out, cols, ...)
 {
   
+  cols  = rainbow(10)
   county = grep("SR_Curve_years_", names(jjm.out))
   colyear = NULL
   for(i in seq_along(county)){
