@@ -190,7 +190,7 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE,
       jjm.ypr = x[[i]]$output$YPR
       namesPlot[i] = x[[i]]$info$output$model
       
-      pic[[i]] = .fit_summarySheet3FUN(jjm.out, scales = list(alternating = 1,
+      pic[[i]] = .fit_summarySheet3FUN(jjm.out, endvalue, scales = list(alternating = 1,
                                                               y = list(relation = "free", rot = 0),
                                                               axs = "i"), ...)
       
