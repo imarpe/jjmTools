@@ -87,9 +87,9 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = NULL,
   jjm.ypr = object[[i]]$output$YPR
   namesPlot[i] = object[[i]]$info$output$model
   
-  pic[[i]] = .fit_summarySheetFUN(jjm.out, scales = list(alternating = 1,
-                                                         y = list(relation = "free", rot = 0),
-                                                         axs = "i"), ...)
+  pic[[i]] = .fit_summarySheet3FUN(jjm.out, scales = list(alternating = 1,
+                                            y = list(relation = "free", rot = 0),
+                                            axs = "i"), ...)
   
   }
   
@@ -129,7 +129,7 @@ print.summary.jjm.output = function(x, ...) {
   for(i in seq_along(x$plots)){
     
     cat(names(x$plots)[i], "\n")
-    plot(x$plots[[i]])
+    print(x$plots[[i]])
     
   }
   
@@ -138,8 +138,8 @@ print.summary.jjm.output = function(x, ...) {
 
 
 
-plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, 
-                           All = FALSE, ...){
+plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE 
+                           , All = FALSE, ...){
   dataShape = .reshapeJJM(x, what = what)
   
   mtheme = standard.theme("pdf", color=TRUE)
@@ -178,26 +178,6 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE,
                                  font = 2, adj = 0)
                          }
                        })
-  }
-  
-  if (All == TRUE ){
-    pic = list()
-    namesPlot = NULL
-    for(i in seq_along(x)){
-      
-      jjm.out = x[[i]]$output
-      jjm.in  = x[[i]]$data
-      jjm.ypr = x[[i]]$output$YPR
-      namesPlot[i] = x[[i]]$info$output$model
-      
-      pic[[i]] = .fit_summarySheet3FUN(jjm.out, endvalue, scales = list(alternating = 1,
-                                                              y = list(relation = "free", rot = 0),
-                                                              axs = "i"), ...)
-      
-    }
-	
-	names(pic) = namesPlot
-    
   }
   
   return(pic)

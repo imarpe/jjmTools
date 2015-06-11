@@ -219,7 +219,7 @@ kobe = function(obj, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Fl
 		  Blim = Bref, Flim = Fref, xlim = xlim, ylim = ylim, ...)
     
 	}
-
+    
 	return(invisible())
   
  }
