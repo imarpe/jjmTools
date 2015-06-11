@@ -281,6 +281,25 @@
 .ProjTable = function(lstOuts, Projections, Fmult, BiomProj, CapProj, MRS){
 
 if(Projections){
+		
+		Fs = Fmult
+		#Bp = BiomProj
+		#Cp = CapProj
+		mrs = MRS
+		
+		if(is.null(CapProj)) Cp = c(lstOuts[[1]]$info$data$year[2] + 1, lstOuts[[1]]$info$data$year[2] + 2) 
+		else Cp = CapProj
+		
+		if(is.null(BiomProj)) { Bp = c(lstOuts[[1]]$info$data$year[2] + 2, 
+		lstOuts[[1]]$info$data$year[2] + 6, lstOuts[[1]]$info$data$year[2] + 10) 
+		} else { 
+		Bp = BiomProj }
+		
+		if(is.null(Fmult)) Fs = c(0, 0.5, 0.75, 1, 1.25)
+		else Fs = Fmult
+		
+		if(is.null(MRS)) mrs = mean(lstOuts[[1]]$output$msy_mt[,10])
+		else mrs = MRS
 
 		Name = NULL
 		Outs = list()
@@ -295,11 +314,6 @@ if(Projections){
 			xb = paste0(xa[[1]][2:length(xa[[1]])], collapse = "") 
 			Name[i] = paste(xa[[1]][1], xb, sep = "_")
 		}
-
-		Fs = Fmult
-		Bp = BiomProj
-		Cp = CapProj
-		mrs = MRS
 		
 		names(Outs) = Name
 		

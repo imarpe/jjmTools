@@ -73,10 +73,10 @@ print.jjm.output = function(x, ...) {
   
 }
 
-summary.jjm.output = function(object, Projections = FALSE, Fmult = c(0, 0.5, 0.75, 1, 1.25),
-                              BiomProj = c(2016, 2020, 2024), 
-                              CapProj = c(2015, 2016), 
-                              MRS = 970, ...) {
+summary.jjm.output = function(object, Projections = FALSE, Fmult = NULL,
+                              BiomProj = NULL, 
+                              CapProj = NULL, 
+                              MRS = NULL, ...) {
   
   pic = list()
   namesPlot = NULL
