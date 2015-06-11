@@ -433,10 +433,15 @@
                                                                 main = "Mature - Immature fish")
   
   # 24: Stock-recruitment
-  outPlots$stockRecruitment = .fit_stockRecruitmentFUN(jjm.out, cols,
+  if(length(grep("SR_Curve_years", names(jjm.out))) == 0 ){
+  outPlots$stockRecruitment = .fit_stockRecruitmentFUN(jjm.out,
                                                         ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
                                                         main = "Stock Recruitment")
-  
+  } else {
+  outPlots$stockRecruitment = .fit_stockRecruitmentFUN2(jjm.out, cols,
+                                                 ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
+                                                 main = "Stock Recruitment")
+  }
   # 25: SSB not fished over SSB fished
   outPlots$fishedUnfishedBiomass = .fit_fishedUnfishedBiomassFUN(jjm.out,
                                                                   ylab = "Total biomass", xlab = "Years", 
@@ -468,7 +473,11 @@
 
   outPlots$kobePlot = .kobeFUN(jjm.out, Bref = 1, Fref = 1)
   
+  if(length(grep("SR_Curve_years", names(jjm.out))) == 0 ){
+		outPlots$recDev = NULL
+	} else {
   outPlots$recDev = .recDevFUN(jjm.out, cols, breaks = 10)
+  }
 
   # Join all plots
   plotTree = list(model = model, data = names(inputPlots), output = names(outPlots))
@@ -1864,9 +1873,17 @@
                   
                 }, ...)
   
-  pic2 = .fit_stockRecruitmentFUN(jjm.out, cols, 
+  
+  if(length(grep("SR_Curve_years", names(jjm.out))) == 0 ){
+    pic2 = .fit_stockRecruitmentFUN(jjm.out, 
                                   ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
                                   main = "Stock Recruitment")
+  
+  } else {
+  pic2 = .fit_stockRecruitmentFUN2(jjm.out, cols, 
+                                  ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
+                                  main = "Stock Recruitment")
+								  }
   
   pic3 = grid.arrange(pic1, pic2)
   
@@ -1921,7 +1938,53 @@
   return(pic)
 }
 
-.fit_stockRecruitmentFUN = function(jjm.out, cols, ...)
+
+.fit_stockRecruitmentFUN <- function(jjm.out, ...)
+{
+  res1 <- data.frame(jjm.out[["Stock_Rec"]][,c(2, 4)])
+  res1 <- res1[1:(nrow(res1) - 1),]
+  res1$class <- "observed"
+  
+  res2 <- data.frame(jjm.out[["stock_Rec_Curve"]])
+  res2 <- res2[1:(nrow(res2) - 1),]
+  res2$class <- "modelled"
+  
+  res  <- rbind(res1, res2)
+  colnames(res) <- c("SSB", "Rec", "class")
+  
+  #ikey           <- simpleKey(text = c("Observed", "Modelled"),
+  #                            points = TRUE, lines = TRUE, columns = 2)
+  #ikey$lines$col <- c(1, rev(cols)[1])
+  #ikey$lines$lwd <- c(2, 3)
+  #ikey$lines$lty <- c(3, 2)
+  
+  #ikey$points$pch <- c(19, 0)
+  #ikey$points$col <- c("darkgrey", "white")
+  
+  pic <- xyplot(Rec ~ SSB, data = res, groups = class,
+                #key = ikey,
+                panel = function(x, y){
+                  panel.grid(h = -1, v = -1)
+                  idxobs <- which(res$SSB %in% x & res$class == "observed")
+                  idxmod <- which(res$SSB %in% x & res$class == "modelled")
+                  #panel.xyplot(x[idxobs], y[idxobs], type = "l", lwd = 3, col = 1, lty = 3)
+                  panel.points(x[idxobs], y[idxobs], type = "p", cex = 1.5, pch = 19, col = "darkgrey")
+                  panel.xyplot(x[idxmod], y[idxmod], type = "l", lwd = 4, col = "black", lty = 1)
+                },
+				
+				auto.key = list(title = "", 
+                               text = "Simulated",
+                               x = 0.85, y = 1, cex = 1.25,
+                               points = FALSE, border = FALSE, 
+                               lines = FALSE, col = "darkgrey")
+
+				, ...)
+  
+  return(pic)
+}
+
+
+.fit_stockRecruitmentFUN2 = function(jjm.out, cols, ...)
 {
   
   cols  = rainbow(10)
