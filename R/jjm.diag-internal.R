@@ -119,7 +119,7 @@
 }
 
 # .diagnostic function -----------------------------------------------------
-.diagnostics = function(jjm.info, jjm.out, jjm.in, Bref = 1, Fref = 1){
+.diagnostics = function(jjm.info, jjm.out, jjm.in, ...){
   
   # Get model name
   model = jjm.info$model
@@ -471,7 +471,7 @@
                                                             scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
   
 
-  outPlots$kobePlot = .kobeFUN(jjm.out, Bref = 1, Fref = 1)
+  outPlots$kobePlot = .kobeFUN(jjm.out)
   
   if(length(grep("SR_Curve_years", names(jjm.out))) == 0 ){
 		outPlots$recDev = NULL
@@ -2235,12 +2235,12 @@
 
 
 
-.kobeFUN = function(jjm.out, Bref = 1, Fref = 1) {
+.kobeFUN = function(jjm.out) {
 
   kob = jjm.out$msy_mt
   
-  Blim = Bref
-  Flim = Fref
+  #Blim = Bref
+  #Flim = Fref
   
   col = "black"
   
