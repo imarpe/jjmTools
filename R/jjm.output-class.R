@@ -195,6 +195,8 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE,
                                                               axs = "i"), ...)
       
     }
+	
+	names(pic) = namesPlot
     
   }
   

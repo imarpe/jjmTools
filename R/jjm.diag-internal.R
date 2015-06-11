@@ -1885,7 +1885,7 @@
                                   main = "Stock Recruitment")
 								  }
   
-  pic3 = grid.arrange(pic1, pic2)
+  pic3 = arrangeGrob(pic1, pic2)
   
   return(pic3)
 }
