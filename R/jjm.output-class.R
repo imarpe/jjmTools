@@ -139,7 +139,9 @@ print.summary.jjm.output = function(x, ...) {
 
 
 plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE 
-                           , All = FALSE, ...){
+                           , cols = NULL, ...){
+						   
+	if(what != "kobe") {					   
   dataShape = .reshapeJJM(x, what = what)
   
   mtheme = standard.theme("pdf", color=TRUE)
@@ -179,6 +181,13 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE
                          }
                        })
   }
+  } else {
+  
+		obj = x
+		pic = .kobeFUN2(obj, cols = cols)
+
+  }
+  
   
   return(pic)
 }

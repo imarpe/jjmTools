@@ -2279,6 +2279,75 @@
  
 }
 
+
+.kobeFUN2 = function(obj, cols) {
+  
+  if(is.null(cols)) cols = rainbow(10)
+  
+  fMx = numeric(length(obj))
+  bMx = numeric(length(obj))
+  
+  for(i in seq_along(obj)){
+
+	fMx[i] = max(obj[[i]]$output$msy_mt[,4])	
+	bMx[i] = max(obj[[i]]$output$msy_mt[,13])	
+
+   }
+
+	posFmax = which(fMx == max(fMx))
+	posBmax = which(bMx == max(bMx))
+  
+  xlim= range(pretty(c(0, obj[[posBmax]]$output$msy_mt[,13])))
+  ylim= range(pretty(c(0, obj[[posFmax]]$output$msy_mt[,4])))
+
+  x <- seq(0, max(xlim), by = 0.1)
+  y <- seq(0, max(ylim), by = 0.1)
+
+  y = y[1:length(x)]
+  
+  b = list()
+  c = list()
+  
+  for(i in seq_along(obj)){
+  
+  kob = obj[[i]]$output$msy_mt
+  
+  #Blim = Bref
+  #Flim = Fref
+  
+  F_Fmsy = kob[,4]
+  B_Bmsy = kob[,13]
+  years  = kob[,1]
+  
+  n = length(B_Bmsy)
+
+  mypanel<-function(x,y,...){
+  panel.xyplot(x, y, ...)
+  panel.text(x + 0.05, y + 0.2, labels = range(years), cex = 0.8, col = cols[i])
+  }
+
+  b[[i]] <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = cols[i], panel = mypanel, pch = c(15, 17), cex = 0.8)
+  c[[i]] <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = cols[i], pch = 19, cex = 0.5)
+
+  }
+  
+  pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+				main="Kobe plot") + 
+		layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
+		layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
+		layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
+		layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) 
+  for(i in seq_along(obj)){
+    pic = pic + as.layer(b[[i]])
+    pic = pic + as.layer(c[[i]]) 
+  }
+  
+  return(pic)
+ 
+}
+
+
+
 .recDevFUN = function(jjm.out, cols, ...)
 {
   
