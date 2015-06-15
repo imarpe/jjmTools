@@ -183,8 +183,8 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE
   } else {
   
 		obj = x
-		pic = .kobeFUN2(obj, cols = cols, endvalue = endvalue, ...)
-
+		if(stack) {pic = .kobeFUN3(obj, cols = cols, endvalue = endvalue, ...)}
+		else {pic = .kobeFUN2(obj, cols = cols, endvalue = endvalue, ...)}
   }
   
   

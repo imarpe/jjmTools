@@ -189,37 +189,3 @@ combineStocks = function(..., modelName = NULL){
   return(output)
   
 }
-
-
-
-# Kobe plot ---------------------------------------------------------------
-
-#' @title Kobe plot
-#' @description This function create a kobe plot from JJM  model outputs
-#' @param model Name for new model created with the \code{readJJM} function.
-#' @param add boolean, add to an existing kobe plot?
-#' @param col color for the lines and points.
-#' @param Bref Reference point for B/B_MSY, default=1.
-#' @param Fref Reference point for F/F_MSY, default=1.
-#' @param Blim Limit reference point for B/B_MSY, default=0.5.
-#' @param Flim Limit reference point for F/F_MSY, default=1.5.
-#' @param xlim 'x' axis limits.
-#' @param ylim 'y' axis limits.
-#' @param ... Additional parameters passed to plot.
-#' @examples
-#' kobe(model)
-kobe = function(obj, add=FALSE, col="black", Bref = 1, Fref = 1, Blim = Bref, Flim = Fref,  
-                xlim = NULL, ylim = NULL, ...) {
-    
-	for(i in seq_along(obj)){
-	
-	object = obj[[i]]
-	
-    .kobe1(x = object, add=add, col=col, Bref = Bref, Fref = Fref, 
-		  Blim = Bref, Flim = Fref, xlim = xlim, ylim = ylim, ...)
-    
-	}
-    
-	return(invisible())
-  
- }

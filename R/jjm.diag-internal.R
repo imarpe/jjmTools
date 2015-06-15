@@ -2352,6 +2352,68 @@
 
 
 
+.kobeFUN3 = function(obj, cols, endvalue, ...) {
+  
+  
+  if(is.null(cols)) cols = "black"
+  cols = cols[1]
+
+  dataT = NULL
+  dataxy = NULL
+  datalab = NULL
+  
+  for(i in seq_along(obj)){
+    
+    kob = obj[[i]]$output$msy_mt
+    
+    F_Fmsy = kob[,4]
+    B_Bmsy = kob[,13]
+    years  = kob[,1]
+    name = names(obj)[i]
+    xlim = range(pretty(c(0, B_Bmsy)))
+    ylim = range(pretty(c(0, F_Fmsy)))
+    
+    x <- c(0, 1, max(xlim))
+    y <- c(0, 1, max(ylim))
+    y = y[1:length(x)]
+    
+    n = length(years)
+    
+    data = as.data.frame(cbind(F_Fmsy, B_Bmsy, years))
+    data = cbind(data, name)
+    dataT = rbind(dataT, data)
+    
+    data1 = as.data.frame(cbind(x, y))
+    data1 = cbind(data1, name)
+    dataxy = rbind(dataxy, data1)
+    
+    data2 = as.data.frame(cbind(F_Fmsy[c(1,n)], B_Bmsy[c(1,n)], range(years)))
+    data2 = cbind(data2, name)
+    datalab = rbind(datalab, data2)
+
+  }
+
+  pic = xyplot(y ~ x | name, dataxy, type="n", xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+               scale = list(axs = 'i'), ...) +  
+    layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
+    layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
+    layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
+    layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1))  
+    if(endvalue) pic = pic + as.layer(xyplot(V1 ~ V2 | name, datalab, type = "p", col = "black", 
+                                      panel = function(x,y,subscripts, ...){
+                                              panel.xyplot(x, y, ...)
+                                              panel.text(x + 0.05, y + 0.2, labels = datalab$V3[subscripts], ...)
+                                              } , 
+                                 pch = c(15, 17), cex = 1))
+    if(endvalue == FALSE) pic = pic + as.layer(xyplot(V1 ~ V2 | name, datalab, type = "p", col = cols, pch = c(15, 17), cex = 1))
+    pic = pic + as.layer(xyplot(F_Fmsy ~ B_Bmsy | name, dataT, type = "b", col = cols, pch = 19, cex = 0.5)) 
+
+  return(pic)
+ 
+}
+
+
+
 .recDevFUN = function(jjm.out, cols, ...)
 {
   
