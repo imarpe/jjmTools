@@ -2280,9 +2280,10 @@
 }
 
 
-.kobeFUN2 = function(obj, cols) {
+.kobeFUN2 = function(obj, cols, endvalue, ...) {
   
-  if(is.null(cols)) cols = rainbow(10)
+  
+  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   
   fMx = numeric(length(obj))
   bMx = numeric(length(obj))
@@ -2290,8 +2291,8 @@
   for(i in seq_along(obj)){
 
 	fMx[i] = max(obj[[i]]$output$msy_mt[,4])	
-	bMx[i] = max(obj[[i]]$output$msy_mt[,13])	
-
+	bMx[i] = max(obj[[i]]$output$msy_mt[,13])
+	
    }
 
 	posFmax = which(fMx == max(fMx))
@@ -2323,16 +2324,19 @@
 
   mypanel<-function(x,y,...){
   panel.xyplot(x, y, ...)
-  panel.text(x + 0.05, y + 0.2, labels = range(years), cex = 0.8, col = cols[i])
+  panel.text(x + 0.05, y + 0.2, labels = range(years), ...)
   }
 
-  b[[i]] <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = cols[i], panel = mypanel, pch = c(15, 17), cex = 0.8)
+  if(endvalue) {b[[i]] <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = cols[i], panel = mypanel, pch = c(15, 17), cex = 1)}
+  else {b[[i]] <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = cols[i], pch = c(15, 17), cex = 1)}
   c[[i]] <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = cols[i], pch = 19, cex = 0.5)
 
   }
   
   pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
-				main="Kobe plot") + 
+				key = list(lines = list(col = cols[1:length(obj)], lwd = 3),
+                           text = list(names(obj)), ...
+							), ...) + 
 		layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
 		layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
 		layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +

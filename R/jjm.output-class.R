@@ -139,23 +139,23 @@ print.summary.jjm.output = function(x, ...) {
 
 
 plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE 
-                           , cols = NULL, ...){
+                           , cols = NULL, poslegend = "right", ...){
 						   
-	if(what != "kobe") {					   
+  if(what != "kobe") {					   
   dataShape = .reshapeJJM(x, what = what)
   
+  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   mtheme = standard.theme("pdf", color=TRUE)
   mtheme$plot.line$lwd = 5
   mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "", main = what,
+    pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "", 
                  ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                  xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
-                 auto.key = list(title = "",
-                                 space = "right",
-                                 points = FALSE, border = FALSE,
-                                 lines = TRUE, lineheight = 3, size = 5),                
+                 key = list(lines = list(col = cols[1:length(x)], lwd = 3),
+							text = list(names(x))
+							, ...),                
                  par.settings=mtheme,
                  upper = dataShape$upper, lower = dataShape$lower,
                  panel = function(x, y, ...){
@@ -166,9 +166,8 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE
                            font = 2, adj = 0)
                    }
                  }
-    )
+    , ...)
   } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model, ylab = "",
-                       main = what,
                        ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                        xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
                        upper = dataShape$upper, lower = dataShape$lower,
@@ -179,12 +178,12 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE
                            ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
                          }
-                       })
+                       }, ...)
   }
   } else {
   
 		obj = x
-		pic = .kobeFUN2(obj, cols = cols)
+		pic = .kobeFUN2(obj, cols = cols, endvalue = endvalue, ...)
 
   }
   
