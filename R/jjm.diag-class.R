@@ -12,7 +12,7 @@ print.jjm.diag = function(x, ...) {
   }
   cat("\n")
   
-  cat("Input Plots:\n", paste(x[[1]]$info$input, collapse = "\n "), "\n\n")
+  cat("Input Plots:\n", paste(x[[1]]$info$data, collapse = "\n "), "\n\n")
   cat("Output Plots:\n", paste(x[[1]]$info$output, collapse = "\n "), "\n\n")
  # cat("Projections Plots:\n", paste(x$info$projections, collapse = "\n "), "\n\n")
  # cat("YPR Plots:\n", paste(x$info$ypr, collapse = "\n "), "\n")

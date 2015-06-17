@@ -845,7 +845,7 @@
     totcatch[which(iYr == sort(unique(res$year)))] = sum(subset(res, year == iYr)$catch)
   }
   
-  pic = xyplot(totcatch~jjm.out$Yr,
+  pic = xyplot(totcatch~jjm.out$Yr, ylim = c(0, 1.1*max(totcatch)),
                 
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
@@ -2412,8 +2412,6 @@
  
 }
 
-
-
 .recDevFUN = function(jjm.out, cols, ...)
 {
   
@@ -2490,4 +2488,3 @@
   
   return(out)
 } 
-
