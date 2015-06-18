@@ -379,7 +379,7 @@ if(Projections){
   seqPos = (length(Bp)*2+2):length(namesTabla[[2]])
 
     for(j in seq_along(seqPos)){
-      tabla[,seqPos[j]] = catchPrj[[j]][c(5:4,2:1,3)]
+      tabla[,seqPos[j]] = round(catchPrj[[j]][c(5:4,2:1,3)])
     }
 	
 	tableTot[[i]] = tabla
