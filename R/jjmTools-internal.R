@@ -341,19 +341,19 @@ if(Projections){
   
   partName = NULL
   for(j in seq_along(Bp)){
-    part = c(paste("B",Bp[j],sep=""), paste("P(B",Bp[j],">Bmsy)",sep=""))
+    part = c(Bp[j], Bp[j])
     partName = c(partName, part)
   }
   
-  namesTabla = list(rep("",times = length(Fs)), c("Fs",partName,
-                                                  paste0("Catch", Cp)))
+  FsName = lstOuts[[1]]$info$data$year[2]
+  namesTabla = c(FsName,partName,Cp)
   
   #tabla   = list()
   
   #for(i in names(lstOuts)){
     
     #tabla[[i]] = matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
-	tabla = matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
+	tabla = matrix(NA, ncol = length(namesTabla), nrow = length(Fs))
     rsktable  = matrix(NA, nrow = 1, ncol = length(grep("SSB_fut_", names(Outs[[i]]))),
                         dimnames = list(names(Outs)[i], 1:length(grep("SSB_fut_",names(Outs[[i]])))))
     
@@ -376,12 +376,14 @@ if(Projections){
                                   function(y){y[y[,1]==Cp[k],2]}))
   }
   
-  seqPos = (length(Bp)*2+2):length(namesTabla[[2]])
+  seqPos = (length(Bp)*2+2):length(namesTabla)
 
     for(j in seq_along(seqPos)){
       tabla[,seqPos[j]] = round(catchPrj[[j]][c(5:4,2:1,3)])
     }
 	
+	colnames(tabla) = namesTabla
+	tabla = as.data.frame(tabla)
 	tableTot[[i]] = tabla
 	
 	}
