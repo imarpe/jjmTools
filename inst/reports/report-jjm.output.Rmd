@@ -1,0 +1,36 @@
+---
+title: "Risk Tables"
+author: "South Pacific Regional Fisheries Management Organisation"
+date: ''
+output:
+  pdf_document:
+    fig_caption: yes
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 230)
+```
+
+```{r tabla1, echo=FALSE, results='asis'}
+
+table   = summary(object, Projections = TRUE, Fmult = Fmult,
+                                             BiomProj = BiomProj, CapProj = CapProj, 
+                                             MRS = MRS, ...)$proj[[1]]
+
+
+namesCol = colnames(table)
+NameFs = paste0("Multiplier of ", "$F_{", namesCol[1], "}$")
+NameBs = NULL
+for(i in (1:3 * 2)){
+  NameBs1 = c(paste0("$B_{", namesCol[i], "}$"), paste0("P(", "$B_{", namesCol[i+1], "}$", " > ", "$B_{MSY}$) %"))
+  NameBs = c(NameBs, NameBs1)
+}
+NameCt = c(paste0("Catch ", namesCol[8], " (kt)"), paste0("Catch ", namesCol[9], " (kt)"))
+NamesCol = c(NameFs, NameBs, NameCt)
+colnames(table) = NamesCol
+
+ModelName = mod1[[1]]$info$output$model
+
+pandoc.table(table, split.cells = c("0%","10%", "5%", "17%", "5%", "17%", "5%", "17%", "12%", "12%"),   split.tables = 250, caption = ModelName)
+
+```

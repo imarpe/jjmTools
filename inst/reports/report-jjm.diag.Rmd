@@ -1,0 +1,148 @@
+---
+title: "STOCK SUMMARY (Joint Jack Mackerel Model)"
+author: ""
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    fig_caption: yes
+header-includes:
+- \usepackage{morefloats}
+- \usepackage{fullpage}
+---
+
+This report shows the plots to ..... :
+
+```{r functions, include=FALSE}
+fig = local({
+  i = 0
+  ref = list()
+  list(
+    cap = function(refName, text) {
+      i <<- i + 1
+      ref[[refName]] <<- i
+      if(format == "docx") lab = paste("Figure ", i, ": ", text, sep="")
+      if(format != "docx") lab = paste(text, sep="")
+      return(lab)
+    },
+    ref = function(refName) {
+      return(ref[[refName]])
+    })
+})
+
+```
+
+\begin{centering}
+\section{Section one: Fit of catch data}
+\end{centering}
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("diag", "Total catch estimation over time."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$totalCatch
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$catchResidualsByFleet
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$absoluteResidualCatchByFleet
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$residualsCatchAtLengthByFleet
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "Length compositions. Bars represent the observed data and dots represent the model fit and color codes correspond to cohorts."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$lengthFitsCatch
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$predictedObservedCatchesByFleet
+```
+
+\newpage
+\begin{centering}
+\section{Section two: Fit of survey data}
+\end{centering}
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "Model fit to different indices. Vertical bars represent 2 standard deviations around the observations."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$predictedObservedIndices
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$standardizedSurveyResiduals
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$sdPerInputSeries
+```
+
+\newpage
+\begin{centering}
+\section{Section three: Fleet and Survey Sel and $F$}
+\end{centering}
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("diag", "Estimates of selectivity by fishery over time. Each cell represents a 5-year period."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$selectivityFisheryByPentad
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("diag", "Estimates of selectivity by survey over time. Each cell represents a 5-year period"), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$selectivitySurveyByPentad
+```
+
+
+```{r echo=FALSE, fig.width = 7, fig.height = 9, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$fAtAGe
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$fProportionAtAGe
+```
+
+
+```{r echo=FALSE, fig.width = 7, fig.height = 9, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$nAtAGe
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$nProportionAtAGe
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$fisheryMeanLength
+```
+
+
+\newpage
+\begin{centering}
+\section{Section four: Stock summary}
+\end{centering}
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "Summary of stock assessment. Biomass (total and unfished) is measured in thousand tonnes, recruitment is measured in thousands,  and harvest (fishing mortality) as a rate per year."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$summarySheet2
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$uncertaintyKeyParams
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$matureInmatureFishes
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("diag", "..."), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$stockRecruitment
+```
+
+
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("diag", "Estimated total biomass (solid line) and the estimated total biomass that would have occurred if no fishing had taken place, 1970-2014"), fig.pos='h', results='hide', warning=FALSE}
+object[[1]]$output$fishedUnfishedBiomass
