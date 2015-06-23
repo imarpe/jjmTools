@@ -15,7 +15,7 @@ options(width = 230)
 
 table   = summary(object, Projections = TRUE, Fmult = Fmult,
                                              BiomProj = BiomProj, CapProj = CapProj, 
-                                             MRS = MRS, ...)$proj[[1]]
+                                             MRS = MRS)$proj[[1]]
 
 
 namesCol = colnames(table)
