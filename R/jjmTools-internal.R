@@ -279,121 +279,121 @@
 }
 
 .ProjTable = function(lstOuts, Projections, Fmult, BiomProj, CapProj, MRS){
+
+if(Projections){
+		
+		Fs = Fmult
+		#Bp = BiomProj
+		#Cp = CapProj
+		mrs = MRS
+		
+		if(is.null(CapProj)) Cp = c(lstOuts[[1]]$info$data$year[2] + 1, lstOuts[[1]]$info$data$year[2] + 2) 
+		else Cp = CapProj
+		
+		if(is.null(BiomProj)) { Bp = c(lstOuts[[1]]$info$data$year[2] + 2, 
+		lstOuts[[1]]$info$data$year[2] + 6, lstOuts[[1]]$info$data$year[2] + 10) 
+		} else { 
+		Bp = BiomProj }
+		
+		if(is.null(Fmult)) Fs = c(0, 0.5, 0.75, 1, 1.25)
+		else Fs = Fmult
+		
+		if(is.null(MRS)) mrs = mean(lstOuts[[1]]$output$msy_mt[,10])
+		else mrs = MRS
+
+		Name = NULL
+		Outs = list()
+		for(i in seq_along(lstOuts)){
+			Name[i] = lstOuts[[i]]$info$output$model
+			Outs[[i]] = lstOuts[[i]]$output
+		}
+		
+		
+		for(i in seq_along(lstOuts)){
+			xa = strsplit(Name[i], split = "_")
+			xb = paste0(xa[[1]][2:length(xa[[1]])], collapse = "") 
+			Name[i] = paste(xa[[1]][1], xb, sep = "_")
+		}
+		
+		names(Outs) = Name
+		
+	tableTot = list()
+	
+	for(i in seq_along(Outs)){
+		
+	fut = do.call(rbind,lapply(Outs[[i]][grep("SSB_fut_",names(Outs[[i]]))],
+                   function(y){return(y[,1:3])}))
+		
+	#fut = do.call(rbind, lapply(Outs, function(x){
+	#				do.call(rbind, lapply(x[grep("SSB_fut_",names(x))],
+    #                      function(y){return(y[,1:3])}))})
   
-  if(Projections){
-    
-    Fs = Fmult
-    #Bp = BiomProj
-    #Cp = CapProj
-    mrs = MRS
-    
-    if(is.null(CapProj)) Cp = c(lstOuts[[1]]$info$data$year[2] + 1, lstOuts[[1]]$info$data$year[2] + 2) 
-    else Cp = CapProj
-    
-    if(is.null(BiomProj)) { Bp = c(lstOuts[[1]]$info$data$year[2] + 2, 
-                                   lstOuts[[1]]$info$data$year[2] + 6, lstOuts[[1]]$info$data$year[2] + 10) 
-    } else { 
-      Bp = BiomProj }
-    
-    if(is.null(Fmult)) Fs = c(0, 0.5, 0.75, 1, 1.25)
-    else Fs = Fmult
-    
-    if(is.null(MRS)) mrs = mean(lstOuts[[1]]$output$msy_mt[,10])
-    else mrs = MRS
-    
-    Name = NULL
-    Outs = list()
-    for(i in seq_along(lstOuts)){
-      Name[i] = lstOuts[[i]]$info$output$model
-      Outs[[i]] = lstOuts[[i]]$output
-    }
-    
-    
-    for(i in seq_along(lstOuts)){
-      xa = strsplit(Name[i], split = "_")
-      xb = paste0(xa[[1]][2:length(xa[[1]])], collapse = "") 
-      Name[i] = paste(xa[[1]][1], xb, sep = "_")
-    }
-    
-    names(Outs) = Name
-    
-    tableTot = list()
-    
-    for(i in seq_along(Outs)){
-      
-      fut = do.call(rbind,lapply(Outs[[i]][grep("SSB_fut_",names(Outs[[i]]))],
-                                 function(y){return(y[,1:3])}))
-      
-      #fut = do.call(rbind, lapply(Outs, function(x){
-      #				do.call(rbind, lapply(x[grep("SSB_fut_",names(x))],
-      #                      function(y){return(y[,1:3])}))})
-      
-      fut = as.data.frame(fut, stringsAsFactors = F)
-      colnames(fut) = c("year", "SSB", "SD")
-      fut$modelscenario = paste(rep(names(Outs)[i], each=nrow(Outs[[i]]$SSB_fut_1) *
-                                      length(grep("SSB_fut_", names(Outs[[i]])))),
-                                paste("Scen",
-                                      rep(1:length(grep("SSB_fut_", names(Outs[[i]]))), each=nrow(Outs[[i]]$SSB_fut_1)),
-                                      sep="_"),
-                                sep="_")
-      
-      assdato = mrs
-      
-      partName = NULL
-      for(j in seq_along(Bp)){
-        part = c(Bp[j], Bp[j])
-        partName = c(partName, part)
-      }
-      
-      FsName = lstOuts[[1]]$info$data$year[2]
-      namesTabla = c(FsName,partName,Cp)
-      
-      #tabla   = list()
-      
-      #for(i in names(lstOuts)){
-      
-      #tabla[[i]] = matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
-      tabla = matrix(NA, ncol = length(namesTabla), nrow = length(Fs))
-      rsktable  = matrix(NA, nrow = 1, ncol = length(grep("SSB_fut_", names(Outs[[i]]))),
-                         dimnames = list(names(Outs)[i], 1:length(grep("SSB_fut_",names(Outs[[i]])))))
-      
-      for(j in seq_along(Bp)){
-        
-        futdat = subset(fut, year == Bp[j] &
-                          paste("Model_", unlist(strsplit(fut$modelscenario,"_"))[seq(2, nrow(fut)*4, 4)],sep="") == names(Outs)[i])
-        Bs = futdat[,2][c(5:4,2:1,3)]
-        rsktable[1,] = (1 - pnorm(mrs, futdat$SSB, futdat$SD))*100
-        tabla[,1] = Fs
-        tabla[,(j*2)] = round(Bs)
-        tabla[,(j*2+1)] = round(rsktable[1,][c(5:4,2:1,3)])
-        
-      }
-      #}
-      
-      catchPrj = list()
-      for(k in seq_along(Cp)){
-        catchPrj[[k]] = unlist(lapply(Outs[[i]][grep("Catch_fut_",names(Outs[[i]]))],
-                                      function(y){y[y[,1]==Cp[k],2]}))
-      }
-      
-      seqPos = (length(Bp)*2+2):length(namesTabla)
-      
-      for(j in seq_along(seqPos)){
-        tabla[,seqPos[j]] = round(catchPrj[[j]][c(5:4,2:1,3)])
-      }
-      
-      colnames(tabla) = namesTabla
-      tabla = as.data.frame(tabla)
-      tableTot[[i]] = tabla
-      
-    }
-    
-    names(tableTot) = names(Outs)
-    
+	  fut = as.data.frame(fut, stringsAsFactors = F)
+	  colnames(fut) = c("year", "SSB", "SD")
+	  fut$modelscenario = paste(rep(names(Outs)[i], each=nrow(Outs[[i]]$SSB_fut_1) *
+									   length(grep("SSB_fut_", names(Outs[[i]])))),
+								 paste("Scen",
+									   rep(1:length(grep("SSB_fut_", names(Outs[[i]]))), each=nrow(Outs[[i]]$SSB_fut_1)),
+									   sep="_"),
+								 sep="_")
+  
+  assdato = mrs
+  
+  partName = NULL
+  for(j in seq_along(Bp)){
+    part = c(Bp[j], Bp[j])
+    partName = c(partName, part)
   }
   
-  else { tableTot = NULL }
+  FsName = lstOuts[[1]]$info$data$year[2]
+  namesTabla = c(FsName,partName,Cp)
   
+  #tabla   = list()
+  
+  #for(i in names(lstOuts)){
+    
+    #tabla[[i]] = matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
+	tabla = matrix(NA, ncol = length(namesTabla), nrow = length(Fs))
+    rsktable  = matrix(NA, nrow = 1, ncol = length(grep("SSB_fut_", names(Outs[[i]]))),
+                        dimnames = list(names(Outs)[i], 1:length(grep("SSB_fut_",names(Outs[[i]])))))
+    
+    for(j in seq_along(Bp)){
+      
+      futdat = subset(fut, year == Bp[j] &
+                         paste("Model_", unlist(strsplit(fut$modelscenario,"_"))[seq(2, nrow(fut)*4, 4)],sep="") == names(Outs)[i])
+      Bs = futdat[,2][c(5:4,2:1,3)]
+      rsktable[1,] = (1 - pnorm(mrs, futdat$SSB, futdat$SD))*100
+      tabla[,1] = Fs
+      tabla[,(j*2)] = round(Bs)
+      tabla[,(j*2+1)] = round(rsktable[1,][c(5:4,2:1,3)])
+      
+    }
+  #}
+  
+  catchPrj = list()
+  for(k in seq_along(Cp)){
+    catchPrj[[k]] = unlist(lapply(Outs[[i]][grep("Catch_fut_",names(Outs[[i]]))],
+                                  function(y){y[y[,1]==Cp[k],2]}))
+  }
+  
+  seqPos = (length(Bp)*2+2):length(namesTabla)
+
+    for(j in seq_along(seqPos)){
+      tabla[,seqPos[j]] = round(catchPrj[[j]][c(5:4,2:1,3)])
+    }
+	
+	colnames(tabla) = namesTabla
+	tabla = as.data.frame(tabla)
+	tableTot[[i]] = tabla
+	
+	}
+	
+	names(tableTot) = names(Outs)
+	
+	}
+	
+	else { tableTot = NULL }
+
   return(tableTot)
   
 }
