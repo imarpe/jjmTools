@@ -6,7 +6,12 @@ report = function(...) {
 report.jjm.output = function(object, format="latex", Fmult = NULL,
                              BiomProj = NULL, CapProj = NULL, verbose=TRUE,
                              MRS = NULL, tangle=FALSE, tidy=TRUE, ...) {
-
+  
+  if(is.null(BiomProj)) nBiom = 3
+  if(!is.null(BiomProj)) nBiom = length(BiomProj)
+  if(is.null(CapProj)) nCap = 2
+  if(!is.null(CapProj)) nCap = length(CapProj)
+  
   modelName = deparse(substitute(object))
   
   f = system.file("reports", "report-jjm.output.Rmd", package = "jjmTools")
