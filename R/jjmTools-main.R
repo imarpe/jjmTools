@@ -137,7 +137,7 @@ diagnostics <- function(outputObject, ...) {
   # Take an output object and get diagnostic plots extracting outputs, data and YPR
   output = list()
   
-  for(i in seq_along(outputObject)){
+  for(i in seq_along(outputObject)) {
 	output[[i]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
 								jjm.out = outputObject[[i]]$output, jjm.in = outputObject[[i]]$data
 								, ...)
