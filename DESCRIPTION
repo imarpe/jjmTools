@@ -16,9 +16,10 @@ Depends:
     PBSadmb,
     RColorBrewer,
     doBy,
-    doSNOW,
     foreach,
-	latticeExtra,
-	gridExtra
+    knitr,
+    pander,
+    latticeExtra,
+    gridExtra
 LazyData: TRUE
 Encoding:  utf-8
