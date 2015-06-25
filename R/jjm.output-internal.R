@@ -38,6 +38,75 @@
   
 }
 
+.reshapeJJM2 = function(x, what, ...){
+  
+  var = switch(what,
+               catchProj     = "Catch_fut_",
+               ssbProj       = "SSB_fut_"
+  )
+  
+  out = NULL
+  
+  for(i in seq_along(x)) {
+    
+    jjm.out = x[[i]]$output
+    
+  lastYear = jjm.out$R[nrow(jjm.out$R), 1]
+  Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
+  scenarios = c(paste0("F", lastYear ," SQ"), 
+				paste0("F", lastYear, " 0.75x"), 
+				paste0("F", lastYear, " 1.25x"), 
+				paste0("F", lastYear, " 0.5x"), 
+				paste0("F", lastYear, " 0x"))
+  
+  if(var == "Catch_fut_") {
+  totCatch  = 0
+  for(iFlt in grep("Obs_catch_", names(jjm.out)))
+    totCatch = jjm.out[[iFlt]] + totCatch
+  
+  totCatch  = cbind(jjm.out$Yr, totCatch)
+  colnames(totCatch) = c("year", "catch")
+  }
+  
+  for(iScen in 1:length(scenarios)){
+	
+	if(var == "SSB_fut_") {
+	idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2)])
+    tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2)],
+                 get("jjm.out")[[paste(var, iScen, sep = "")]][,c(1, 2)])
+    colnames(tot) = c("year", "SSB")
+	}
+	
+	if(var == "Catch_fut_") {
+	    tot = rbind(totCatch, jjm.out[[paste(var, iScen, sep = "")]])
+		colnames(tot) = c("year", "catch")
+	}
+	
+	  if(iScen == 1){
+		totres = data.frame(tot)
+		totres$scenario = scenarios[iScen]
+      } else {
+		res = data.frame(tot)
+        res$scenario = scenarios[iScen]
+        totres  = rbind(totres, res)
+      }
+
+  }
+
+  colnames(totres) = c("year", "data", "scenario")	
+  
+    model   = x[[i]]$info$output$model 
+	totres$model = model
+    
+    out    = rbind(out, totres)
+    
+  }
+  
+  colnames(out) = c("year", "data", "scenario", "model")
+  
+  return(out)
+  
+}
 
 
 .combineModels = function(...){
@@ -140,10 +209,26 @@
   
   if(!stack) warning("Series do not have to be in the same plot")
   
-  if(length(x) < 2) jjm.out = x[[1]]$output
+  Nfutscen  = length(grep("SSB_fut_", names(x[[1]]$output)))
+  scenarios = c("F SQ", "F 0.75x", "F 1.25x", "F 0.5x", "F 0x")
   
-  if(what == "catchProj") pic = .projections_catchPredictionFUN(jjm.out, ...)
-  if(what == "ssbProj")   pic = .projections_ssbPredictionFUN(jjm.out, ...)
+  dataShape = .reshapeJJM2(x, what, ...)
+  ikey           = simpleKey(text=scenarios, points = FALSE, lines = TRUE, columns = 2)
+  ikey$lines$col = 1:length(scenarios)
+  ikey$lines$lwd = 4
+  ikey$lines$lty = 1
+  
+  pic = xyplot(data ~ year | model, data = dataShape, type = "l", groups = scenario, 
+				key = ikey,
+				prepanel = function(...) {list(ylim = c(0, max(dataShape$data, na.rm = TRUE)))},
+                panel = function(x, y){
+                  panel.grid(h = -1, v = -1)
+                  idx = mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
+                                seq(length(x)/Nfutscen, length(x), length.out = Nfutscen), FUN = seq)
+                  #scen1 = idx[,1]; scen2 = idx[,2]; scen3 = idx[,3]; scen4 = idx[,4]; scen5 = idx[,5]
+                  for(iScen in 2:Nfutscen) panel.xyplot(x[idx[,iScen]], y[idx[,iScen]], type = "l", col = iScen, lwd = 3)
+                  panel.xyplot(x[idx[,1]], y[idx[,1]], type = "l", col = 1, lwd = 4)                  
+                }, ...)
   
   return(pic)
 }

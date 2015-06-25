@@ -2196,7 +2196,7 @@
 {
   lastYear = jjm.out$R[nrow(jjm.out$R), 1]
   Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
-    scenarios = c(paste0("F", lastYear ," SQ"), 
+  scenarios = c(paste0("F", lastYear ," SQ"), 
 				paste0("F", lastYear, " 0.75x"), 
 				paste0("F", lastYear, " 1.25x"), 
 				paste0("F", lastYear, " 0.5x"), 
@@ -2270,8 +2270,6 @@
   
   return(pic)
 }
-
-
 
 .kobeFUN = function(jjm.out) {
 
@@ -2387,8 +2385,6 @@
   return(pic)
  
 }
-
-
 
 .kobeFUN3 = function(obj, cols, endvalue, ...) {
   
