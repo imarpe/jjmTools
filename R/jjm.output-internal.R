@@ -118,7 +118,7 @@
   
   out = NULL
   
-  scenarios = c(0, 0.5, 0.75, 1, 1.25)
+  scenarios = c(1, 0.75, 1.25, 0.5, 0)
   
   for(i in seq_along(x)) {
     
@@ -159,11 +159,61 @@
     
   }
   
-  colnames(out) = c("scen", "data", "model")
+  colnames(out) = c("Scenario", "data", "model")
+  out = out[with(out, order(Scenario)),]
   
   return(out)
   
 }
+
+
+.reshapeJJM4 = function(x, what, ...){
+  
+  var = switch(what,
+               ratioSSB_F     = "SSB_NoFishR",
+               ratioSSB       = "SSB"
+  )
+  
+  out = NULL
+  
+  for(i in seq_along(x)) {
+    
+  jjm.out = x[[i]]$output
+  
+  if(var == "SSB_NoFishR") {
+	idx1 = grep(var, names(jjm.out))
+	idx2 = grep("TotF", names(jjm.out))
+	xAxis = jjm.out[[idx1]][,2]
+	yAxis = rowMeans(jjm.out[[idx2]])[-1]
+	Data   = data.frame(xAxis = xAxis, yAxis = yAxis)
+  }
+  
+  if(var == "SSB") {
+    idx = grep(var, names(jjm.out))
+	fEst = jjm.out[[idx]][1,2]
+	indYear = which(jjm.out[[idx]][ ,1] == 1971)
+	Years = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]), 1 ]
+	Values = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]) , 2] / fEst
+
+	Data    = data.frame(xAxis = Years, yAxis = Values)
+  
+  }
+
+    colnames(Data) = c("scen", "data")	
+    
+    model   = x[[i]]$info$output$model 
+	Data$model = model
+    
+    out    = rbind(out, Data)
+    
+  }
+  
+  colnames(out) = c("Scenario", "data", "model")
+  
+  return(out)
+  
+}
+
 
 
 .combineModels = function(...){
@@ -291,32 +341,77 @@
 }
 
 
-.funPlotCatchScen = function(x, what, cols, stack, endvalue, poslegend, ...){
+.funPlotScen = function(x, what, cols, stack, endvalue, poslegend, ...){
 	
   dataShape = .reshapeJJM3(x, what = what)
-  ikey           = simpleKey(text=scenarios, points = FALSE, lines = TRUE, columns = 2)
-  ikey$lines$col = 1:length(scenarios)
-  ikey$lines$lwd = 4
-  ikey$lines$lty = 1
+  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
+  mtheme = standard.theme("pdf", color=TRUE)
+  mtheme$plot.line$lwd = 5
+  mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(data ~ scen, data = dataShape, groups = model, ylab = "", 
-                 key = ikey,                
+    pic = xyplot(data ~ Scenario, data = dataShape, groups = model, 
+                 key = list(lines = list(col = cols[1:length(x)], lwd = 3),
+                            text = list(names(x))
+                            , ...),                
                  par.settings=mtheme,
                  panel = function(x, y, ...){
-                   panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                   panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
+                   #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                   panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
+				   panel.xyplot(x, y, type = 'p', cex = 1.5, pch = 19, ...)
                    if(endvalue){
                      ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
                            font = 2, adj = 0)
                    }
                  }
                  , ...)
-  } else {pic = xyplot(data ~ scen | model, data = dataShape, groups = model, ylab = "",
+  } else {pic = xyplot(data ~ Scenario | model, data = dataShape, groups = model,
                        panel = function(x, y, ...){
-                         panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                         panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
-                         if(endvalue){
+                         #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                         panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
+                         panel.xyplot(x, y, type = 'p', cex = 1.5, pch = 19, ...)
+						 if(endvalue){
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                                 font = 2, adj = 0)
+                         }
+                       }, ...)
+  }
+  
+  return(pic)
+	
+}
+
+
+.funPlotRatio = function(x, what, cols, stack, endvalue, poslegend, ...){
+	
+  dataShape = .reshapeJJM4(x, what = what)
+  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
+  mtheme = standard.theme("pdf", color=TRUE)
+  mtheme$plot.line$lwd = 5
+  mtheme$superpose.line$lwd = 5
+  
+  if(stack == !TRUE){
+    pic = xyplot(data ~ Scenario, data = dataShape, groups = model, 
+                 key = list(lines = list(col = cols[1:length(x)], lwd = 3),
+                            text = list(names(x))
+                            , ...),                
+                 par.settings=mtheme,
+                 panel = function(x, y, ...){
+                   #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                   panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
+				   panel.xyplot(x, y, type = 'p', cex = 1.5, pch = 19, ...)
+                   if(endvalue){
+                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                           font = 2, adj = 0)
+                   }
+                 }
+                 , ...)
+  } else {pic = xyplot(data ~ Scenario | model, data = dataShape, groups = model,
+                       panel = function(x, y, ...){
+                         #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                         panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
+                         panel.xyplot(x, y, type = 'p', cex = 1.5, pch = 19, ...)
+						 if(endvalue){
                            ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
                          }
