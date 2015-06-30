@@ -139,17 +139,19 @@ print.summary.jjm.output = function(x, ...) {
 
 
 plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE 
-                           , cols = NULL, poslegend = "right", ...){
+                           , cols = NULL, poslegend = "right", scen, ...){
   
-    switch(what, biomass   = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               recruitment = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               ssb         = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               noFishTB    = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               ftot        = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               kobe        = .funPlotKobe(x, what, cols, stack, endvalue, poslegend, ...),
-               catchProj   = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
-               ssbProj     = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...))
-  
+    switch(what, biomass     = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               recruitment   = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               ssb           = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               noFishTB      = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               ftot          = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               kobe          = .funPlotKobe(x, what, cols, stack, endvalue, poslegend, ...),
+               catchProj     = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
+               ssbProj       = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
+			   #totalProj     = .funPlotTotProj(x, what, cols, stack, endvalue, poslegend, scen, ...),
+			   catchProjScen = .funPlotCatchScen(x, what, cols, stack, endvalue, poslegend, ...),
+			   ssbProjScen   = .funPlotSsbScen(x, what, cols, stack, endvalue, poslegend, ...))
   
 }
 

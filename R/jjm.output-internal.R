@@ -109,6 +109,63 @@
 }
 
 
+.reshapeJJM3 = function(x, what, ...){
+  
+  var = switch(what,
+               catchProjScen     = "Catch_fut_",
+               ssbProjScen       = "SSB_fut_"
+  )
+  
+  out = NULL
+  
+  scenarios = c(0, 0.5, 0.75, 1, 1.25)
+  
+  for(i in seq_along(x)) {
+    
+  jjm.out = x[[i]]$output
+    
+  lastYear = jjm.out$R[nrow(jjm.out$R), 1]
+  Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
+  
+  
+  if(var == "Catch_fut_") {
+    meanCatch = NULL
+	idx = grep(var, names(jjm.out))
+	for(j in seq_along(idx)){
+		meanCatch[j] = mean(jjm.out[[idx[j]]][,2])
+	}
+	totres    = data.frame(scen = scenarios, data = meanCatch)
+  
+  }
+  
+  if(var == "SSB_fut_") {
+    ssbLy = jjm.out$SSB[(nrow(jjm.out$SSB) - 1), 2]
+    ratio = NULL
+	idx = grep(var, names(jjm.out))
+	for(j in seq_along(idx)){
+		ratio[j] = jjm.out[[idx[j]]][nrow(jjm.out[[idx[j]]]),2] / ssbLy
+	}
+	totres    = data.frame(scen = scenarios, data = ratio)
+  
+  }
+  
+  
+	colnames(totres) = c("scen", "data")	
+    
+    model   = x[[i]]$info$output$model 
+	totres$model = model
+    
+    out    = rbind(out, totres)
+    
+  }
+  
+  colnames(out) = c("scen", "data", "model")
+  
+  return(out)
+  
+}
+
+
 .combineModels = function(...){
   
   modelList = list(...)
@@ -231,4 +288,41 @@
                 }, ...)
   
   return(pic)
+}
+
+
+.funPlotCatchScen = function(x, what, cols, stack, endvalue, poslegend, ...){
+	
+  dataShape = .reshapeJJM3(x, what = what)
+  ikey           = simpleKey(text=scenarios, points = FALSE, lines = TRUE, columns = 2)
+  ikey$lines$col = 1:length(scenarios)
+  ikey$lines$lwd = 4
+  ikey$lines$lty = 1
+  
+  if(stack == !TRUE){
+    pic = xyplot(data ~ scen, data = dataShape, groups = model, ylab = "", 
+                 key = ikey,                
+                 par.settings=mtheme,
+                 panel = function(x, y, ...){
+                   panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                   panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
+                   if(endvalue){
+                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                           font = 2, adj = 0)
+                   }
+                 }
+                 , ...)
+  } else {pic = xyplot(data ~ scen | model, data = dataShape, groups = model, ylab = "",
+                       panel = function(x, y, ...){
+                         panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                         panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
+                         if(endvalue){
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                                 font = 2, adj = 0)
+                         }
+                       }, ...)
+  }
+  
+  return(pic)
+	
 }
