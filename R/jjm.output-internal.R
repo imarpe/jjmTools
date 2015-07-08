@@ -189,7 +189,7 @@
   }
   
   if(var == "SSB") {
-    idx = grep(var, names(jjm.out))
+    idx = which(names(jjm.out) == var)
 	fEst = jjm.out[[idx]][1,2]
 	indYear = which(jjm.out[[idx]][ ,1] == 1971)
 	Years = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]), 1 ]
@@ -325,8 +325,8 @@
   ikey$lines$lwd = 4
   ikey$lines$lty = 1
   
-  pic = xyplot(data ~ year | model, data = dataShape, type = "l", groups = scenario, 
-				key = ikey,
+  pic = xyplot(data ~ year | model, data = dataShape, type = "l", groups = scenario,
+				key = ikey, ylab = "",
 				prepanel = function(...) {list(ylim = c(0, max(dataShape$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
@@ -350,7 +350,8 @@
   mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(data ~ Scenario, data = dataShape, groups = model, 
+    pic = xyplot(data ~ Scenario, data = dataShape, groups = model,
+				xlab="Fishing Mortality Multiplier", ylab = "",
                  key = list(lines = list(col = cols[1:length(x)], lwd = 3),
                             text = list(names(x))
                             , ...),                
@@ -358,7 +359,7 @@
                  panel = function(x, y, ...){
                    #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                    panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
-				   panel.xyplot(x, y, type = 'p', cex = 1.5, pch = 19, ...)
+				   panel.xyplot(x, y, type = 'p', cex = 1, pch = 19, ...)
                    if(endvalue){
                      ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
                            font = 2, adj = 0)
@@ -366,10 +367,11 @@
                  }
                  , ...)
   } else {pic = xyplot(data ~ Scenario | model, data = dataShape, groups = model,
-                       panel = function(x, y, ...){
+                       xlab="Fishing Mortality Multiplier", ylab = "",
+					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
-                         panel.xyplot(x, y, type = 'p', cex = 1.5, pch = 19, ...)
+                         panel.xyplot(x, y, type = 'p', cex = 1, pch = 19, ...)
 						 if(endvalue){
                            ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
@@ -382,7 +384,7 @@
 }
 
 
-.funPlotRatio = function(x, what, cols, stack, endvalue, poslegend, ...){
+.funPlotRatioSSB_F = function(x, what, cols, stack, endvalue, poslegend, ...){
 	
   dataShape = .reshapeJJM4(x, what = what)
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
@@ -391,7 +393,8 @@
   mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(data ~ Scenario, data = dataShape, groups = model, 
+    pic = xyplot(data ~ Scenario, data = dataShape, groups = model,
+				xlab = "Ratio", ylab = "Fishing Mortality",
                  key = list(lines = list(col = cols[1:length(x)], lwd = 3),
                             text = list(names(x))
                             , ...),                
@@ -399,7 +402,7 @@
                  panel = function(x, y, ...){
                    #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                    panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
-				   panel.xyplot(x, y, type = 'p', cex = 1.5, pch = 19, ...)
+				   panel.xyplot(x, y, type = 'p', cex = 1, pch = 19, ...)
                    if(endvalue){
                      ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
                            font = 2, adj = 0)
@@ -407,10 +410,52 @@
                  }
                  , ...)
   } else {pic = xyplot(data ~ Scenario | model, data = dataShape, groups = model,
-                       panel = function(x, y, ...){
+                       xlab = "Ratio", ylab = "Fishing Mortality",
+					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
-                         panel.xyplot(x, y, type = 'p', cex = 1.5, pch = 19, ...)
+                         panel.xyplot(x, y, type = 'p', cex = 1, pch = 19, ...)
+						 if(endvalue){
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                                 font = 2, adj = 0)
+                         }
+                       }, ...)
+  }
+  
+  return(pic)
+	
+}
+
+
+.funPlotRatioSSB = function(x, what, cols, stack, endvalue, poslegend, ...){
+	
+  dataShape = .reshapeJJM4(x, what = what)
+  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
+  mtheme = standard.theme("pdf", color=TRUE)
+  mtheme$plot.line$lwd = 5
+  mtheme$superpose.line$lwd = 5
+  
+  if(stack == !TRUE){
+    pic = xyplot(data ~ Scenario, data = dataShape, groups = model,
+				xlab = "year", ylab = "Ratio",
+                 key = list(lines = list(col = cols[1:length(x)], lwd = 3),
+                            text = list(names(x))
+                            , ...),                
+                 par.settings=mtheme,
+                 panel = function(x, y, ...){
+                   #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                   panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
+                   if(endvalue){
+                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                           font = 2, adj = 0)
+                   }
+                 }
+                 , ...)
+  } else {pic = xyplot(data ~ Scenario | model, data = dataShape, groups = model,
+                       xlab = "year", ylab = "Ratio",
+					   panel = function(x, y, ...){
+                         #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                         panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
 						 if(endvalue){
                            ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
