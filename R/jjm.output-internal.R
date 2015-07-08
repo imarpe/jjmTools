@@ -215,6 +215,54 @@
 }
 
 
+.reshapeJJM5 = function(x, scen, ...){
+  
+  out = NULL
+  
+  if(scen == 0) scenario = 5
+  if(scen == 0.5) scenario = 4
+  if(scen == 0.75) scenario = 2
+  if(scen == 1) scenario = 1
+  if(scen == 1.25) scenario = 3
+	
+  for(i in seq_along(x)) {
+    
+	jjm.out = x[[i]]$output
+
+	idx = grep("Pred_catch_", names(jjm.out))
+	
+	idx_catch = grep(paste0("Catch_fut_", scenario), names(jjm.out))
+	idx_ssb   = grep(paste0("SSB_fut_", scenario), names(jjm.out))
+
+	totCatch = 0
+	for(j in idx){
+		totCatch = totCatch + jjm.out[[j]] 
+	}
+	
+	dataCatch = data.frame(year = c(jjm.out$Yr, jjm.out[[idx_catch]][,1]), 
+						   catch = c(totCatch, jjm.out[[idx_catch]][,2]))
+	
+	
+	jjm.out$SSB = jjm.out$SSB[- nrow(jjm.out$SSB), ]
+	
+	dataSSB = rbind(jjm.out$SSB, jjm.out[[idx_ssb]])
+	dataSSB = as.data.frame(dataSSB)
+	names(dataSSB) = c("year", "ssb", "sd", "lower", "upper")
+	
+	Data = merge(dataCatch, dataSSB, by = "year")
+	
+    model   = x[[i]]$info$output$model 
+	Data$model = model
+    
+    out    = rbind(out, Data)
+    
+  }
+  
+  return(out)
+  
+}
+
+
 
 .combineModels = function(...){
   
@@ -322,7 +370,7 @@
   dataShape = .reshapeJJM2(x, what, ...)
   ikey           = simpleKey(text=scenarios, points = FALSE, lines = TRUE, columns = 2)
   ikey$lines$col = 1:length(scenarios)
-  ikey$lines$lwd = 4
+  ikey$lines$lwd = 2
   ikey$lines$lty = 1
   
   pic = xyplot(data ~ year | model, data = dataShape, type = "l", groups = scenario,
@@ -333,8 +381,8 @@
                   idx = mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
                                 seq(length(x)/Nfutscen, length(x), length.out = Nfutscen), FUN = seq)
                   #scen1 = idx[,1]; scen2 = idx[,2]; scen3 = idx[,3]; scen4 = idx[,4]; scen5 = idx[,5]
-                  for(iScen in 2:Nfutscen) panel.xyplot(x[idx[,iScen]], y[idx[,iScen]], type = "l", col = iScen, lwd = 3)
-                  panel.xyplot(x[idx[,1]], y[idx[,1]], type = "l", col = 1, lwd = 4)                  
+                  for(iScen in 2:Nfutscen) panel.xyplot(x[idx[,iScen]], y[idx[,iScen]], type = "l", col = iScen, lwd = 2)
+                  panel.xyplot(x[idx[,1]], y[idx[,1]], type = "l", col = 1, lwd = 2)                  
                 }, ...)
   
   return(pic)
@@ -446,7 +494,7 @@
                    #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                    panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
                    if(endvalue){
-                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                     ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1], 2), pos=3, offset=1, cex=0.9,
                            font = 2, adj = 0)
                    }
                  }
@@ -457,7 +505,53 @@
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
 						 if(endvalue){
-                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels = round(rev(y)[1], 2), pos=3, offset=1, cex=0.9,
+                                 font = 2, adj = 0)
+                         }
+                       }, ...)
+  }
+  
+  return(pic)
+	
+}
+
+
+
+.funPlotTotProj = function(x, what, cols, stack, endvalue, poslegend, scen, ...){
+	
+  dataShape = .reshapeJJM5(x, scen)
+  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
+  mtheme = standard.theme("pdf", color=TRUE)
+  mtheme$plot.line$lwd = 5
+  mtheme$superpose.line$lwd = 5
+  
+  if(stack == !TRUE){
+    pic = xyplot(ssb ~ year, data = dataShape, groups = model,
+				xlab = "year", ylab = "",
+                key = list(lines = list(col = cols[1:length(x)], lwd = 3),
+                            text = list(names(x))
+                            , ...),                
+                 par.settings=mtheme,
+                 panel = function(x, y,groups, ...){
+                   #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                   panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, groups, ...)
+                   panel.lines(x = dataShape$year, y = dataShape$upper, type ='l', lty = 3, lwd = 2, ...)
+				   panel.lines(x = dataShape$year, y = dataShape$lower, type ='l', lty = 3, lwd = 2, ...)
+                   if(endvalue){
+                     ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1], 2), pos=3, offset=1, cex=0.9,
+                           font = 2, adj = 0)
+                   }
+                 }
+                 , ...)
+  } else {pic = xyplot(ssb ~ year | model, data = dataShape, groups = model,
+                       xlab = "year", ylab = "",
+					   panel = function(x, y, ...){
+                         #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                         panel.lines(x = dataShape$year, y = dataShape$upper, type ='l', lty = 3, lwd = 2, ...)
+				         panel.lines(x = dataShape$year, y = dataShape$lower, type ='l', lty = 3, lwd = 2, ...)
+						 panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
+						 if(endvalue){
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels = round(rev(y)[1], 2), pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
                          }
                        }, ...)

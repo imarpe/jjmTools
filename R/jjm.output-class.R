@@ -139,7 +139,7 @@ print.summary.jjm.output = function(x, ...) {
 
 
 plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE 
-                           , cols = NULL, poslegend = "right", scen, ...){
+                           , cols = NULL, poslegend = "right", scen = 1, ...){
   
     switch(what, biomass     = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
                recruitment   = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
@@ -149,7 +149,7 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE
                kobe          = .funPlotKobe(x, what, cols, stack, endvalue, poslegend, ...),
                catchProj     = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
                ssbProj       = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
-			   #totalProj     = .funPlotTotProj(x, what, cols, stack, endvalue, poslegend, scen, ...),
+			   totalProj     = .funPlotTotProj(x, what, cols, stack, endvalue, poslegend, scen, ...),
 			   catchProjScen = .funPlotScen(x, what, cols, stack, endvalue, poslegend, ...),
 			   ssbProjScen   = .funPlotScen(x, what, cols, stack, endvalue, poslegend, ...),
 			   ratioSSB_F    = .funPlotRatioSSB_F(x, what, cols, stack, endvalue, poslegend, ...),
