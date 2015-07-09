@@ -240,7 +240,8 @@
 	}
 	
 	dataCatch = data.frame(year = c(jjm.out$Yr, jjm.out[[idx_catch]][,1]), 
-						   catch = c(totCatch, jjm.out[[idx_catch]][,2]))
+						   data = c(totCatch, jjm.out[[idx_catch]][,2]),
+						   class = "catch")
 	
 	
 	jjm.out$SSB = jjm.out$SSB[- nrow(jjm.out$SSB), ]
@@ -249,11 +250,28 @@
 	dataSSB = as.data.frame(dataSSB)
 	names(dataSSB) = c("year", "ssb", "sd", "lower", "upper")
 	
-	Data = merge(dataCatch, dataSSB, by = "year")
+	dataS = cbind(dataSSB$year, dataSSB$ssb)
+	dataS = as.data.frame(dataS)
+	dataS$class = "ssb"
+	
+	dataL = cbind(dataSSB$year, dataSSB$lower)
+	dataL = as.data.frame(dataL)
+	dataL$class = "lower"
+	
+	dataU = cbind(dataSSB$year, dataSSB$upper)
+	dataU = as.data.frame(dataU)
+	dataU$class = "upper"
+	
+	dataT = rbind(dataS, dataL, dataU)
+	dataT = as.data.frame(dataT)
+	names(dataT) = c("year", "data", "class")
+	
+	Data = rbind(dataCatch, dataT)
 	
     model   = x[[i]]$info$output$model 
 	Data$model = model
-    
+    names(Data) = c("year", "data", "class", "model")
+	
     out    = rbind(out, Data)
     
   }
@@ -521,35 +539,42 @@
 	
   dataShape = .reshapeJJM5(x, scen)
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
-  mtheme = standard.theme("pdf", color=TRUE)
-  mtheme$plot.line$lwd = 5
-  mtheme$superpose.line$lwd = 5
+  
+  ikey           = simpleKey(text = names(x),
+                              points = FALSE, lines = TRUE, columns = 2)
+
+  ikey$lines$col = rep(cols[1:length(x)], each = 4)
+  ikey$lines$lwd = 2
+  ikey$lines$lty = c(5, 1, 3, 3)
+  
+  
+  #mtheme = standard.theme("pdf", color=TRUE)
+  #mtheme$plot.line$lwd = 5
+  #mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(ssb ~ year, data = dataShape, groups = model,
+    pic = xyplot(data ~ year, data = dataShape, groups = class,
 				xlab = "year", ylab = "",
-                key = list(lines = list(col = cols[1:length(x)], lwd = 3),
-                            text = list(names(x))
-                            , ...),                
-                 par.settings=mtheme,
-                 panel = function(x, y,groups, ...){
+                key = ikey,               
+                # par.settings=mtheme,
+                 panel = function(x, y, ...){
                    #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                   panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, groups, ...)
-                   panel.lines(x = dataShape$year, y = dataShape$upper, type ='l', lty = 3, lwd = 2, ...)
-				   panel.lines(x = dataShape$year, y = dataShape$lower, type ='l', lty = 3, lwd = 2, ...)
+                   panel.xyplot(x, y, type = 'l', lwd = 2, 
+								lty = c(5, 1, 3, 3),
+								col = rep(cols[1:length(x)], each = 4), ...)
                    if(endvalue){
                      ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1], 2), pos=3, offset=1, cex=0.9,
                            font = 2, adj = 0)
                    }
                  }
                  , ...)
-  } else {pic = xyplot(ssb ~ year | model, data = dataShape, groups = model,
-                       xlab = "year", ylab = "",
+  } else {pic = xyplot(data ~ year | model, data = dataShape, groups = class,
+					   xlab = "year", ylab = "",
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                         panel.lines(x = dataShape$year, y = dataShape$upper, type ='l', lty = 3, lwd = 2, ...)
-				         panel.lines(x = dataShape$year, y = dataShape$lower, type ='l', lty = 3, lwd = 2, ...)
-						 panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
+						 panel.xyplot(x, y, type = 'l', lwd = 2, 
+									  lty = c(5, 1, 3, 3), 
+									  col = cols[1], ...)
 						 if(endvalue){
                            ltext(x=rev(x)[1], y=rev(y)[1], labels = round(rev(y)[1], 2), pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
