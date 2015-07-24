@@ -215,9 +215,13 @@
 }
 
 
-.reshapeJJM5 = function(x, scen, ...){
+.reshapeJJM5 = function(x, scen, cols, ...){
+  
+  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   
   out = NULL
+  
+  if(!(scen %in% c(0, 0.5, 0.75, 1, 1.25))) stop("Only 0, 0.5, 0.75, 1 and 1.25 multipliers are allowed.")
   
   if(scen == 0) scenario = 5
   if(scen == 0.5) scenario = 4
@@ -270,7 +274,8 @@
 	
     model   = x[[i]]$info$output$model 
 	Data$model = model
-    names(Data) = c("year", "data", "class", "model")
+	Data$color = cols[i]
+    names(Data) = c("year", "data", "class", "model", "color")
 	
     out    = rbind(out, Data)
     
@@ -280,6 +285,28 @@
   
 }
 
+
+.reshapeJJMCol = function(x, cols, ...){
+  
+  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
+  
+  out = NULL
+	
+  for(i in seq_along(x)) {
+    
+	jjm.out = x[[i]]$output
+	
+	model   = x[[i]]$info$output$model
+	Data = data.frame(model = model, class = c("catch", "ssb", "upper", "lower"),
+					  color = cols[i])
+
+    out    = rbind(out, Data)
+    
+  }
+  
+  return(out)
+  
+}
 
 
 .combineModels = function(...){
@@ -537,15 +564,16 @@
 
 .funPlotTotProj = function(x, what, cols, stack, endvalue, poslegend, scen, ...){
 	
-  dataShape = .reshapeJJM5(x, scen)
+  dataShape = .reshapeJJM5(x, scen, cols)
+  dataCol = .reshapeJJMCol(x, cols)
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   
   ikey           = simpleKey(text = names(x),
                               points = FALSE, lines = TRUE, columns = 2)
 
-  ikey$lines$col = rep(cols[1:length(x)], each = 4)
+  ikey$lines$col = cols[1:length(x)]
   ikey$lines$lwd = 2
-  ikey$lines$lty = c(5, 1, 3, 3)
+  ikey$lines$lty = 1
   
   
   #mtheme = standard.theme("pdf", color=TRUE)
@@ -569,17 +597,20 @@
                  }
                  , ...)
   } else {pic = xyplot(data ~ year | model, data = dataShape, groups = class,
-					   xlab = "year", ylab = "",
-					   panel = function(x, y, ...){
+					   xlab = "year", ylab = "", type = "l",
+					   par.settings = list(superpose.line = list(
+                                           lwd = 2, 
+										   col = dataCol$color)),
+					   #panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-						 panel.xyplot(x, y, type = 'l', lwd = 2, 
-									  lty = c(5, 1, 3, 3), 
-									  col = cols[1], ...)
+						 #panel.xyplot(x, y, ...)
+						#panel.xyplot(x, y, lwd = 2, type = "l",
+						#			 lty = c(5, 1, 3, 3), ...)
 						 if(endvalue){
                            ltext(x=rev(x)[1], y=rev(y)[1], labels = round(rev(y)[1], 2), pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
                          }
-                       }, ...)
+                       , ...)
   }
   
   return(pic)

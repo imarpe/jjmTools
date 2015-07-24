@@ -11,7 +11,7 @@
   # Verify if files exist
   necesaryFiles = c(paste0(model, ".ctl"), outputs)
   necesaryFiles = file.path(inputPath, necesaryFiles)
-  
+
   for(ifile in necesaryFiles)
     if(!file.exists(ifile))
       stop(paste0("File", ifile, " doesn't exist, please check the name or the path."))
@@ -22,8 +22,11 @@
   outputs$YPR = ypr
   
   # Extract asociated .dat file
-  dataName    = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 2, 
-                      what = character(), sep = "\n", quiet = TRUE)
+  nameD = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 4, 
+                      what = character(), sep = "\n", quiet = TRUE,
+					  comment.char = "#")
+  nameD = nameD[! nameD %in% ""]
+  dataName    = nameD
   modelName   = gsub(x = dataName[2], pattern = " ", replacement = "")
   dataName    = gsub(x = dataName[1], pattern = " ", replacement = "")
   
