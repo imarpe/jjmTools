@@ -1158,7 +1158,7 @@ if(Projections){
   file.remove(dir(pattern="\\.[r,p,b][0-9]"))
   
   exts = c("tmp", "dep", "log", "obj", ".o", "htp", "hes", "cov", 
-           "rpt", "cor", "eva", "td2", "tds","tr2")
+           "rpt", "cor", "eva", "td2", "tds","tr2", "rep")
   
   for(ext in exts) {
     pat = sprintf("\\.%s$", ext)
