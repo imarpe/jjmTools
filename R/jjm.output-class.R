@@ -4,12 +4,21 @@
   # Define path of input
   inputPath   = path
   
+  Files = list.files(path = output, 
+					 pattern = paste0(model, "_[[:digit:]]_R.rep"))
+  
   # Set files .rep and .yld
-  outputs = file.path(output, paste0(model, "_R.rep")) 
-  ypr     = file.path(output, paste0(model, ".yld"))
+  outpts = NULL
+  for(i in seq_along(Files)){
+	temp = file.path(output, Files[i])
+	outpts = c(outpts, temp) 	
+  }
+  
+  
+  yprName     = file.path(output, paste0(model, ".yld"))
     
   # Verify if files exist
-  necesaryFiles = c(paste0(model, ".ctl"), outputs)
+  necesaryFiles = c(paste0(model, ".ctl"), outpts)
   necesaryFiles = file.path(inputPath, necesaryFiles)
 
   for(ifile in necesaryFiles)
@@ -17,9 +26,12 @@
       stop(paste0("File", ifile, " doesn't exist, please check the name or the path."))
   
   # Read files .rep and .yld
-  outputs = readList(file.path(inputPath, outputs))
-  ypr     = .readYPR(file.path(inputPath, ypr))
-  outputs$YPR = ypr
+  outputs = list(length(Files))
+  for(i in seq_along(Files)){
+	  outputs[[i]] = readList(file.path(inputPath, outpts[i]))
+	  ypr     = .readYPR(file.path(inputPath, yprName))
+	  outputs[[i]]$YPR = ypr
+  }
   
   # Extract asociated .dat file
   nameD = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 4, 
@@ -37,9 +49,26 @@
   iFilename   = file.path(inputPath, dataName)
   info.data   = list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
                       age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]))
-  info.output = list(model = modelName, fisheryNames = outputs$Fshry_names, modelYears = outputs$Yr,
-                                              indexModel = outputs$Index_names)
-
+  
+  indices = NULL
+  fisheries = NULL
+  
+  for(i in seq_along(Files)){
+		tempI = outputs[[i]]$Index_names
+		tempF = outputs[[i]]$Fshry_names
+	    indices = c(indices, tempI)
+	    fisheries = c(fisheries, tempF)
+  }
+  
+  indices = unique(indices)
+  fisheries = unique(fisheries)
+  
+  info.output = list(model = modelName, fisheryNames = fisheries, modelYears = outputs$Yr,
+                     indexModel = indices, nStock = length(Files))
+  
+  namesStock = paste0("Stock_", 1:length(Files)) # Puede ser modificado cuando se lea el ctl
+  names(outputs) = namesStock
+  
   output = list()												
   # Group in a list
   output[[1]]   = list(info = list(data = info.data, output = info.output),
@@ -67,6 +96,7 @@ print.jjm.output = function(x, ...) {
   cat("Lengths from: ", obj$info$data$length[1] ,"to", obj$info$data$length[2], "\n", sep = " ")
   cat("Fisheries names: ", paste(obj$info$output$fisheryNames, collapse = ", "), "\n")
   cat("Associated indices: ", paste(obj$info$output$indexModel, collapse = ", "), "\n")
+  cat("Number of Stocks: ", paste(obj$info$output$nStock, collapse = ", "), "\n")
   #cat("Projection years number: ", paste(length(obj$output$SSB_fut_1), collapse = ", "), "\n")
   cat(" ", "\n")
   
