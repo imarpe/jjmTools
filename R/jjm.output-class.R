@@ -5,7 +5,7 @@
   inputPath   = path
   
   Files = list.files(path = output, 
-					 pattern = paste0(model, "_[[:digit:]]_R.rep"))
+					 pattern = paste0(model, ".*_R.rep"))
   
   # Set files .rep and .yld
   outpts = NULL

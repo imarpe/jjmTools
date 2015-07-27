@@ -12,27 +12,35 @@
   
   for(i in seq_along(x)) {
     
-    jjm.out = x[[i]]$output
-    jjm.out$Ftot = cbind(jjm.out$Yr, rowMeans(jjm.out$TotF[, -1]), 
-                         apply(jjm.out$TotF[, -1], 1, sd), 
-                         rowMeans(jjm.out$TotF[, -1]),
-                         rowMeans(jjm.out$TotF[, -1]))   
-  
-    jjm.in  = x[[i]]$data
-    jjm.ypr = x[[i]]$output$YPR
-    model   = x[[i]]$info$output$model 
+    jjm.stocks = x[[i]]$output
     
-    outVar = jjm.out[[var]]
-    year   = jjm.out$Yr
-    ind    = which(outVar[, 1] %in% year) 
-    outVar = outVar[ind, ]
-    outVar = data.frame(outVar, model=model)
+    for(j in seq_along(jjm.stocks)){
+      
+      jjm.out = jjm.stocks[[j]]
+      jjm.out$Ftot = cbind(jjm.out$Yr, rowMeans(jjm.out$TotF[, -1]), 
+                           apply(jjm.out$TotF[, -1], 1, sd), 
+                           rowMeans(jjm.out$TotF[, -1]),
+                           rowMeans(jjm.out$TotF[, -1]))   
+      
+      jjm.in  = x[[i]]$data
+      jjm.ypr = jjm.stocks[[j]]$YPR
+      model   = x[[i]]$info$output$model
+      stocks  = as.list(names(jjm.stocks))[[j]]
+      
+      
+      outVar = jjm.out[[var]]
+      year   = jjm.out$Yr
+      ind    = which(outVar[, 1] %in% year) 
+      outVar = outVar[ind, ]
+      outVar = data.frame(outVar, model = model, stocks = stocks)
+      
+      out    = rbind(out, outVar)
+      
+    }
     
-    out    = rbind(out, outVar)
+    colnames(out) = c("year", "mean", "sd", "lower", "upper", "model", "stocks")
     
   }
-  
-  colnames(out) = c("year", "mean", "sd", "lower", "upper", "model")
   
   return(out)
   
@@ -358,7 +366,7 @@
   mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "", 
+    pic = xyplot(mean ~ year, data = dataShape, groups = stocks, ylab = "", 
                  ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                  xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
                  key = list(lines = list(col = cols[1:length(x)], lwd = 3),
@@ -375,7 +383,7 @@
                    }
                  }
                  , ...)
-  } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model, ylab = "",
+  } else {pic = xyplot(mean ~ year | stocks, data = dataShape, groups = stocks, ylab = "",
                        ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                        xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
                        upper = dataShape$upper, lower = dataShape$lower,
