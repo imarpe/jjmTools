@@ -1158,7 +1158,7 @@ if(Projections){
   file.remove(dir(pattern="\\.[r,p,b][0-9]"))
   
   exts = c("tmp", "dep", "log", "obj", ".o", "htp", "hes", "cov", 
-           "rpt", "cor", "eva", "td2", "tds","tr2")
+           "rpt", "cor", "eva", "td2", "tds","tr2", "rep")
   
   for(ext in exts) {
     pat = sprintf("\\.%s$", ext)
@@ -1251,13 +1251,19 @@ if(Projections){
   cat("\n\tModel run finished. Time elapsed =", elapsed[3],"s.")
   cat("\n\tCopying output files...")
   
+  Files = list.files(pattern = "For_R_[[:digit:]].rep")
+  
   # copy outputs to 'output' folder
   file.copy(from="jjm.par",   to=.to(".par",   output, model), overwrite = TRUE)
   file.copy(from="jjm.rep",   to=.to(".rep",   output, model), overwrite = TRUE)
   file.copy(from="jjm.std",   to=.to(".std",   output, model), overwrite = TRUE)
   file.copy(from="jjm.cor",   to=.to(".cor",   output, model), overwrite = TRUE)
   file.copy(from="fprof.yld", to=.to(".yld",   output, model), overwrite = TRUE)
-  file.copy(from="for_r.rep", to=.to("_R.rep", output, model), overwrite = TRUE)
+  
+  for(i in seq_along(Files)){
+	file.copy(from = Files[i], 
+			  to=.to(paste0("_", i, "_R.rep"), output, model), overwrite = TRUE)
+  }
   
   cat("\n\n")
   return(as.numeric(elapsed[3]))

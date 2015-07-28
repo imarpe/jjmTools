@@ -4,26 +4,41 @@
   # Define path of input
   inputPath   = path
   
+  Files = list.files(path = output, 
+					 pattern = paste0(model, ".*_R.rep"))
+  
   # Set files .rep and .yld
-  outputs = file.path(output, paste0(model, "_R.rep")) 
-  ypr     = file.path(output, paste0(model, ".yld"))
+  outpts = NULL
+  for(i in seq_along(Files)){
+	temp = file.path(output, Files[i])
+	outpts = c(outpts, temp) 	
+  }
+  
+  
+  yprName     = file.path(output, paste0(model, ".yld"))
     
   # Verify if files exist
-  necesaryFiles = c(paste0(model, ".ctl"), outputs)
+  necesaryFiles = c(paste0(model, ".ctl"), outpts)
   necesaryFiles = file.path(inputPath, necesaryFiles)
-  
+
   for(ifile in necesaryFiles)
     if(!file.exists(ifile))
       stop(paste0("File", ifile, " doesn't exist, please check the name or the path."))
   
   # Read files .rep and .yld
-  outputs = readList(file.path(inputPath, outputs))
-  ypr     = .readYPR(file.path(inputPath, ypr))
-  outputs$YPR = ypr
+  outputs = list(length(Files))
+  for(i in seq_along(Files)){
+	  outputs[[i]] = readList(file.path(inputPath, outpts[i]))
+	  ypr     = .readYPR(file.path(inputPath, yprName))
+	  outputs[[i]]$YPR = ypr
+  }
   
   # Extract asociated .dat file
-  dataName    = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 2, 
-                      what = character(), sep = "\n", quiet = TRUE)
+  nameD = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 4, 
+                      what = character(), sep = "\n", quiet = TRUE,
+					  comment.char = "#")
+  nameD = nameD[! nameD %in% ""]
+  dataName    = nameD
   modelName   = gsub(x = dataName[2], pattern = " ", replacement = "")
   dataName    = gsub(x = dataName[1], pattern = " ", replacement = "")
   
@@ -34,9 +49,26 @@
   iFilename   = file.path(inputPath, dataName)
   info.data   = list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
                       age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]))
-  info.output = list(model = modelName, fisheryNames = outputs$Fshry_names, modelYears = outputs$Yr,
-                                              indexModel = outputs$Index_names)
-
+  
+  indices = NULL
+  fisheries = NULL
+  
+  for(i in seq_along(Files)){
+		tempI = outputs[[i]]$Index_names
+		tempF = outputs[[i]]$Fshry_names
+	    indices = c(indices, tempI)
+	    fisheries = c(fisheries, tempF)
+  }
+  
+  indices = unique(indices)
+  fisheries = unique(fisheries)
+  
+  info.output = list(model = modelName, fisheryNames = fisheries, modelYears = outputs$Yr,
+                     indexModel = indices, nStock = length(Files))
+  
+  namesStock = paste0("Stock_", 1:length(Files)) # Puede ser modificado cuando se lea el ctl
+  names(outputs) = namesStock
+  
   output = list()												
   # Group in a list
   output[[1]]   = list(info = list(data = info.data, output = info.output),
@@ -64,6 +96,7 @@ print.jjm.output = function(x, ...) {
   cat("Lengths from: ", obj$info$data$length[1] ,"to", obj$info$data$length[2], "\n", sep = " ")
   cat("Fisheries names: ", paste(obj$info$output$fisheryNames, collapse = ", "), "\n")
   cat("Associated indices: ", paste(obj$info$output$indexModel, collapse = ", "), "\n")
+  cat("Number of Stocks: ", paste(obj$info$output$nStock, collapse = ", "), "\n")
   #cat("Projection years number: ", paste(length(obj$output$SSB_fut_1), collapse = ", "), "\n")
   cat(" ", "\n")
   
@@ -139,55 +172,21 @@ print.summary.jjm.output = function(x, ...) {
 
 
 plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE 
-                           , cols = NULL, poslegend = "right", ...){
-						   
-  if(what != "kobe") {					   
-  dataShape = .reshapeJJM(x, what = what)
+                           , cols = NULL, poslegend = "right", scen = 1, ...){
   
-  if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
-  mtheme = standard.theme("pdf", color=TRUE)
-  mtheme$plot.line$lwd = 5
-  mtheme$superpose.line$lwd = 5
+    switch(what, biomass     = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               recruitment   = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               ssb           = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               noFishTB      = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               ftot          = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+               kobe          = .funPlotKobe(x, what, cols, stack, endvalue, poslegend, ...),
+               catchProj     = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
+               ssbProj       = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
+			   totalProj     = .funPlotTotProj(x, what, cols, stack, endvalue, poslegend, scen, ...),
+			   catchProjScen = .funPlotScen(x, what, cols, stack, endvalue, poslegend, ...),
+			   ssbProjScen   = .funPlotScen(x, what, cols, stack, endvalue, poslegend, ...),
+			   ratioSSB_F    = .funPlotRatioSSB_F(x, what, cols, stack, endvalue, poslegend, ...),
+			   ratioSSB      = .funPlotRatioSSB(x, what, cols, stack, endvalue, poslegend, ...))
   
-  if(stack == !TRUE){
-    pic = xyplot(mean ~ year, data = dataShape, groups = model, ylab = "", 
-                 ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
-                 xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
-                 key = list(lines = list(col = cols[1:length(x)], lwd = 3),
-							text = list(names(x))
-							, ...),                
-                 par.settings=mtheme,
-                 upper = dataShape$upper, lower = dataShape$lower,
-                 panel = function(x, y, ...){
-                   panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                   panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
-                   if(endvalue){
-                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
-                           font = 2, adj = 0)
-                   }
-                 }
-    , ...)
-  } else {pic = xyplot(mean ~ year | model, data = dataShape, groups = model, ylab = "",
-                       ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
-                       xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
-                       upper = dataShape$upper, lower = dataShape$lower,
-                       panel = function(x, y, ...){
-                         panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                         panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
-                         if(endvalue){
-                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
-                                 font = 2, adj = 0)
-                         }
-                       }, ...)
-  }
-  } else {
-  
-		obj = x
-		if(stack) {pic = .kobeFUN3(obj, cols = cols, endvalue = endvalue, ...)}
-		else {pic = .kobeFUN2(obj, cols = cols, endvalue = endvalue, ...)}
-  }
-  
-  
-  return(pic)
 }
 

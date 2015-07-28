@@ -2098,71 +2098,109 @@
 
 .projections_ssbPredictionFUN = function(jjm.out, ...)
 {
+  lastYear = jjm.out$R[nrow(jjm.out$R), 1]
   Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
-  scenarios = c("F2012 SQ", "F2012 0.75x", "F2012 0.5x", "F2012 0.25x", "F2012 0x")[1:Nfutscen]
+  scenarios = c(paste0("F", lastYear ," SQ"), 
+				paste0("F", lastYear, " 0.75x"), 
+				paste0("F", lastYear, " 1.25x"), 
+				paste0("F", lastYear, " 0.5x"), 
+				paste0("F", lastYear, " 0x"))
+ #[1:Nfutscen]
   
   for(iScen in 1:length(scenarios)){
-    idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2, 4, 5)])
-    tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2, 4, 5)],
-                 get("jjm.out")[[paste("SSB_fut_", iScen, sep = "")]][,c(1, 2, 4, 5)])
-    colnames(tot) = c("year", "SSB", "SSB5", "SSB95")
+    #idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2, 4, 5)])
+    #tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2, 4, 5)],
+    #             get("jjm.out")[[paste("SSB_fut_", iScen, sep = "")]][,c(1, 2, 4, 5)])
+    #colnames(tot) = c("year", "SSB", "SSB5", "SSB95")
+	idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2)])
+    tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2)],
+                 get("jjm.out")[[paste("SSB_fut_", iScen, sep = "")]][,c(1, 2)])
+    colnames(tot) = c("year", "SSB")
     
-    for(i in 2:4){
-      if(iScen == 1 & i == 2){
-        totres = data.frame(cbind(tot[,1], tot[,2]))
-        totres$class = colnames(tot)[i]
-        totres$scenario = scenarios[iScen]
-      }
-      if(iScen != 1 | i != 2){
-        res = data.frame(cbind(tot[,1], tot[,i]))
-        res$class = colnames(tot)[i]
+    #for(i in 2:4){
+      #if(iScen == 1 & i == 2){
+	  if(iScen == 1){
+        #totres = data.frame(cbind(tot[,1], tot[,2]))
+        #totres$class = colnames(tot)[i]
+        #totres$scenario = scenarios[iScen]
+		totres = data.frame(tot)
+		totres$scenario = scenarios[iScen]
+      } else {
+      #if(iScen != 1 | i != 2){
+        #res = data.frame(cbind(tot[,1], tot[,i]))
+        #res$class = colnames(tot)[i]
+        #res$scenario = scenarios[iScen]
+        #totres = rbind(totres, res)
+		res = data.frame(tot)
         res$scenario = scenarios[iScen]
-        totres = rbind(totres, res)
+        totres  = rbind(totres, res)
       }
-    }
+    #}
   }
-  colnames(totres) = c("year", "data", "class", "scenario")
+  #colnames(totres) = c("year", "data", "class", "scenario")
+  colnames(totres) = c("year", "data", "scenario")
   
-  ikey           = simpleKey(text = scenarios, points = FALSE, lines = TRUE, columns = 2)
+  #ikey           = simpleKey(text = scenarios, points = FALSE, lines = TRUE, columns = 2)
+  #ikey$lines$col = 1:length(scenarios)
+  #ikey$lines$lwd = 4
+  #ikey$lines$lty = 1
+  
+  #pic = xyplot(data ~ year, data = totres, type = "l", groups = scenario,
+  #              xlim = c(2000, max(totres$year)),
+#                 key = ikey,
+  #              prepanel = function(...) {list(ylim = c(0, max(totres$data, na.rm = TRUE)))},
+  #              panel = function(x, y){
+  #                panel.grid(h = -1, v = -1)
+  #                idx = mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
+  #                              seq(length(x)/Nfutscen, length(x), length.out = Nfutscen), FUN = seq)
+     #             idx2 = mapply(seq(length(idx[,1])/3, length(idx[,1]), length.out = 3) - length(idx[,1])/3 + 1,
+     #                            seq(length(idx[,1])/3, length(idx[,1]), length.out = 3), FUN = seq)
+     #             
+     #             for(iScen in 2:Nfutscen){
+     #               panel.xyplot(x[idx[,iScen][idx2[,1]]], y[idx[,iScen][idx2[,1]]], type = "l", col = iScen, lwd = 3)
+     #               iCol  = col2rgb(iScen)
+     #               iCol  = rgb(iCol[1]/255, iCol[2]/255, iCol[3]/255, 0.25)
+     #               panel.polygon(c(x[idx[,iScen][idx2[,2]]], rev(x[idx[,iScen][idx2[,3]]])),
+     #                             c(y[idx[,iScen][idx2[,2]]], rev(y[idx[,iScen][idx2[,3]]])), col = iCol, border = iCol)
+     #               panel.lines(x[idx[,iScen][idx2[,1]]], y[idx[,iScen][idx2[,1]]], col = iScen, lwd = 3)
+     #             }
+     #             panel.xyplot(x[idx[,1][idx2[,1]]], y[idx[,1][idx2[,1]]], type = "l", col = 1, lwd = 4)
+     #             iCol  = col2rgb(1)
+    #              iCol  = rgb(iCol[1]/255, iCol[2]/255, iCol[3]/255, 0.15)
+   #               panel.polygon(c(x[idx[,1][idx2[,2]]], rev(x[idx[,1][idx2[,3]]])),
+  #                              c(y[idx[,1][idx2[,2]]], rev(y[idx[,1][idx2[,3]]])), col = iCol, border = iCol)
+ #                 panel.lines(x[idx[,1][idx2[,1]]], y[idx[,1][idx2[,1]]], col = 1, lwd = 4)
+  #              })
+				
+  ikey           = simpleKey(text=scenarios, points = FALSE, lines = TRUE, columns = 2)
   ikey$lines$col = 1:length(scenarios)
   ikey$lines$lwd = 4
   ikey$lines$lty = 1
   
   pic = xyplot(data ~ year, data = totres, type = "l", groups = scenario,
-                xlim = c(2000, max(totres$year)),
-#                 key = ikey,
+                key = ikey,
                 prepanel = function(...) {list(ylim = c(0, max(totres$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
                   idx = mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
                                 seq(length(x)/Nfutscen, length(x), length.out = Nfutscen), FUN = seq)
-                  idx2 = mapply(seq(length(idx[,1])/3, length(idx[,1]), length.out = 3) - length(idx[,1])/3 + 1,
-                                 seq(length(idx[,1])/3, length(idx[,1]), length.out = 3), FUN = seq)
-                  
-                  for(iScen in 2:Nfutscen){
-                    panel.xyplot(x[idx[,iScen][idx2[,1]]], y[idx[,iScen][idx2[,1]]], type = "l", col = iScen, lwd = 3)
-                    iCol  = col2rgb(iScen)
-                    iCol  = rgb(iCol[1]/255, iCol[2]/255, iCol[3]/255, 0.25)
-                    panel.polygon(c(x[idx[,iScen][idx2[,2]]], rev(x[idx[,iScen][idx2[,3]]])),
-                                  c(y[idx[,iScen][idx2[,2]]], rev(y[idx[,iScen][idx2[,3]]])), col = iCol, border = iCol)
-                    panel.lines(x[idx[,iScen][idx2[,1]]], y[idx[,iScen][idx2[,1]]], col = iScen, lwd = 3)
-                  }
-                  panel.xyplot(x[idx[,1][idx2[,1]]], y[idx[,1][idx2[,1]]], type = "l", col = 1, lwd = 4)
-                  iCol  = col2rgb(1)
-                  iCol  = rgb(iCol[1]/255, iCol[2]/255, iCol[3]/255, 0.15)
-                  panel.polygon(c(x[idx[,1][idx2[,2]]], rev(x[idx[,1][idx2[,3]]])),
-                                c(y[idx[,1][idx2[,2]]], rev(y[idx[,1][idx2[,3]]])), col = iCol, border = iCol)
-                  panel.lines(x[idx[,1][idx2[,1]]], y[idx[,1][idx2[,1]]], col = 1, lwd = 4)
-                })
+                  #scen1 = idx[,1]; scen2 = idx[,2]; scen3 = idx[,3]; scen4 = idx[,4]; scen5 = idx[,5]
+                  for(iScen in 2:Nfutscen) panel.xyplot(x[idx[,iScen]], y[idx[,iScen]], type = "l", col = iScen, lwd = 3)
+                  panel.xyplot(x[idx[,1]], y[idx[,1]], type = "l", col = 1, lwd = 4)                  
+                }, ...)
   
   return(pic)
 }
 
 .projections_catchPredictionFUN = function(jjm.out, ...)
 {
+  lastYear = jjm.out$R[nrow(jjm.out$R), 1]
   Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
-  scenarios = c("F2012 SQ", "F2012 0.75x", "F2012 0.5x", "F2012 0.25x", "F2012 0x")[1:Nfutscen]
-  
+  scenarios = c(paste0("F", lastYear ," SQ"), 
+				paste0("F", lastYear, " 0.75x"), 
+				paste0("F", lastYear, " 1.25x"), 
+				paste0("F", lastYear, " 0.5x"), 
+				paste0("F", lastYear, " 0x"))
   totCatch  = 0
   for(iFlt in grep("Obs_catch_", names(jjm.out)))
     totCatch = jjm.out[[iFlt]] + totCatch
@@ -2232,8 +2270,6 @@
   
   return(pic)
 }
-
-
 
 .kobeFUN = function(jjm.out) {
 
@@ -2349,8 +2385,6 @@
   return(pic)
  
 }
-
-
 
 .kobeFUN3 = function(obj, cols, endvalue, ...) {
   
