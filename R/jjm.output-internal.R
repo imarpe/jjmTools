@@ -1,4 +1,4 @@
-.reshapeJJM = function(x, what = "biomass", total = TRUE){
+.reshapeJJM = function(x, what = "biomass", total = FALSE){
   
   var = switch(what,
                biomass     = "TotBiom",

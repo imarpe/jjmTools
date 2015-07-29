@@ -495,8 +495,11 @@
 # Plots of diagnostic function --------------------------------------------
 .input_weightFisheryFUN = function(Nfleets, jjm.out, ages, ...)
 {
+  
+  wt_fsh = grep(pattern ="wt_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in 1:Nfleets){
-    res = .createDataFrame(jjm.out[[paste("wt_fsh_", iFleet, sep = "")]][,-1], jjm.out$Yr, ages)
+    res = .createDataFrame(jjm.out[[wt_fsh[iFleet]]][,-1], jjm.out$Yr, ages)
     
     if(iFleet == 1)
       tot = cbind(res, c(jjm.out$Fshry_names[iFleet]))
@@ -517,8 +520,11 @@
 
 .input_weightAgeFUN = function(Nsurveys, jjm.out, ages, ...)
 {
+  
+  wt_ind = grep(pattern ="wt_ind_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iSurvey in 1:Nsurveys){
-    res = .createDataFrame(jjm.out[[paste("wt_ind_", iSurvey, sep = "")]][,-1],jjm.out$Yr, ages)
+    res = .createDataFrame(jjm.out[[wt_ind[iSurvey]]][,-1], jjm.out$Yr, ages)
     
     if(iSurvey == 1)
       tot = cbind(res, c(jjm.out$Index_names[iSurvey]))
@@ -536,8 +542,11 @@
 
 .input_weightByCohortFleetFUN = function(Nfleets, jjm.out, ages, ...)
 {
+  
+  wt_fsh = grep(pattern ="wt_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in 1:Nfleets){
-    res = .createDataFrame(jjm.out[[paste("wt_fsh_", iFleet, sep = "")]][,-1], jjm.out$Yr, ages)
+    res = .createDataFrame(jjm.out[[wt_fsh[iFleet]]][,-1], jjm.out$Yr, ages)
     
     if(iFleet == 1)
       tot = cbind(res, c(jjm.out$Fshry_names[iFleet]))
@@ -561,8 +570,11 @@
 
 .input_weightByCohortSurveyFUN = function(Nsurveys, jjm.out, ages, ...)
 {
+  
+  wt_ind = grep(pattern ="wt_ind_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iSurvey in 1:Nsurveys){
-    res = .createDataFrame(get("jjm.out")[[paste("wt_ind_",iSurvey,sep="")]][,-1],jjm.out$Yr,ages)
+    res = .createDataFrame(get("jjm.out")[[wt_ind[iSurvey]]][,-1], jjm.out$Yr, ages)
     if(iSurvey == 1) tot = cbind(res,c(jjm.out$Index_names[iSurvey]))
     if(iSurvey != 1) tot = rbind(tot,cbind(res,c(jjm.out$Index_names[iSurvey])))
   }
@@ -829,9 +841,11 @@
 
 .fit_totalCatchFUN = function(Nfleets, jjm.out, ...)
 {
+  Obs_catch = grep(pattern ="Obs_catch_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in 1:Nfleets){
-    res = cbind(jjm.out$Yr, jjm.out[[paste("Obs_catch_", iFleet, sep = "")]])
-    
+    res = cbind(jjm.out$Yr, jjm.out[[Obs_catch[iFleet]]])
+   
     if(Nfleets == 1) res = cbind(res, jjm.out$Fshry_names[iFleet])
     if(Nfleets > 1) res = cbind(res, jjm.out$Fshry_names[iFleet, 1])
     if(iFleet == 1) tot = res
@@ -857,8 +871,10 @@
 
 .fit_totalCatchByFleetFUN = function(jjm.out, Nfleets, ...)
 {
+  Obs_catch = grep(pattern ="Obs_catch_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in 1:Nfleets){
-    res = cbind(jjm.out$Yr, jjm.out[[paste("Obs_catch_", iFleet, sep = "")]])
+    res = cbind(jjm.out$Yr, jjm.out[[Obs_catch[iFleet]]])
     
     if(Nfleets == 1) res = cbind(res, jjm.out$Fshry_names[iFleet])
     if(Nfleets > 1) res = cbind(res, jjm.out$Fshry_names[iFleet, 1])
@@ -899,9 +915,12 @@
 
 .fit_catchResidualsByFleetFUN = function(Nfleets, jjm.out, ...)
 {
+  Obs_catch  = grep(pattern = "Obs_catch_[0-9]*", x = names(jjm.out), value=TRUE)
+  Pred_catch = grep(pattern = "Pred_catch_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in 1:Nfleets){
-    res = data.frame(year = jjm.out$Yr, obs = jjm.out[[paste("Obs_catch_", iFleet, sep = "")]],
-                      model = jjm.out[[paste("Pred_catch_", iFleet, sep = "")]], fleet = jjm.out$Fshry_names[iFleet])
+    res = data.frame(year = jjm.out$Yr, obs = jjm.out[[Obs_catch[iFleet]]],
+                      model = jjm.out[[Pred_catch[iFleet]]], fleet = jjm.out$Fshry_names[iFleet])
     
     if(iFleet == 1) tot = res
     if(iFleet != 1) tot = rbind(tot, res)
@@ -935,9 +954,16 @@
 
 .fit_absoluteResidualCatchByFleetFUN = function(Nfleets, jjm.out, ...)
 {
+  
+  Obs_catch  = grep(pattern = "Obs_catch_[0-9]*", x = names(jjm.out), value=TRUE)
+  Pred_catch = grep(pattern = "Pred_catch_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in 1:Nfleets){
-    res = data.frame(year = jjm.out$Yr, obs = jjm.out[[paste("Obs_catch_", iFleet, sep = "")]],
-                      model = jjm.out[[paste("Pred_catch_", iFleet, sep = "")]], fleet = jjm.out$Fshry_names[iFleet])
+#     res = data.frame(year = jjm.out$Yr, obs = jjm.out[[paste("Obs_catch_", iFleet, sep = "")]],
+#                       model = jjm.out[[paste("Pred_catch_", iFleet, sep = "")]], fleet = jjm.out$Fshry_names[iFleet])
+
+    res = data.frame(year = jjm.out$Yr, obs = jjm.out[[Obs_catch[iFleet]]],
+                     model = jjm.out[[Pred_catch[iFleet]]], fleet = jjm.out$Fshry_names[iFleet])
     
     if(iFleet == 1) tot = res
     if(iFleet != 1) tot = rbind(tot, res)
@@ -957,11 +983,14 @@
 
 .fit_residualsCatchAtAgeByFleetFUN = function(ageFleets, jjm.out, ages, ...)
 {
+  pobs_fsh = grep(pattern = "pobs_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  phat_fsh = grep(pattern = "phat_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in .an(ageFleets)){
-    obs = .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
-                            jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,1], ages)
-    mod = .createDataFrame(jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,-1],
-                            jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,1], ages)
+    obs = .createDataFrame(jjm.out[[pobs_fsh[iFleet]]][,-1],
+                           jjm.out[[pobs_fsh[iFleet]]][,1], ages)
+    mod = .createDataFrame(jjm.out[[phat_fsh[iFleet]]][,-1],
+                           jjm.out[[phat_fsh[iFleet]]][,1], ages)
     
     if(iFleet == .an(ageFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet, 1], nrow(obs)))
     if(iFleet != .an(ageFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
@@ -987,11 +1016,14 @@
 
 .fit_residualsCatchAtLengthByFleetFUN = function(lgtFleets, jjm.out, lengths, Nfleets, ...)
 {
+  pobs_len_fsh = grep(pattern = "pobs_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  phat_len_fsh = grep(pattern = "phat_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in .an(lgtFleets)){
-    obs = .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1], 
-                            jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,1], lengths)
-    mod = .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
-                            jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,1], lengths)
+    obs = .createDataFrame(jjm.out[[pobs_len_fsh[iFleet]]][,-1],
+                           jjm.out[[pobs_len_fsh[iFleet]]][,1], lengths)
+    mod = .createDataFrame(jjm.out[[phat_len_fsh[iFleet]]][,-1],
+                           jjm.out[[phat_len_fsh[iFleet]]][,1], lengths)
     
     if(Nfleets == 1){
       if(iFleet == .an(lgtFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs)))
@@ -1023,11 +1055,19 @@
 
 .fit_ageFitsCatchFUN = function(ageFleets, jjm.out, ages, ...)
 {
+  pobs_fsh = grep(pattern = "pobs_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  phat_fsh = grep(pattern = "phat_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in .an(ageFleets)){
-    obs = .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
-                            jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,1], ages)
-    mod = .createDataFrame(jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,-1],
-                            jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,1], ages)
+#     obs = .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
+#                             jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,1], ages)
+#     mod = .createDataFrame(jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,-1],
+#                             jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,1], ages)
+
+    obs = .createDataFrame(jjm.out[[pobs_fsh[iFleet]]][,-1],
+                           jjm.out[[pobs_fsh[iFleet]]][,1], ages)
+    mod = .createDataFrame(jjm.out[[phat_fsh[iFleet]]][,-1],
+                           jjm.out[[phat_fsh[iFleet]]][,1],, ages)
     
     if(iFleet == .an(ageFleets)[1]){
       x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
@@ -1093,11 +1133,19 @@
 
 .fit_lengthFitsCatchFUN = function(lgtFleets, jjm.out, lengths, ...)
 {
+  pobs_len_fsh = grep(pattern = "pobs_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  phat_len_fsh = grep(pattern = "phat_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iFleet in .an(lgtFleets)){
-    obs = .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1],
-                            jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,1], lengths)
-    mod = .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
-                            jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,1], lengths)
+#     obs = .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1],
+#                             jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,1], lengths)
+#     mod = .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
+#                             jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,1], lengths)
+    
+    obs = .createDataFrame(jjm.out[[pobs_len_fsh[iFleet]]][,-1],
+                           jjm.out[[pobs_len_fsh[iFleet]]][,1], lengths)
+    mod = .createDataFrame(jjm.out[[phat_len_fsh[iFleet]]][,-1],
+                           jjm.out[[phat_len_fsh[iFleet]]][,1], lengths)
     
     if(iFleet == .an(lgtFleets)[1]){
       x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
@@ -1161,9 +1209,12 @@
 
 .fit_predictedObservedCatchesByFleetFUN = function(Nfleets, cols, jjm.out, ...)
 {
+  Obs_catch  = grep(pattern = "Obs_catch_[0-9]*", x = names(jjm.out), value = TRUE)
+  Pred_catch = grep(pattern = "Pred_catch_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iFleet in 1:Nfleets){
-    res = data.frame(year = jjm.out$Yr,obs = jjm.out[[paste("Obs_catch_", iFleet,sep="")]],
-                      model = jjm.out[[paste("Pred_catch_", iFleet, sep = "")]],
+    res = data.frame(year = jjm.out$Yr, obs = jjm.out[[Obs_catch[iFleet]]],
+                      model = jjm.out[[Pred_catch[iFleet]]],
                       fleet = jjm.out$Fshry_names[iFleet])
     
     if(iFleet == 1) tot = rbind(cbind(res$year, res$obs, .ac(res$fleet), rep("obs", nrow(res))),
@@ -1201,8 +1252,10 @@
 
 .fit_predictedObservedIndicesFUN = function(Nsurveys, jjm.out, ...)
 {
+  obs_Survey = grep(pattern = "Obs_Survey_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iSurvey in 1:Nsurveys){
-    if(any(jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey,sep="")]][,1] == TRUE)){
+    if(any(jjm.out$Yr %in% jjm.out[[Obs_Survey[iSurvey]]][,1] == TRUE)){
       addToDF = jjm.out$Yr[which(!jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1])]
       addToDF = as.data.frame(rbind(cbind(addToDF, NA, "model"), 
                                      cbind(addToDF, NA, "obs"),
@@ -1267,11 +1320,14 @@
 
 .fit_ageFitsSurveyFUN = function(ageSurveys, jjm.out, ages, ageFleets, ...)
 {
+  pobs_ind = grep(pattern = "pobs_ind_[0-9]*", x = names(jjm.out), value=TRUE)
+  phat_ind = grep(pattern = "phat_ind_[0-9]*", x = names(jjm.out), value=TRUE)
+  
   for(iSurvey in .an(ageSurveys)){
-    obs = .createDataFrame(jjm.out[[paste("pobs_ind_", iSurvey, sep = "")]][,-1],
-                            jjm.out[[paste("pobs_ind_", iSurvey, sep = "")]][,1], ages)
-    mod = .createDataFrame(jjm.out[[paste("phat_ind_", iSurvey, sep = "")]][,-1], 
-                            jjm.out[[paste("phat_ind_", iSurvey, sep = "")]][,1], ages)
+    obs = .createDataFrame(jjm.out[[pobs_ind[iSurvey]]][,-1],
+                           jjm.out[[pobs_ind[iSurvey]]][,1], ages)
+    mod = .createDataFrame(jjm.out[[phat_ind[iSurvey]]][,-1], 
+                           jjm.out[[phat_ind[iSurvey]]][,1], ages)
     
     if(iSurvey == .an(ageSurveys)[1]){
       x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Index_names[iSurvey])
@@ -1337,17 +1393,19 @@
 
 .fit_standardizedSurveyResidualsFUN = function(Nsurveys, jjm.out, cols, ...)
 {
+  Obs_Survey = grep(pattern = "Obs_Survey_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iSurvey in 1:Nsurveys){
-    if(any(jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1] == FALSE)){
+    if(any(jjm.out$Yr %in% jjm.out[[Obs_Survey[iSurvey]]][,1] == FALSE)){
       addToDF = jjm.out$Yr[which(!jjm.out$Yr %in% jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1])]
       addToDF = data.frame(year = addToDF, obs = NA, model = NA, sd = NA, stdres = NA, lstdres = NA)
       colnames(addToDF) = c("year", "obs", "model", "sd", "stdres", "lstdres")
       addToDF$year = .an(.ac(addToDF$year))
     }
     
-    res = .createDataFrame(jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,-1],
-                            jjm.out[[paste("Obs_Survey_", iSurvey, sep = "")]][,1],
-                            c("obs", "model", "sd", "stdres", "lstdres"))
+    res = .createDataFrame(jjm.out[[Obs_Survey[iSurvey]]][,-1],
+                           jjm.out[[Obs_Survey[iSurvey]]][,1],
+                           c("obs", "model", "sd", "stdres", "lstdres"))
     res = cbind(subset(res, class == "obs")[,1:2], 
                  subset(res, class == "model")$data,
                  subset(res, class == "sd")$data,
@@ -1437,8 +1495,10 @@
 
 .fit_selectivityFisheryByPentadFUN = function(Nfleets, jjm.out, ages, ...)
 {
+  sel_fsh = grep(pattern = "sel_fsh_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iFleet in 1:Nfleets){
-    res = .createDataFrame(jjm.out[[paste("sel_fsh_", iFleet, sep = "")]][,-c(1,2)], jjm.out$Yr, ages)
+    res = .createDataFrame(jjm.out[[sel_fsh[iFleet]]][,-c(1,2)], jjm.out$Yr, ages)
     res = cbind(res, jjm.out$Fshry_names[iFleet])
     
     if(iFleet == 1) tot = res
@@ -1455,8 +1515,10 @@
 
 .fit_selectivitySurveyByPentadFUN = function(Nsurveys, jjm.out, ages, ...)
 {
+  sel_ind = grep(pattern = "sel_ind_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iSurvey in 1:Nsurveys){
-    res = .createDataFrame(jjm.out[[paste("sel_ind_", iSurvey, sep = "")]][,-c(1,2)], jjm.out$Yr, ages)
+    res = .createDataFrame(jjm.out[[sel_ind[iSurvey]]][,-c(1,2)], jjm.out$Yr, ages)
     res = cbind(res, jjm.out$Index_names[iSurvey])
     
     if(iSurvey == 1) tot = res
@@ -1540,8 +1602,11 @@
 
 .fit_fisheryMeanAgeFUN = function(jjm.out, ageFleets, ...)
 {
+  
+  EffN_Fsh = grep(pattern = "EffN_Fsh_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iFleet in .an(ageFleets)){
-    res = data.frame(jjm.out[[paste("EffN_Fsh_", iFleet, sep = "")]][,c(1, 4, 5, 7, 8)])
+    res = data.frame(jjm.out[[EffN_Fsh[iFleet]]][,c(1, 4, 5, 7, 8)])
     colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
     
     for(i in 2:5){
@@ -1584,8 +1649,10 @@
 
 .fit_fisheryMeanLengthFUN = function(lgtFleets, jjm.out, ...)
 {
+  EffN_Length_Fsh = grep(pattern = "EffN_Length_Fsh_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iFleet in .an(lgtFleets)){
-    res = data.frame(jjm.out[[paste("EffN_Length_Fsh_", iFleet, sep = "")]][,c(1, 4, 5, 7, 8)])
+    res = data.frame(jjm.out[[EffN_Length_Fsh[iFleet]]][,c(1, 4, 5, 7, 8)])
     colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
     
     for(i in 2:5){
@@ -1628,8 +1695,10 @@
 
 .fit_surveyMeanAgeFUN = function(Nsurveys, jjm.out, ...)
 {
+  EffN_Survey = grep(pattern = "EffN_Survey_[0-9]*", x = names(jjm.out), value = TRUE)
+  
   for(iSurvey in 1:Nsurveys){
-    res = data.frame(jjm.out[[paste("EffN_Survey_", iSurvey, sep = "")]][,c(1, 4, 5, 7, 8)])
+    res = data.frame(jjm.out[[EffN_Survey[iSurvey]]][,c(1, 4, 5, 7, 8)])
     if(nrow(res) > 1){
       colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
       
@@ -2107,6 +2176,7 @@
 				paste0("F", lastYear, " 0x"))
  #[1:Nfutscen]
   
+  SSB_fut = grep(pattern = "SSB_fut_", x = names(jjm.out), value = TRUE)
   for(iScen in 1:length(scenarios)){
     #idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2, 4, 5)])
     #tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2, 4, 5)],
@@ -2114,7 +2184,7 @@
     #colnames(tot) = c("year", "SSB", "SSB5", "SSB95")
 	idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2)])
     tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2)],
-                 get("jjm.out")[[paste("SSB_fut_", iScen, sep = "")]][,c(1, 2)])
+                 get("jjm.out")[[SSB_fut[iScen]]][,c(1, 2)])
     colnames(tot) = c("year", "SSB")
     
     #for(i in 2:4){
@@ -2208,8 +2278,11 @@
   totCatch  = cbind(jjm.out$Yr, totCatch)
   colnames(totCatch) = c("year", "catch")
   
+  Catch_fut = grep(pattern = "Catch_fut_[0-9]*", x = names(jjm.out), value=TRUE)
+    
   for(iScen in 1:length(scenarios)){
-    tot = rbind(totCatch, jjm.out[[paste("Catch_fut_", iScen, sep = "")]])
+#     tot = rbind(totCatch, jjm.out[[paste("Catch_fut_", iScen, sep = "")]])
+    tot = rbind(totCatch, jjm.out[[Catch_fut[iScen]]])
     colnames(tot) = c("year", "catch")
     if(iScen == 1){
       totres = data.frame(tot)

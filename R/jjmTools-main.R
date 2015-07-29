@@ -139,9 +139,15 @@ diagnostics <- function(outputObject, ...) {
   
   for(i in seq_along(outputObject)){
      
+    jjm.stocks = outputObject[[i]]$output
+    
+    for(j in seq_along(jjm.stocks)){
+      
       output[[i]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
-                                  jjm.out = outputObject[[i]]$output, jjm.in = outputObject[[i]]$data
+                                  jjm.out = jjm.stocks[[j]], jjm.in = outputObject[[i]]$data
                                   , ...)
+    }
+      
   }
   
   names(output) = names(outputObject)
