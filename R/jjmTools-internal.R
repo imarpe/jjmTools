@@ -299,14 +299,17 @@ if(Projections){
 		if(is.null(Fmult)) Fs = c(0, 0.5, 0.75, 1, 1.25)
 		else Fs = Fmult
 		
-		if(is.null(MRS)) mrs = mean(lstOuts[[1]]$output$msy_mt[,10])
-		else mrs = MRS
+    for(i in seq_along(lstOuts[[1]]$output)){
+      if(is.null(MRS)) mrs = mean(lstOuts[[1]]$output[[i]]$msy_mt[,10])
+      else mrs = MRS
+    }
 
 		Name = NULL
 		Outs = list()
 		for(i in seq_along(lstOuts)){
+      for(j in seq_along(lstOuts[[i]]$output))
 			Name[i] = lstOuts[[i]]$info$output$model
-			Outs[[i]] = lstOuts[[i]]$output
+			Outs[[i]] = lstOuts[[i]]$output[[j]]
 		}
 		
 		

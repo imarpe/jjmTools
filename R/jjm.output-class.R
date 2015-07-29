@@ -120,7 +120,7 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = NULL,
       
       jjm.out = jjm.stocks[[j]]
       jjm.in  = object[[i]]$data
-      jjm.ypr = object[[i]]$output$YPR
+      jjm.ypr = jjm.stocks[[j]]$YPR
       namesPlot[i] = object[[i]]$info$output$model
       
       pic[[i]] = .fit_summarySheet3FUN(jjm.out, scales = list(alternating = 1,
