@@ -113,16 +113,21 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = NULL,
   pic = list()
   namesPlot = NULL
   for(i in seq_along(object)){
-  
-  jjm.out = object[[i]]$output
-  jjm.in  = object[[i]]$data
-  jjm.ypr = object[[i]]$output$YPR
-  namesPlot[i] = object[[i]]$info$output$model
-  
-  pic[[i]] = .fit_summarySheet3FUN(jjm.out, scales = list(alternating = 1,
-                                            y = list(relation = "free", rot = 0),
-                                            axs = "i"), ...)
-  
+    
+    jjm.stocks = object[[i]]$output
+    
+    for(j in seq_along(jjm.stocks)){
+      
+      jjm.out = jjm.stocks[[j]]
+      jjm.in  = object[[i]]$data
+      jjm.ypr = object[[i]]$output$YPR
+      namesPlot[i] = object[[i]]$info$output$model
+      
+      pic[[i]] = .fit_summarySheet3FUN(jjm.out, scales = list(alternating = 1,
+                                                              y = list(relation = "free", rot = 0),
+                                                              axs = "i"), ...)
+    }
+
   }
   
   names(pic) = namesPlot

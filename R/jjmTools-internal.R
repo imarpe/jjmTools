@@ -267,8 +267,9 @@
   Name = NULL
   Outs = list()
   for(i in seq_along(lstOuts)){
+    for(j in seq_along(lstOuts[[i]]$output))
     Name[i] = lstOuts[[i]]$info$output$model
-    Outs[[i]] = lstOuts[[i]]$output
+    Outs[[i]] = lstOuts[[i]]$output[[j]]
 	}
  
   names(Outs) = Name
