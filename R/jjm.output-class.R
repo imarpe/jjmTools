@@ -72,8 +72,7 @@
   output = list()												
   # Group in a list
   output[[1]]   = list(info = list(data = info.data, output = info.output),
-                       data = data,
-                       output = outputs)
+                       data = data, output = outputs)
   names(output) = modelName				  
   
   # Define jjm.output class
@@ -171,14 +170,14 @@ print.summary.jjm.output = function(x, ...) {
 
 
 
-plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE 
-                           , cols = NULL, poslegend = "right", scen = 1, ...){
+plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, total = FALSE,
+                           cols = NULL, poslegend = "right", scen = 1, ...){
   
-    switch(what, biomass     = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               recruitment   = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               ssb           = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               noFishTB      = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
-               ftot          = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, ...),
+    switch(what, biomass     = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
+               recruitment   = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
+               ssb           = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
+               noFishTB      = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
+               ftot          = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
                kobe          = .funPlotKobe(x, what, cols, stack, endvalue, poslegend, ...),
                catchProj     = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
                ssbProj       = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),

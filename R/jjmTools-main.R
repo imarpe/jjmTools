@@ -138,9 +138,10 @@ diagnostics <- function(outputObject, ...) {
   output = list()
   
   for(i in seq_along(outputObject)){
-	output[[i]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
-								jjm.out = outputObject[[i]]$output, jjm.in = outputObject[[i]]$data
-								, ...)
+     
+      output[[i]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
+                                  jjm.out = outputObject[[i]]$output, jjm.in = outputObject[[i]]$data
+                                  , ...)
   }
   
   names(output) = names(outputObject)

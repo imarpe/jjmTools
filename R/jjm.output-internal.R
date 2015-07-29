@@ -1,4 +1,4 @@
-.reshapeJJM = function(x, what="biomass"){
+.reshapeJJM = function(x, what = "biomass", total = TRUE){
   
   var = switch(what,
                biomass     = "TotBiom",
@@ -6,7 +6,7 @@
                recruitment = "R",
                ssb         = "SSB",
                noFishTB    = "TotBiom_NoFish"
-  )
+               )
   
   out = NULL
   
@@ -17,6 +17,7 @@
     for(j in seq_along(jjm.stocks)){
       
       jjm.out = jjm.stocks[[j]]
+      
       jjm.out$Ftot = cbind(jjm.out$Yr, rowMeans(jjm.out$TotF[, -1]), 
                            apply(jjm.out$TotF[, -1], 1, sd), 
                            rowMeans(jjm.out$TotF[, -1]),
@@ -26,7 +27,6 @@
       jjm.ypr = jjm.stocks[[j]]$YPR
       model   = x[[i]]$info$output$model
       stocks  = as.list(names(jjm.stocks))[[j]]
-      
       
       outVar = jjm.out[[var]]
       year   = jjm.out$Yr
@@ -42,9 +42,23 @@
     
   }
   
+  if(what == "biomass" & isTRUE(total)){
+    
+    meanTotal = aggregate(mean ~ year + model, data = out, FUN = sum)
+    sdTotal   = aggregate(sd ~ year + model, data = out, FUN = function(x) sqrt(sum(x^2)))
+    outTotal  = merge(meanTotal, sdTotal, all = TRUE)
+    outTotal$lower  = outTotal$mean - outTotal$sd
+    outTotal$upper  = outTotal$mean + outTotal$sd
+    outTotal$stocks = "Total"
+    
+    out = merge(out, outTotal, all = TRUE, sort = FALSE)
+    
+  }
+  
   return(out)
   
 }
+
 
 .reshapeJJM2 = function(x, what, ...){
   
@@ -357,9 +371,9 @@
 
 }
 
-.funPlotSeries = function(x, what, cols, stack, endvalue, poslegend, ...){
+.funPlotSeries = function(x, what, cols, stack, endvalue, poslegend, total, ...){
   
-  dataShape = .reshapeJJM(x, what = what)
+  dataShape = .reshapeJJM(x, what = what, total = total)
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   mtheme = standard.theme("pdf", color=TRUE)
   mtheme$plot.line$lwd = 5
