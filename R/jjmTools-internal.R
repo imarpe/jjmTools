@@ -311,7 +311,6 @@ if(Projections){
 		for(i in seq_along(lstOuts)){
       for(j in seq_along(lstOuts[[i]]$output))
 			Name[i] = lstOuts[[i]]$info$output$model
-      #Name[j] = as.list(names(lstOuts[[i]]$output))[[j]]
 			Outs[[i]] = lstOuts[[i]]$output[[j]]
 		}
 		
