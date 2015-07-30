@@ -2391,24 +2391,32 @@
 
 .kobeFUN2 = function(obj, cols, endvalue, ...) {
   
-  
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   
   fMx = numeric(length(obj))
   bMx = numeric(length(obj))
   
   for(i in seq_along(obj)){
-
-	fMx[i] = max(obj[[i]]$output$msy_mt[,4])	
-	bMx[i] = max(obj[[i]]$output$msy_mt[,13])
-	
-   }
+    
+    for(j in seq_along(obj[[i]]$output)){
+      
+      fMx[i] = max(obj[[i]]$output[[j]]$msy_mt[,4])	
+      bMx[i] = max(obj[[i]]$output[[j]]$msy_mt[,13])
+      
+    }
+    
+  }
 
 	posFmax = which(fMx == max(fMx))
 	posBmax = which(bMx == max(bMx))
   
-  xlim= range(pretty(c(0, obj[[posBmax]]$output$msy_mt[,13])))
-  ylim= range(pretty(c(0, obj[[posFmax]]$output$msy_mt[,4])))
+	for(i in seq_along(obj)){
+	  for(j in seq_along(obj[[i]]$output)){
+	    xlim = range(pretty(c(0, obj[[posBmax]]$output[[j]]$msy_mt[,13])))
+	    ylim = range(pretty(c(0, obj[[posFmax]]$output[[j]]$msy_mt[,4])))    
+	  }
+	}
+  
 
   x <- seq(0, max(xlim), by = 0.1)
   y <- seq(0, max(ylim), by = 0.1)
@@ -2419,105 +2427,124 @@
   c = list()
   
   for(i in seq_along(obj)){
-  
-  kob = obj[[i]]$output$msy_mt
-  
-  #Blim = Bref
-  #Flim = Fref
-  
-  F_Fmsy = kob[,4]
-  B_Bmsy = kob[,13]
-  years  = kob[,1]
-  
-  n = length(B_Bmsy)
-
-  mypanel<-function(x,y,...){
-  panel.xyplot(x, y, ...)
-  panel.text(x + 0.05, y + 0.2, labels = range(years), ...)
+    for(j in seq_along(obj[[i]]$output)){
+      kob = obj[[i]]$output[[j]]$msy_mt
+      
+      #Blim = Bref
+      #Flim = Fref
+      
+      F_Fmsy = kob[,4]
+      B_Bmsy = kob[,13]
+      years  = kob[,1]
+      
+      n = length(B_Bmsy)
+      
+      mypanel<-function(x,y,...){
+        panel.xyplot(x, y, ...)
+        panel.text(x + 0.05, y + 0.2, labels = range(years), ...)
+      }
+      
+      if(endvalue) {b[[j]] <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = cols[j], panel = mypanel, pch = c(15, 17), cex = 1)}
+      else {b[[j]] <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = cols[j], pch = c(15, 17), cex = 1)}
+      c[[j]] <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = cols[j], pch = 19, cex = 0.5)
+      
+    }   
+    
   }
-
-  if(endvalue) {b[[i]] <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = cols[i], panel = mypanel, pch = c(15, 17), cex = 1)}
-  else {b[[i]] <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = cols[i], pch = c(15, 17), cex = 1)}
-  c[[i]] <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = cols[i], pch = 19, cex = 0.5)
-
-  }
   
-  pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
-				key = list(lines = list(col = cols[1:length(obj)], lwd = 3),
-                           text = list(names(obj)), ...
-							), ...) + 
-		layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
-		layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
-		layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
-		layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) 
   for(i in seq_along(obj)){
-    pic = pic + as.layer(b[[i]])
-    pic = pic + as.layer(c[[i]]) 
+    for(j in seq_along(obj[[i]]$output)){
+  
+          pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+                   key = list(lines = list(col = cols[1:length(obj[[i]]$output)], lwd = 3),
+                              text = list(names(obj[[i]]$output)), ...
+                   ), ...) + 
+        layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
+        layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
+        layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
+        layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) 
+      
+    }
+  }
+  
+  
+  for(i in seq_along(obj)){
+    for(j in seq_along(obj[[i]]$output)){
+      pic = pic + as.layer(b[[j]])
+      pic = pic + as.layer(c[[j]])  
+    }
   }
   
   return(pic)
  
 }
 
+
 .kobeFUN3 = function(obj, cols, endvalue, ...) {
-  
   
   if(is.null(cols)) cols = "black"
   cols = cols[1]
 
-  dataT = NULL
-  dataxy = NULL
-  datalab = NULL
+  pic = list()
   
   for(i in seq_along(obj)){
     
-    kob = obj[[i]]$output$msy_mt
+    for(j in seq_along(obj[[i]]$output)){
+      
+      dataT = NULL
+      dataxy = NULL
+      datalab = NULL
+      
+      kob = obj[[i]]$output[[j]]$msy_mt
+      
+      F_Fmsy = kob[,4]
+      B_Bmsy = kob[,13]
+      years  = kob[,1]
+      name = names(obj)[i]
+      xlim = range(pretty(c(0, B_Bmsy)))
+      ylim = range(pretty(c(0, F_Fmsy)))
+      
+      x <- c(0, 1, max(xlim))
+      y <- c(0, 1, max(ylim))
+      y = y[1:length(x)]
+      
+      n = length(years)
+      
+      data = as.data.frame(cbind(F_Fmsy, B_Bmsy, years))
+      data = cbind(data, name)
+      dataT = rbind(dataT, data)
+      
+      data1 = as.data.frame(cbind(x, y))
+      data1 = cbind(data1, name)
+      dataxy = rbind(dataxy, data1)
+      
+      data2 = as.data.frame(cbind(F_Fmsy[c(1,n)], B_Bmsy[c(1,n)], range(years)))
+      data2 = cbind(data2, name)
+      datalab = rbind(datalab, data2)
+      
+      pic[[j]] = xyplot(y ~ x | name, dataxy, type="n", xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+                   scale = list(axs = 'i'), ...) +  
+        layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
+        layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
+        layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
+        layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1))  
+      if(endvalue) pic[[j]] = pic[[j]] + as.layer(xyplot(V1 ~ V2 | name, datalab, type = "p", col = "black", 
+                                               panel = function(x,y,subscripts, ...){
+                                                 panel.xyplot(x, y, ...)
+                                                 panel.text(x + 0.05, y + 0.2, labels = datalab$V3[subscripts], ...)
+                                               } , 
+                                               pch = c(15, 17), cex = 1))
+      if(endvalue == FALSE) pic[[j]] = pic[[j]] + as.layer(xyplot(V1 ~ V2 | name, datalab, type = "p", col = cols, pch = c(15, 17), cex = 1))
+      pic[[j]] = pic[[j]] + as.layer(xyplot(F_Fmsy ~ B_Bmsy | name, dataT, type = "b", col = cols, pch = 19, cex = 0.5)) 
+      
+    }
     
-    F_Fmsy = kob[,4]
-    B_Bmsy = kob[,13]
-    years  = kob[,1]
-    name = names(obj)[i]
-    xlim = range(pretty(c(0, B_Bmsy)))
-    ylim = range(pretty(c(0, F_Fmsy)))
-    
-    x <- c(0, 1, max(xlim))
-    y <- c(0, 1, max(ylim))
-    y = y[1:length(x)]
-    
-    n = length(years)
-    
-    data = as.data.frame(cbind(F_Fmsy, B_Bmsy, years))
-    data = cbind(data, name)
-    dataT = rbind(dataT, data)
-    
-    data1 = as.data.frame(cbind(x, y))
-    data1 = cbind(data1, name)
-    dataxy = rbind(dataxy, data1)
-    
-    data2 = as.data.frame(cbind(F_Fmsy[c(1,n)], B_Bmsy[c(1,n)], range(years)))
-    data2 = cbind(data2, name)
-    datalab = rbind(datalab, data2)
-
   }
-
-  pic = xyplot(y ~ x | name, dataxy, type="n", xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
-               scale = list(axs = 'i'), ...) +  
-    layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
-    layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
-    layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
-    layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1))  
-    if(endvalue) pic = pic + as.layer(xyplot(V1 ~ V2 | name, datalab, type = "p", col = "black", 
-                                      panel = function(x,y,subscripts, ...){
-                                              panel.xyplot(x, y, ...)
-                                              panel.text(x + 0.05, y + 0.2, labels = datalab$V3[subscripts], ...)
-                                              } , 
-                                 pch = c(15, 17), cex = 1))
-    if(endvalue == FALSE) pic = pic + as.layer(xyplot(V1 ~ V2 | name, datalab, type = "p", col = cols, pch = c(15, 17), cex = 1))
-    pic = pic + as.layer(xyplot(F_Fmsy ~ B_Bmsy | name, dataT, type = "b", col = cols, pch = 19, cex = 0.5)) 
 
   return(pic)
  
 }
+
 
 .recDevFUN = function(jjm.out, cols, ...)
 {
