@@ -188,45 +188,50 @@
   
   for(i in seq_along(x)) {
     
-  jjm.out = x[[i]]$output
+    jjm.stocks = x[[i]]$output
     
-  lastYear = jjm.out$R[nrow(jjm.out$R), 1]
-  Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
-  
-  
-  if(var == "Catch_fut_") {
-    meanCatch = NULL
-	idx = grep(var, names(jjm.out))
-	for(j in seq_along(idx)){
-		meanCatch[j] = mean(jjm.out[[idx[j]]][,2])
-	}
-	totres    = data.frame(scen = scenarios, data = meanCatch)
-  
-  }
-  
-  if(var == "SSB_fut_") {
-    ssbLy = jjm.out$SSB[(nrow(jjm.out$SSB) - 1), 2]
-    ratio = NULL
-	idx = grep(var, names(jjm.out))
-	for(j in seq_along(idx)){
-		ratio[j] = jjm.out[[idx[j]]][nrow(jjm.out[[idx[j]]]),2] / ssbLy
-	}
-	totres    = data.frame(scen = scenarios, data = ratio)
-  
-  }
-  
-  
-	colnames(totres) = c("scen", "data")	
+    for(j in seq_along(jjm.stocks)){
+      
+      jjm.out = jjm.stocks[[j]]
+      
+      lastYear = jjm.out$R[nrow(jjm.out$R), 1]
+      Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
+      
+      if(var == "Catch_fut_") {
+        meanCatch = NULL
+        idx = grep(var, names(jjm.out))
+        for(j in seq_along(idx)){
+          meanCatch[j] = mean(jjm.out[[idx[j]]][,2])
+        }
+        totres    = data.frame(scen = scenarios, data = meanCatch)
+        
+      }
+      
+      if(var == "SSB_fut_") {
+        ssbLy = jjm.out$SSB[(nrow(jjm.out$SSB) - 1), 2]
+        ratio = NULL
+        idx = grep(var, names(jjm.out))
+        for(j in seq_along(idx)){
+          ratio[j] = jjm.out[[idx[j]]][nrow(jjm.out[[idx[j]]]),2] / ssbLy
+        }
+        totres    = data.frame(scen = scenarios, data = ratio)
+        
+      }
+      
+      
+      colnames(totres) = c("scen", "data")	
+      
+      model   = x[[i]]$info$output$model 
+      totres$model = model
+      
+      out    = rbind(out, totres)
+      
+    }
     
-    model   = x[[i]]$info$output$model 
-	totres$model = model
-    
-    out    = rbind(out, totres)
-    
-  }
-  
-  colnames(out) = c("Scenario", "data", "model")
-  out = out[with(out, order(Scenario)),]
+    colnames(out) = c("Scenario", "data", "model")
+    out = out[with(out, order(Scenario)),]
+    }
+      
   
   return(out)
   
@@ -294,55 +299,61 @@
   if(scen == 0.75) scenario = 2
   if(scen == 1) scenario = 1
   if(scen == 1.25) scenario = 3
-	
+  
   for(i in seq_along(x)) {
     
-	jjm.out = x[[i]]$output
-
-	idx = grep("Pred_catch_", names(jjm.out))
-	
-	idx_catch = grep(paste0("Catch_fut_", scenario), names(jjm.out))
-	idx_ssb   = grep(paste0("SSB_fut_", scenario), names(jjm.out))
-
-	totCatch = 0
-	for(j in idx){
-		totCatch = totCatch + jjm.out[[j]] 
-	}
-	
-	dataCatch = data.frame(year = c(jjm.out$Yr, jjm.out[[idx_catch]][,1]), 
-						   data = c(totCatch, jjm.out[[idx_catch]][,2]),
-						   class = "catch")
-	
-	
-	jjm.out$SSB = jjm.out$SSB[- nrow(jjm.out$SSB), ]
-	
-	dataSSB = rbind(jjm.out$SSB, jjm.out[[idx_ssb]])
-	dataSSB = as.data.frame(dataSSB)
-	names(dataSSB) = c("year", "ssb", "sd", "lower", "upper")
-	
-	dataS = cbind(dataSSB$year, dataSSB$ssb)
-	dataS = as.data.frame(dataS)
-	dataS$class = "ssb"
-	
-	dataL = cbind(dataSSB$year, dataSSB$lower)
-	dataL = as.data.frame(dataL)
-	dataL$class = "lower"
-	
-	dataU = cbind(dataSSB$year, dataSSB$upper)
-	dataU = as.data.frame(dataU)
-	dataU$class = "upper"
-	
-	dataT = rbind(dataS, dataL, dataU)
-	dataT = as.data.frame(dataT)
-	names(dataT) = c("year", "data", "class")
-	
-	Data = rbind(dataCatch, dataT)
-	
-    model   = x[[i]]$info$output$model 
-	Data$model = model
-	Data$color = cols[i]
-    names(Data) = c("year", "data", "class", "model", "color")
-	
+    jjm.stocks = x[[i]]$output
+    
+    for(j in seq_along(jjm.stocks)){
+      
+      jjm.out = jjm.stocks[[j]]
+      
+      idx = grep("Pred_catch_", names(jjm.out))
+      
+      idx_catch = grep(paste0("Catch_fut_", scenario), names(jjm.out))
+      idx_ssb   = grep(paste0("SSB_fut_", scenario), names(jjm.out))
+      
+      totCatch = 0
+      for(j in idx){
+        totCatch = totCatch + jjm.out[[j]] 
+      }
+      
+      dataCatch = data.frame(year = c(jjm.out$Yr, jjm.out[[idx_catch]][,1]), 
+                             data = c(totCatch, jjm.out[[idx_catch]][,2]),
+                             class = "catch")
+      
+      
+      jjm.out$SSB = jjm.out$SSB[- nrow(jjm.out$SSB), ]
+      
+      dataSSB = rbind(jjm.out$SSB, jjm.out[[idx_ssb]])
+      dataSSB = as.data.frame(dataSSB)
+      names(dataSSB) = c("year", "ssb", "sd", "lower", "upper")
+      
+      dataS = cbind(dataSSB$year, dataSSB$ssb)
+      dataS = as.data.frame(dataS)
+      dataS$class = "ssb"
+      
+      dataL = cbind(dataSSB$year, dataSSB$lower)
+      dataL = as.data.frame(dataL)
+      dataL$class = "lower"
+      
+      dataU = cbind(dataSSB$year, dataSSB$upper)
+      dataU = as.data.frame(dataU)
+      dataU$class = "upper"
+      
+      dataT = rbind(dataS, dataL, dataU)
+      dataT = as.data.frame(dataT)
+      names(dataT) = c("year", "data", "class")
+      
+      Data = rbind(dataCatch, dataT)
+      
+      model   = x[[i]]$info$output$model 
+      Data$model = model
+      Data$color = cols[i]
+      names(Data) = c("year", "data", "class", "model", "color")
+      
+    }
+    
     out    = rbind(out, Data)
     
   }
@@ -350,6 +361,7 @@
   return(out)
   
 }
+
 
 
 .reshapeJJMCol = function(x, cols, ...){
@@ -360,12 +372,19 @@
 	
   for(i in seq_along(x)) {
     
-	jjm.out = x[[i]]$output
-	
-	model   = x[[i]]$info$output$model
-	Data = data.frame(model = model, class = c("catch", "ssb", "upper", "lower"),
-					  color = cols[i])
-
+    jjm.stocks = x[[i]]$output
+    
+    for(j in seq_along(jjm.stocks)){
+      
+      jjm.out = jjm.stocks[[j]]
+      
+      model   = x[[i]]$info$output$model
+      
+      Data = data.frame(model = model, class = c("catch", "ssb", "upper", "lower"),
+                        color = cols[i])
+      
+    }
+    
     out    = rbind(out, Data)
     
   }
