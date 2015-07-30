@@ -200,8 +200,8 @@
       if(var == "Catch_fut_") {
         meanCatch = NULL
         idx = grep(var, names(jjm.out))
-        for(j in seq_along(idx)){
-          meanCatch[j] = mean(jjm.out[[idx[j]]][,2])
+        for(k in seq_along(idx)){
+          meanCatch[k] = mean(jjm.out[[idx[k]]][,2])
         }
         totres    = data.frame(scen = scenarios, data = meanCatch)
         
@@ -211,8 +211,8 @@
         ssbLy = jjm.out$SSB[(nrow(jjm.out$SSB) - 1), 2]
         ratio = NULL
         idx = grep(var, names(jjm.out))
-        for(j in seq_along(idx)){
-          ratio[j] = jjm.out[[idx[j]]][nrow(jjm.out[[idx[j]]]),2] / ssbLy
+        for(k in seq_along(idx)){
+          ratio[k] = jjm.out[[idx[k]]][nrow(jjm.out[[idx[k]]]),2] / ssbLy
         }
         totres    = data.frame(scen = scenarios, data = ratio)
         
@@ -585,11 +585,16 @@
   mtheme$plot.line$lwd = 5
   mtheme$superpose.line$lwd = 5
   
+  listStocks = NULL
+  for(i in seq_along(x)){
+    listStocks = x[[i]]$output 
+  }
+  
   if(stack == !TRUE){
     pic = xyplot(data ~ Scenario , data = dataShape, groups = stocks,
 				xlab = "Ratio", ylab = "Fishing Mortality",
-                 key = list(lines = list(col = cols[1:length(x)], lwd = 3),
-                            text = list(names(x))
+                 key = list(lines = list(col = cols[1:length(listStocks)], lwd = 3),
+                            text = list(names(listStocks))
                             , ...),                
                  par.settings=mtheme,
                  panel = function(x, y, ...){
@@ -628,11 +633,16 @@
   mtheme$plot.line$lwd = 5
   mtheme$superpose.line$lwd = 5
   
+  listStocks = NULL
+  for(i in seq_along(x)){
+    listStocks = x[[i]]$output 
+  }
+  
   if(stack == !TRUE){
     pic = xyplot(data ~ Scenario, data = dataShape, groups = stocks,
 				xlab = "year", ylab = "Ratio",
-                 key = list(lines = list(col = cols[1:length(x)], lwd = 3),
-                            text = list(names(x))
+                 key = list(lines = list(col = cols[1:length(listStocks)], lwd = 3),
+                            text = list(names(listStocks))
                             , ...),                
                  par.settings=mtheme,
                  panel = function(x, y, ...){

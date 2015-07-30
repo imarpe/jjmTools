@@ -186,9 +186,9 @@ plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, 
                kobe          = .funPlotKobe(x, what, cols, stack, endvalue, poslegend, ...),
                catchProj     = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
                ssbProj       = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
-			   totalProj     = .funPlotTotProj(x, what, cols, stack, endvalue, poslegend, scen, ...),
-			   catchProjScen = .funPlotScen(x, what, cols, stack, endvalue, poslegend, ...),
-			   ssbProjScen   = .funPlotScen(x, what, cols, stack, endvalue, poslegend, ...),
+			   totalProj     = .funPlotTotProj(x, what, cols, stack, endvalue, poslegend, scen, ...), #review
+			   catchProjScen = .funPlotScen(x, what, cols, stack, endvalue, poslegend, ...),          #review
+			   ssbProjScen   = .funPlotScen(x, what, cols, stack, endvalue, poslegend, ...),          #review
 			   ratioSSB_F    = .funPlotRatioSSB_F(x, what, cols, stack, endvalue, poslegend, ...),
 			   ratioSSB      = .funPlotRatioSSB(x, what, cols, stack, endvalue, poslegend, ...))
   
