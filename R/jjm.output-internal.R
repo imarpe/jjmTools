@@ -55,6 +55,44 @@
     
   }
   
+  if(what == "noFishTB" & isTRUE(total)){
+    
+    meanTotal = aggregate(mean ~ year + model, data = out, FUN = sum)
+    sdTotal   = aggregate(sd ~ year + model, data = out, FUN = function(x) sqrt(sum(x^2)))
+    outTotal  = merge(meanTotal, sdTotal, all = TRUE)
+    outTotal$lower  = outTotal$mean - outTotal$sd
+    outTotal$upper  = outTotal$mean + outTotal$sd
+    outTotal$stocks = "Total"
+    
+    out = merge(out, outTotal, all = TRUE, sort = FALSE)
+    
+  }
+  
+  if(what == "ssb" & isTRUE(total)){
+    
+    meanTotal = aggregate(mean ~ year + model, data = out, FUN = sum)
+    sdTotal   = aggregate(sd ~ year + model, data = out, FUN = function(x) sqrt(sum(x^2)))
+    outTotal  = merge(meanTotal, sdTotal, all = TRUE)
+    outTotal$lower  = outTotal$mean - outTotal$sd
+    outTotal$upper  = outTotal$mean + outTotal$sd
+    outTotal$stocks = "Total"
+    
+    out = merge(out, outTotal, all = TRUE, sort = FALSE)
+    
+  }
+  
+  if(what == "recruitment" & isTRUE(total)){
+    
+    meanTotal = aggregate(mean ~ year + model, data = out, FUN = sum)
+    sdTotal   = aggregate(sd ~ year + model, data = out, FUN = function(x) sqrt(sum(x^2)))
+    outTotal  = merge(meanTotal, sdTotal, all = TRUE)
+    outTotal$lower  = outTotal$mean - outTotal$sd
+    outTotal$upper  = outTotal$mean + outTotal$sd
+    outTotal$stocks = "Total"
+    
+    out = merge(out, outTotal, all = TRUE, sort = FALSE)
+    
+  }
   return(out)
   
 }
