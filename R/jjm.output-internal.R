@@ -93,6 +93,7 @@
     out = merge(out, outTotal, all = TRUE, sort = FALSE)
     
   }
+  
   return(out)
   
 }
@@ -109,65 +110,70 @@
   
   for(i in seq_along(x)) {
     
-    jjm.out = x[[i]]$output
+    jjm.stocks = x[[i]]$output
     
-  lastYear = jjm.out$R[nrow(jjm.out$R), 1]
-  Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
-  scenarios = c(paste0("F", lastYear ," SQ"), 
-				paste0("F", lastYear, " 0.75x"), 
-				paste0("F", lastYear, " 1.25x"), 
-				paste0("F", lastYear, " 0.5x"), 
-				paste0("F", lastYear, " 0x"))
-  
-  if(var == "Catch_fut_") {
-  totCatch  = 0
-  for(iFlt in grep("Obs_catch_", names(jjm.out)))
-    totCatch = jjm.out[[iFlt]] + totCatch
-  
-  totCatch  = cbind(jjm.out$Yr, totCatch)
-  colnames(totCatch) = c("year", "catch")
-  }
-  
-  for(iScen in 1:length(scenarios)){
-	
-	if(var == "SSB_fut_") {
-	idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2)])
-    tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2)],
-                 get("jjm.out")[[paste(var, iScen, sep = "")]][,c(1, 2)])
-    colnames(tot) = c("year", "SSB")
-	}
-	
-	if(var == "Catch_fut_") {
-	    tot = rbind(totCatch, jjm.out[[paste(var, iScen, sep = "")]])
-		colnames(tot) = c("year", "catch")
-	}
-	
-	  if(iScen == 1){
-		totres = data.frame(tot)
-		totres$scenario = scenarios[iScen]
-      } else {
-		res = data.frame(tot)
-        res$scenario = scenarios[iScen]
-        totres  = rbind(totres, res)
+    for(j in seq_along(jjm.stocks)){
+      
+      jjm.out = jjm.stocks[[j]]
+      
+      lastYear = jjm.out$R[nrow(jjm.out$R), 1]
+      Nfutscen  = length(grep("SSB_fut_", names(jjm.out)))
+      scenarios = c(paste0("F", lastYear ," SQ"), 
+                    paste0("F", lastYear, " 0.75x"), 
+                    paste0("F", lastYear, " 1.25x"), 
+                    paste0("F", lastYear, " 0.5x"), 
+                    paste0("F", lastYear, " 0x"))
+      
+      if(var == "Catch_fut_") {
+        totCatch  = 0
+        for(iFlt in grep("Obs_catch_", names(jjm.out)))
+          totCatch = jjm.out[[iFlt]] + totCatch
+        
+        totCatch  = cbind(jjm.out$Yr, totCatch)
+        colnames(totCatch) = c("year", "catch")
       }
-
-  }
-
-  colnames(totres) = c("year", "data", "scenario")	
-  
-    model   = x[[i]]$info$output$model 
-	totres$model = model
+      
+      for(iScen in 1:length(scenarios)){
+        
+        if(var == "SSB_fut_") {
+          idx = nrow(get("jjm.out")[["SSB"]][,c(1, 2)])
+          tot = rbind(get("jjm.out")[["SSB"]][-idx,c(1, 2)],
+                      get("jjm.out")[[paste(var, iScen, sep = "")]][,c(1, 2)])
+          colnames(tot) = c("year", "SSB")
+        }
+        
+        if(var == "Catch_fut_") {
+          tot = rbind(totCatch, jjm.out[[paste(var, iScen, sep = "")]])
+          colnames(tot) = c("year", "catch")
+        }
+        
+        if(iScen == 1){
+          totres = data.frame(tot)
+          totres$scenario = scenarios[iScen]
+        } else {
+          res = data.frame(tot)
+          res$scenario = scenarios[iScen]
+          totres  = rbind(totres, res)
+        }
+        
+      }
+      
+      colnames(totres) = c("year", "data", "scenario")	
+      
+      model   = x[[i]]$info$output$model 
+      totres$model = model
+      totres$stocks  = as.list(names(jjm.stocks))[[j]]
+      
+      out    = rbind(out, totres)
+    }
     
-    out    = rbind(out, totres)
+    colnames(out) = c("year", "data", "scenario", "model", "stocks")
     
   }
-  
-  colnames(out) = c("year", "data", "scenario", "model")
   
   return(out)
   
 }
-
 
 .reshapeJJM3 = function(x, what, ...){
   
@@ -469,7 +475,16 @@
   
   if(!stack) warning("Series do not have to be in the same plot")
   
-  Nfutscen  = length(grep("SSB_fut_", names(x[[1]]$output)))
+  listStocks = NULL
+  for(i in seq_along(x)){
+    for(j in seq_along(x[[i]]$output)){
+      listStocks = x[[i]]$output[[j]]  
+    }
+  }
+  
+  
+  #Nfutscen  = length(grep("SSB_fut_", names(x[[1]]$output)))
+  Nfutscen  = length(grep("SSB_fut_", names(listStocks)))
   scenarios = c("F SQ", "F 0.75x", "F 1.25x", "F 0.5x", "F 0x")
   
   dataShape = .reshapeJJM2(x, what, ...)
@@ -478,7 +493,7 @@
   ikey$lines$lwd = 2
   ikey$lines$lty = 1
   
-  pic = xyplot(data ~ year | model, data = dataShape, type = "l", groups = scenario,
+  pic = xyplot(data ~ year | model + stocks, data = dataShape, type = "l", groups = scenario,
 				key = ikey, ylab = "",
 				prepanel = function(...) {list(ylim = c(0, max(dataShape$data, na.rm = TRUE)))},
                 panel = function(x, y){
