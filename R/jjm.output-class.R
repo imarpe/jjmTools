@@ -123,7 +123,7 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = NULL,
       jjm.ypr = jjm.stocks[[j]]$YPR
       namesPlot[i] = object[[i]]$info$output$model
       
-      pic[[i]] = .fit_summarySheet3FUN(jjm.out, scales = list(alternating = 1,
+      pic[[j]] = .fit_summarySheet3FUN(jjm.out, scales = list(alternating = 1,
                                                               y = list(relation = "free", rot = 0),
                                                               axs = "i"), ...)
     }
