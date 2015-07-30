@@ -16,7 +16,8 @@
   
   
   yprName     = file.path(output, paste0(model, ".yld"))
-    
+  ypr         = .readYPR(file.path(inputPath, yprName))  
+	
   # Verify if files exist
   necesaryFiles = c(paste0(model, ".ctl"), outpts)
   necesaryFiles = file.path(inputPath, necesaryFiles)
@@ -29,7 +30,6 @@
   outputs = list(length(Files))
   for(i in seq_along(Files)){
 	  outputs[[i]] = readList(file.path(inputPath, outpts[i]))
-	  ypr     = .readYPR(file.path(inputPath, yprName))
 	  outputs[[i]]$YPR = ypr
   }
   
