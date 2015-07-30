@@ -249,42 +249,48 @@
   
   for(i in seq_along(x)) {
     
-  jjm.out = x[[i]]$output
-  
-  if(var == "SSB_NoFishR") {
-	idx1 = grep(var, names(jjm.out))
-	idx2 = grep("TotF", names(jjm.out))
-	xAxis = jjm.out[[idx1]][,2]
-	yAxis = rowMeans(jjm.out[[idx2]])[-1]
-	Data   = data.frame(xAxis = xAxis, yAxis = yAxis)
-  }
-  
-  if(var == "SSB") {
-    idx = which(names(jjm.out) == var)
-	fEst = jjm.out[[idx]][1,2]
-	indYear = which(jjm.out[[idx]][ ,1] == 1971)
-	Years = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]), 1 ]
-	Values = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]) , 2] / fEst
-
-	Data    = data.frame(xAxis = Years, yAxis = Values)
-  
-  }
-
-    colnames(Data) = c("scen", "data")	
+    jjm.stocks = x[[i]]$output
     
-    model   = x[[i]]$info$output$model 
-	Data$model = model
+    for(j in seq_along(jjm.stocks)){
+      
+      jjm.out = jjm.stocks[[j]]
+      
+      if(var == "SSB_NoFishR") {
+        idx1 = grep(var, names(jjm.out))
+        idx2 = grep("TotF", names(jjm.out))
+        xAxis = jjm.out[[idx1]][,2]
+        yAxis = rowMeans(jjm.out[[idx2]])[-1]
+        Data   = data.frame(xAxis = xAxis, yAxis = yAxis)
+      }
+      
+      if(var == "SSB") {
+        idx = which(names(jjm.out) == var)
+        fEst = jjm.out[[idx]][1,2]
+        indYear = which(jjm.out[[idx]][ ,1] == 1971)
+        Years = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]), 1 ]
+        Values = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]) , 2] / fEst
+        
+        Data    = data.frame(xAxis = Years, yAxis = Values)
+        
+      }
+      
+      colnames(Data) = c("scen", "data")	
+      
+      model   = x[[i]]$info$output$model 
+      Data$model = model
+      Data$stocks = as.list(names(jjm.stocks))[[j]]
+      
+      out    = rbind(out, Data)
+      
+    }
     
-    out    = rbind(out, Data)
+    colnames(out) = c("Scenario", "data", "model", "stocks")        
     
   }
-  
-  colnames(out) = c("Scenario", "data", "model")
   
   return(out)
   
 }
-
 
 .reshapeJJM5 = function(x, scen, cols, ...){
   
@@ -580,7 +586,7 @@
   mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(data ~ Scenario, data = dataShape, groups = model,
+    pic = xyplot(data ~ Scenario , data = dataShape, groups = stocks,
 				xlab = "Ratio", ylab = "Fishing Mortality",
                  key = list(lines = list(col = cols[1:length(x)], lwd = 3),
                             text = list(names(x))
@@ -596,7 +602,7 @@
                    }
                  }
                  , ...)
-  } else {pic = xyplot(data ~ Scenario | model, data = dataShape, groups = model,
+  } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab = "Ratio", ylab = "Fishing Mortality",
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
@@ -623,7 +629,7 @@
   mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(data ~ Scenario, data = dataShape, groups = model,
+    pic = xyplot(data ~ Scenario, data = dataShape, groups = stocks,
 				xlab = "year", ylab = "Ratio",
                  key = list(lines = list(col = cols[1:length(x)], lwd = 3),
                             text = list(names(x))
@@ -638,7 +644,7 @@
                    }
                  }
                  , ...)
-  } else {pic = xyplot(data ~ Scenario | model, data = dataShape, groups = model,
+  } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab = "year", ylab = "Ratio",
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
