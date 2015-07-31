@@ -256,41 +256,42 @@
       jjm.out = jjm.stocks[[j]]
       
       if(var == "SSB_NoFishR") {
-        idx1 = grep(var, names(jjm.out))
-        idx2 = grep("TotF", names(jjm.out))
+        idx1  = grep(var, names(jjm.out))
+        idx2  = grep("TotF", names(jjm.out))
         xAxis = jjm.out[[idx1]][,2]
         yAxis = rowMeans(jjm.out[[idx2]])[-1]
-        Data   = data.frame(xAxis = xAxis, yAxis = yAxis)
+        year  = jjm.out$Yr[-1]
+        Data  = data.frame(year = year, xAxis = xAxis, yAxis = yAxis)
       }
       
       if(var == "SSB") {
-        idx = which(names(jjm.out) == var)
-        fEst = jjm.out[[idx]][1,2]
+        idx     = which(names(jjm.out) == var)
+        fEst    = jjm.out[[idx]][1,2]
         indYear = which(jjm.out[[idx]][ ,1] == 1971)
-        Years = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]), 1 ]
-        Values = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]) , 2] / fEst
-        
-        Data    = data.frame(xAxis = Years, yAxis = Values)
+        Years   = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]), 1 ]
+        Values  = jjm.out[[idx]][ indYear:nrow(jjm.out[[idx]]) , 2] / fEst
+        Data    = data.frame(year = Years, xAxis = Years, yAxis = Values)
         
       }
       
-      colnames(Data) = c("scen", "data")	
+      colnames(Data) = c("year", "scen", "data")	
       
-      model   = x[[i]]$info$output$model 
-      Data$model = model
+      model       = x[[i]]$info$output$model 
+      Data$model  = model
       Data$stocks = as.list(names(jjm.stocks))[[j]]
       
       out    = rbind(out, Data)
       
     }
     
-    colnames(out) = c("Scenario", "data", "model", "stocks")        
+    colnames(out) = c("year", "Scenario", "data", "model", "stocks")        
     
   }
   
   return(out)
   
 }
+
 
 .reshapeJJM5 = function(x, scen, cols, ...){
   
@@ -455,13 +456,17 @@
                  key = list(lines = list(col = cols[1:length(x)], lwd = 3),
                             text = list(names(x))
                             , ...),                
-                 par.settings=mtheme,
+                 par.settings = mtheme,
                  upper = dataShape$upper, lower = dataShape$lower,
                  panel = function(x, y, ...){
                    panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                    panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
                    if(endvalue){
-                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+#                      ltext(x = rev(x)[1], y = rev(y)[1], labels = rev(y)[1], pos = 3, offset = 1, cex = 0.9,
+#                            font = 2, adj = 0)
+                     ltext(x = x[dataShape$year == max(dataShape$year)], 
+                           y = y[dataShape$year == max(dataShape$year)], labels = y[dataShape$year == max(dataShape$year)], 
+                           pos = 3, offset = 1, cex = 0.9,
                            font = 2, adj = 0)
                    }
                  }
@@ -554,8 +559,9 @@
                    panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
 				   panel.xyplot(x, y, type = 'p', cex = 1, pch = 19, ...)
                    if(endvalue){
-                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
-                           font = 2, adj = 0)
+                     ltext(x = x[dataShape$Scenario == max(dataShape$Scenario)], 
+                           y = y[dataShape$Scenario == max(dataShape$Scenario)], labels = y[dataShape$Scenario == max(dataShape$Scenario)],
+                           pos=3, offset=1, cex=0.9, font = 2, adj = 0)
                    }
                  }
                  , ...)
@@ -602,8 +608,10 @@
                    panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
 				   panel.xyplot(x, y, type = 'p', cex = 1, pch = 19, ...)
                    if(endvalue){
-                     ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
-                           font = 2, adj = 0)
+                     ltext(x = x[dataShape$year == max(dataShape$year)], 
+                           y = y[dataShape$year == max(dataShape$year)], 
+                           labels = round(y[dataShape$year == max(dataShape$year)],3),
+                           pos=3, offset=1, cex=0.9, font = 2, adj = 0)
                    }
                  }
                  , ...)
@@ -614,7 +622,7 @@
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
                          panel.xyplot(x, y, type = 'p', cex = 1, pch = 19, ...)
 						 if(endvalue){
-                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1], 4), pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
                          }
                        }, ...)
@@ -649,8 +657,10 @@
                    #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                    panel.xyplot(x, y, type ='l', lty = 1, lwd = 2, ...)
                    if(endvalue){
-                     ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1], 2), pos=3, offset=1, cex=0.9,
-                           font = 2, adj = 0)
+                     ltext(x = x[dataShape$Scenario == max(dataShape$Scenario)], 
+                           y = y[dataShape$Scenario == max(dataShape$Scenario)], 
+                           labels = round(y[dataShape$Scenario == max(dataShape$Scenario)],3),
+                           pos=3, offset=1, cex=0.9, font = 2, adj = 0)
                    }
                  }
                  , ...)
