@@ -200,26 +200,27 @@
       if(var == "Catch_fut_") {
         meanCatch = NULL
         idx = grep(var, names(jjm.out))
+        stocks = as.list(names(jjm.stocks))[[j]]
         for(k in seq_along(idx)){
           meanCatch[k] = mean(jjm.out[[idx[k]]][,2])
         }
-        totres    = data.frame(scen = scenarios, data = meanCatch)
+        totres    = data.frame(scen = scenarios, data = meanCatch, stocks = stocks)
         
       }
       
       if(var == "SSB_fut_") {
         ssbLy = jjm.out$SSB[(nrow(jjm.out$SSB) - 1), 2]
+        stocks = as.list(names(jjm.stocks))[[j]]
         ratio = NULL
         idx = grep(var, names(jjm.out))
         for(k in seq_along(idx)){
           ratio[k] = jjm.out[[idx[k]]][nrow(jjm.out[[idx[k]]]),2] / ssbLy
         }
-        totres    = data.frame(scen = scenarios, data = ratio)
+        totres    = data.frame(scen = scenarios, data = ratio, stocks = stocks)
         
       }
       
-      
-      colnames(totres) = c("scen", "data")	
+      colnames(totres) = c("scen", "data", "stocks")	
       
       model   = x[[i]]$info$output$model 
       totres$model = model
@@ -228,10 +229,9 @@
       
     }
     
-    colnames(out) = c("Scenario", "data", "model")
+    colnames(out) = c("Scenario", "data", "stocks", "model")
     out = out[with(out, order(Scenario)),]
-    }
-      
+  }
   
   return(out)
   
@@ -548,7 +548,7 @@
   mtheme$superpose.line$lwd = 5
   
   if(stack == !TRUE){
-    pic = xyplot(data ~ Scenario, data = dataShape, groups = model,
+    pic = xyplot(data ~ Scenario, data = dataShape, groups = stocks,
 				xlab="Fishing Mortality Multiplier", ylab = "",
                  key = list(lines = list(col = cols[1:length(x)], lwd = 3),
                             text = list(names(x))
@@ -565,7 +565,7 @@
                    }
                  }
                  , ...)
-  } else {pic = xyplot(data ~ Scenario | model, data = dataShape, groups = model,
+  } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab="Fishing Mortality Multiplier", ylab = "",
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
@@ -688,10 +688,15 @@
   dataCol = .reshapeJJMCol(x, cols)
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   
-  ikey           = simpleKey(text = names(x),
+  listStocks = NULL
+  for(i in seq_along(mod0)){
+    listStocks = names(mod0[[i]]$output) 
+  }
+  
+    ikey           = simpleKey(text = names(x),
                               points = FALSE, lines = TRUE, columns = 2)
-
-  ikey$lines$col = cols[1:length(x)]
+  
+  ikey$lines$col = cols[1:length(listStocks)]
   ikey$lines$lwd = 2
   ikey$lines$lty = 1
   
