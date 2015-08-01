@@ -2532,10 +2532,7 @@
       datalab = rbind(datalab, data2)
       
       pic[[j]] = xyplot(y ~ x | name + model, dataxy, type="n", xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
-                   scale = list(axs = 'i'), 
-#                    key = list(lines = list(col = cols[1:length(names(listStocks))], lwd = 3),
-#                               text = list(names(listStocks))
-#                               , ...), 
+                        scales = list(alternating = 1, tck = c(1, 0)), 
                    ...) +  
         layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
         layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +

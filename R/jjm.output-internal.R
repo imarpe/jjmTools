@@ -321,8 +321,8 @@
       idx_ssb   = grep(paste0("SSB_fut_", scenario), names(jjm.out))
       
       totCatch = 0
-      for(j in idx){
-        totCatch = totCatch + jjm.out[[j]] 
+      for(k in idx){
+        totCatch = totCatch + jjm.out[[k]] 
       }
       
       dataCatch = data.frame(year = c(jjm.out$Yr, jjm.out[[idx_catch]][,1]), 
@@ -355,13 +355,15 @@
       Data = rbind(dataCatch, dataT)
       
       model   = x[[i]]$info$output$model 
+      stocks  = as.list(names(jjm.stocks))[[j]]
       Data$model = model
-      Data$color = cols[i]
-      names(Data) = c("year", "data", "class", "model", "color")
+      Data$stocks = stocks
+      Data$color = cols[[j]]
+      names(Data) = c("year", "data", "class", "model", "stocks", "color")
+      
+      out    = rbind(out, Data)
       
     }
-    
-    out    = rbind(out, Data)
     
   }
   
@@ -386,13 +388,13 @@
       jjm.out = jjm.stocks[[j]]
       
       model   = x[[i]]$info$output$model
+      stocks  = as.list(names(jjm.stocks))[[j]]
       
-      Data = data.frame(model = model, class = c("catch", "ssb", "upper", "lower"),
-                        color = cols[i])
-      
+      Data = data.frame(model = model, stocks, class = c("catch", "ssb", "upper", "lower"),
+                        color = cols[[j]])
+     
+      out    = rbind(out, Data)
     }
-    
-    out    = rbind(out, Data)
     
   }
   
@@ -458,6 +460,7 @@
     pic = xyplot(mean ~ year | model, data = dataShape, groups = stocks, ylab = "", 
                  ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                  xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
+                 scales = list(alternating = 1, tck = c(1, 0)),
                  key = list(lines = list(col = cols[1:length(names(listStocks))], lwd = 3),
                             text = list(names(listStocks))
                             , ...),                
@@ -478,6 +481,7 @@
                        ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                        xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
                        #scales = list(y = list(relation = "free")),
+                       scales = list(alternating = 1, tck = c(1, 0)),
                        upper = dataShape$upper, lower = dataShape$lower,
                        panel = function(x, y, ...){
                          panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
@@ -516,8 +520,6 @@
     }
   }
   
-  
-  #Nfutscen  = length(grep("SSB_fut_", names(x[[1]]$output)))
   Nfutscen  = length(grep("SSB_fut_", names(listStocks)))
   scenarios = c("F SQ", "F 0.75x", "F 1.25x", "F 0.5x", "F 0x")
   
@@ -529,6 +531,7 @@
   
   pic = xyplot(data ~ year | model + stocks, data = dataShape, type = "l", groups = scenario,
 				key = ikey, ylab = "",
+				scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
 				prepanel = function(...) {list(ylim = c(0, max(dataShape$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
@@ -559,6 +562,7 @@
   if(stack == !TRUE){
     pic = xyplot(data ~ Scenario | model, data = dataShape, groups = stocks,
 				xlab="Fishing Mortality Multiplier", ylab = "",
+				scales = list(alternating = 1, tck = c(1, 0)),
                  key = list(lines = list(col = cols[1:length(listStocks)], lwd = 3),
                             text = list(names(listStocks))
                             , ...),                
@@ -577,12 +581,13 @@
                  , ...)
   } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab="Fishing Mortality Multiplier", ylab = "",
+                       scales = list(alternating = 1, tck = c(1, 0)),
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
                          panel.xyplot(x, y, type = 'p', cex = 1, pch = 19, ...)
 						 if(endvalue){
-                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                           ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1],3), pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
                          }
                        }, ...)
@@ -609,6 +614,7 @@
   if(stack == !TRUE){
     pic = xyplot(data ~ Scenario | model, data = dataShape, groups = stocks,
 				xlab = "Ratio", ylab = "Fishing Mortality",
+				scales = list(alternating = 1, tck = c(1, 0)),
                  key = list(lines = list(col = cols[1:length(listStocks)], lwd = 3),
                             text = list(names(listStocks))
                             , ...),                
@@ -627,6 +633,7 @@
                  , ...)
   } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab = "Ratio", ylab = "Fishing Mortality",
+                       scales = list(alternating = 1, tck = c(1, 0)),
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
@@ -659,6 +666,7 @@
   if(stack == !TRUE){
     pic = xyplot(data ~ Scenario | model, data = dataShape, groups = stocks,
 				xlab = "year", ylab = "Ratio",
+				scales = list(alternating = 1, tck = c(1, 0)),
                  key = list(lines = list(col = cols[1:length(listStocks)], lwd = 3),
                             text = list(names(listStocks))
                             , ...),                
@@ -676,6 +684,7 @@
                  , ...)
   } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab = "year", ylab = "Ratio",
+                       scales = list(alternating = 1, tck = c(1, 0)),
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
@@ -698,54 +707,47 @@
   dataCol = .reshapeJJMCol(x, cols)
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   
-  listStocks = NULL
-  for(i in seq_along(mod0)){
-    listStocks = names(mod0[[i]]$output) 
-  }
+  ikey           = simpleKey(text = unique(dataShape$stocks),
+                             points = FALSE, lines = TRUE, columns = 2)
   
-    ikey           = simpleKey(text = names(x),
-                              points = FALSE, lines = TRUE, columns = 2)
-  
-  ikey$lines$col = cols[1:length(listStocks)]
+  ikey$lines$col = cols[1:length(unique(dataShape$stocks))]
   ikey$lines$lwd = 2
   ikey$lines$lty = 1
   
+  pic = list()
   
-  #mtheme = standard.theme("pdf", color=TRUE)
-  #mtheme$plot.line$lwd = 5
-  #mtheme$superpose.line$lwd = 5
-  
-  if(stack == !TRUE){
-    pic = xyplot(data ~ year, data = dataShape, groups = class,
-				xlab = "year", ylab = "",
-                key = ikey,               
-                # par.settings=mtheme,
-                 panel = function(x, y, ...){
-                   #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                   panel.xyplot(x, y, type = 'l', lwd = 2, 
-								lty = c(5, 1, 3, 3),
-								col = rep(cols[1:length(x)], each = 4), ...)
-                   if(endvalue){
-                     ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1], 3), pos=3, offset=1, cex=0.9,
-                           font = 2, adj = 0)
+  for(i in seq_along(length(unique(dataShape$stocks)))){  
+    
+    if(stack == TRUE){
+      pic = xyplot(data ~ year | stocks + model , data = dataShape, groups = class,
+                   xlab = "year", ylab = "",
+                   scales = list(alternating = 1, tck = c(1, 0),
+                                 y = list(relation = "free", rot = 0)),
+                   #key = ikey,               
+                   panel = function(x, y, ...){
+                     panel.xyplot(x, y, type = 'l', lwd = 2, 
+                                  lty = c(5, 1, 3, 3),
+                                  col = rep(cols[1:length(unique(dataShape$stocks))], each = 8), ...)
+                     if(endvalue){
+                       ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1], 3), pos=3, offset=1, cex=0.9,
+                             font = 2, adj = 0)
+                     }
                    }
-                 }
-                 , ...)
-  } else {pic = xyplot(data ~ year | model, data = dataShape, groups = class,
-					   xlab = "year", ylab = "", type = "l",
-					   par.settings = list(superpose.line = list(
-                                           lwd = 2, 
-										   col = dataCol$color)),
-					   #panel = function(x, y, ...){
-                         #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-						 #panel.xyplot(x, y, ...)
-						#panel.xyplot(x, y, lwd = 2, type = "l",
-						#			 lty = c(5, 1, 3, 3), ...)
-						 if(endvalue){
+                   , ...)
+    } else {pic[[i]] = xyplot(data ~ year | model, data = dataShape, groups = stocks,
+                         xlab = "year", ylab = "", type = "l",
+                         scales = list(alternating = 1, tck = c(1, 0)),
+                         par.settings = list(superpose.line = list(
+                           lwd = 2, 
+                           col = dataCol$color)),
+                         if(endvalue){
                            ltext(x=rev(x)[1], y=rev(y)[1], labels = round(rev(y)[1], 3), pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
                          }
-                       , ...)
+                         , ...)
+    }
+    
+    
   }
   
   return(pic)
