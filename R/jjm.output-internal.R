@@ -460,7 +460,7 @@
     pic = xyplot(mean ~ year | model, data = dataShape, groups = stocks, ylab = "", 
                  ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
                  xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
-                 scales = list(alternating = 1, tck = c(1, 0)),
+                 scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
                  key = list(lines = list(col = cols[1:length(names(listStocks))], lwd = 3),
                             text = list(names(listStocks))
                             , ...),                
@@ -471,23 +471,24 @@
                    panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
                    if(endvalue){
                      ltext(x = x[dataShape$year == max(dataShape$year)], 
-                           y = y[dataShape$year == max(dataShape$year)], labels = y[dataShape$year == max(dataShape$year)], 
+                           y = y[dataShape$year == max(dataShape$year)], 
+                           labels = round(y[dataShape$year == max(dataShape$year)],0), 
                            pos = 3, offset = 1, cex = 0.9,
                            font = 2, adj = 0)
                    }
                  }
                  , ...)
   } else {pic = xyplot(mean ~ year | stocks + model, data = dataShape, groups = stocks, ylab = "",
-                       ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
-                       xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
-                       #scales = list(y = list(relation = "free")),
-                       scales = list(alternating = 1, tck = c(1, 0)),
+                       #ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
+                       #xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
+                       scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
                        upper = dataShape$upper, lower = dataShape$lower,
                        panel = function(x, y, ...){
                          panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
                          if(endvalue){
-                           ltext(x=rev(x)[1], y=rev(y)[1], labels=rev(y)[1], pos=3, offset=1, cex=0.9,
+                           ltext(x = rev(x)[1], y = rev(y)[1], 
+                                 labels = round(rev(y)[1],0), pos=3, offset=1, cex=0.9,
                                  font = 2, adj = 0)
                          }
                        }, ...)
@@ -529,10 +530,10 @@
   ikey$lines$lwd = 2
   ikey$lines$lty = 1
   
-  pic = xyplot(data ~ year | model + stocks, data = dataShape, type = "l", groups = scenario,
+  pic = xyplot(data ~ year | stocks + model, data = dataShape, type = "l", groups = scenario,
 				key = ikey, ylab = "",
 				scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
-				prepanel = function(...) {list(ylim = c(0, max(dataShape$data, na.rm = TRUE)))},
+				#prepanel = function(...) {list(ylim = c(0, max(dataShape$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
                   idx = mapply(seq(length(x)/Nfutscen, length(x), length.out = Nfutscen) - length(x)/Nfutscen + 1,
@@ -581,7 +582,8 @@
                  , ...)
   } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab="Fishing Mortality Multiplier", ylab = "",
-                       scales = list(alternating = 1, tck = c(1, 0)),
+                       scales = list(alternating = 1, tck = c(1, 0),
+                                     y = list(relation = "free", rot = 0)),
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
@@ -633,7 +635,8 @@
                  , ...)
   } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab = "Ratio", ylab = "Fishing Mortality",
-                       scales = list(alternating = 1, tck = c(1, 0)),
+                       scales = list(alternating = 1, tck = c(1, 0),
+                                     y = list(relation = "free", rot = 0)),
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)
@@ -684,7 +687,8 @@
                  , ...)
   } else {pic = xyplot(data ~ Scenario | stocks + model, data = dataShape, groups = stocks,
                        xlab = "year", ylab = "Ratio",
-                       scales = list(alternating = 1, tck = c(1, 0)),
+                       scales = list(alternating = 1, tck = c(1, 0),
+                                     y = list(relation = "free", rot = 0)),
 					   panel = function(x, y, ...){
                          #panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
                          panel.xyplot(x, y, type = 'l', lty = 1, lwd = 2, ...)

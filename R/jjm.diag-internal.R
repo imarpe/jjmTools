@@ -2418,7 +2418,6 @@
 	  }
 	}
   
-
   x <- seq(0, max(xlim), by = 0.1)
   y <- seq(0, max(ylim), by = 0.1)
 
@@ -2430,9 +2429,6 @@
   for(i in seq_along(obj)){
     for(j in seq_along(obj[[i]]$output)){
       kob = obj[[i]]$output[[j]]$msy_mt
-      
-      #Blim = Bref
-      #Flim = Fref
       
       F_Fmsy = kob[,4]
       B_Bmsy = kob[,13]
@@ -2458,7 +2454,7 @@
   for(i in seq_along(obj)){
     for(j in seq_along(obj[[i]]$output)){
   
-          pic = xyplot(y ~ x  , type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+          pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
                    key = list(lines = list(col = cols[1:length(obj[[i]]$output)], lwd = 3),
                               text = list(names(obj[[i]]$output)), ...
                    ), ...) + 
@@ -2531,8 +2527,10 @@
       data2 = cbind(data2, model, name)
       datalab = rbind(datalab, data2)
       
-      pic[[j]] = xyplot(y ~ x | name + model, dataxy, type="n", xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+      pic[[j]] = xyplot(y ~ x | name + model, dataxy, type = "n", xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
                         scales = list(alternating = 1, tck = c(1, 0)), 
+                        xlim = range(pretty(c(0, B_Bmsy))),
+                        ylim = range(pretty(c(0, F_Fmsy))),
                    ...) +  
         layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
         layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
