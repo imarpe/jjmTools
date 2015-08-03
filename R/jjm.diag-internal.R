@@ -2457,10 +2457,10 @@
     
   }
   
-#   for(i in seq_along(obj)){
-#     for(j in seq_along(obj[[i]]$output)){
+  for(i in seq_along(obj)){
+    for(j in seq_along(obj[[i]]$output)){
   
-          pic = xyplot(y ~ x | model, data = dataxy, groups = name, type = "n", xlim = xlim, ylim = ylim, 
+          pic = xyplot(y ~ x, type = "n", xlim = xlim, ylim = ylim, 
                        xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
                        scales = list(alternating = 1, tck = c(1, 0)),
                        key = list(lines = list(col = cols[1:length(obj[[i]]$output)], lwd = 3),
@@ -2471,8 +2471,8 @@
         layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
         layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) 
       
-#     }
-#   }
+    }
+  }
   
 #   for(i in seq_along(obj)){
 #     for(j in seq_along(obj[[i]]$output)){
