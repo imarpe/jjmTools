@@ -1031,8 +1031,8 @@
       if(iFleet != seq_along(.an(lgtFleets))[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs))))
     }
     if(Nfleets != 1){
-      if(iFleet == .an(lgtFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs)))
-      if(iFleet != .an(lgtFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
+      if(iFleet == seq_along(.an(lgtFleets))[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs)))
+      if(iFleet != seq_along(.an(lgtFleets))[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
     }
   }
   colnames(tot)   = c("year", "obs", "length", "model", "fleet")
@@ -1137,7 +1137,7 @@
   pobs_len_fsh = grep(pattern = "pobs_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   phat_len_fsh = grep(pattern = "phat_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   
-  for(iFleet in .an(lgtFleets)){
+  for(iFleet in seq_along(.an(lgtFleets))){
 #     obs = .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1],
 #                             jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,1], lengths)
 #     mod = .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
@@ -1652,8 +1652,8 @@
 {
   EffN_Length_Fsh = grep(pattern = "EffN_Length_Fsh_[0-9]*", x = names(jjm.out), value = TRUE)
   
-  for(iFleet in .an(lgtFleets)){
-    res = data.frame(jjm.out[[EffN_Length_Fsh[iFleet]]][,c(1, 4, 5, 7, 8)])
+  for(iFleet in seq_along(.an(lgtFleets))){
+    res = data.frame(jjm.out[[EffN_Length_Fsh]][,c(1, 4, 5, 7, 8)])
     colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
     
     for(i in 2:5){
@@ -1661,8 +1661,8 @@
       tot$class = names(res)[i]
       tot$Fleet = jjm.out$Fshry_names[iFleet]
       
-      if(iFleet == .an(lgtFleets)[1] & i == 2) total = tot
-      if(iFleet != .an(lgtFleets)[1] | i != 2) total = rbind(total, tot)
+      if(iFleet == seq_along(.an(lgtFleets))[1] & i == 2) total = tot
+      if(iFleet != seq_along(.an(lgtFleets))[1] | i != 2) total = rbind(total, tot)
     }
   }
   colnames(total) = c("year", "data", "class", "fleet")
