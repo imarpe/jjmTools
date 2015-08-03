@@ -1,5 +1,5 @@
 
-.getJjmOutput = function(path, output, model, ...) {
+.getJjmOutput = function(path, output, model, version, ...) {
   
   # Define path of input
   inputPath   = path
@@ -43,8 +43,9 @@
   dataName    = gsub(x = dataName[1], pattern = " ", replacement = "")
   
   # Read .dat file
-  data        = .read.dat(filename = file.path(inputPath, dataName))
-  
+  data        = .read.dat(filename = file.path(inputPath, dataName),
+						  version = version)
+
   # Generate extra info
   iFilename   = file.path(inputPath, dataName)
   info.data   = list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
@@ -65,6 +66,12 @@
   
   info.output = list(model = modelName, fisheryNames = fisheries, modelYears = outputs$Yr,
                      indexModel = indices, nStock = length(Files))
+  
+  #read ctl
+  if(version == "2015MS"){ control = .read.ctlMS(filename = file.path(inputPath, paste0(model, ".ctl")),
+												 info = info.output, infoDat = info.data) }
+	else { control = .read.ctl(filename = file.path(inputPath, paste0(model, ".ctl")),
+							   info = info.output, infoDat = info.data) }
   
   namesStock = paste0("Stock_", 1:length(Files)) # Puede ser modificado cuando se lea el ctl
   names(outputs) = namesStock

@@ -28,11 +28,13 @@ NULL
 #' @param ... Extra arguments
 #' @examples
 #' readJJM(model = "mod2.4")
-readJJM <- function(model, path = "", output="arc", modelName=model, ...) {
+readJJM <- function(model, path = "", output="arc", modelName=model, 
+					version = "2015MS", ...) {
   
   path <- .getPath(path)
   
-  output <- .getJjmOutput(path = path, output=output, model = model, ...)      
+  output <- .getJjmOutput(path = path, output=output, model = model,
+						  version = version,  ...)      
   
   if(length(modelName) > 1)
     warning("The condition has length > 1 and only the first element will be used")
