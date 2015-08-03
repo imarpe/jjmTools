@@ -153,7 +153,6 @@
     lgtSurveys = lgtSurveys[seq(4, length(lgtSurveys), 4)]
   } else {lgtSurveys = 0}
   
-  
   # Plots of the INPUT data
   allPlots = list()
   
@@ -163,14 +162,14 @@
   inputPlots$weightFishery = .input_weightFisheryFUN(Nfleets, jjm.out, ages,
                                                       lwd = 1, xlab = "Years", ylab = "Weight",
                                                       main = "Weight at age in the fishery",
-                                                      scales = list(alternating = 3))
+                                                      scales = list(alternating = 1, tck = c(1,0)))
   
   # 2: Weight at age in the survey
   inputPlots$weightAge = .input_weightAgeFUN(Nsurveys, jjm.out, ages,
                                               type = "l", lwd = 1,
                                               xlab = "Years", ylab = "Weight", main = "Weight at age in the survey",
                                               auto.key = list(space = "right", points = FALSE, lines = TRUE, type = "b"),
-                                              scales = list(alternating = 3))
+                                              scales = list(alternating = 1, tck = c(1,0)))
   
   
   # 3: Weight by cohort in the fleet  
@@ -180,7 +179,7 @@
                                                                   main = "Weight at age by cohort in the fleet",
                                                                   auto.key = list(space = "right", points = FALSE,
                                                                                   lines = TRUE, type = "b"), 
-                                                                  scales = list(alternating = 3))
+                                                                  scales = list(alternating = 1, tck = c(1,0)))
   
   # 4: Weight by cohort in the survey  
   inputPlots$weightByCohortSurvey = .input_weightByCohortSurveyFUN(Nsurveys, jjm.out, ages,
@@ -189,7 +188,7 @@
                                                                     main = "Weight at age by cohort in the survey",
                                                                     auto.key = list(space = "right", points = FALSE,
                                                                                     lines = TRUE, type = "b"),
-                                                                    scales = list(alternating = 3))
+                                                                    scales = list(alternating = 1, tck = c(1,0)))
   
   # 5: Age composition of the catch
   if(.an(ageFleets)[1] != 0){
@@ -251,21 +250,23 @@
   # 9a: Trend in catch
   outPlots$totalCatch = .fit_totalCatchFUN(Nfleets, jjm.out,
                                             xlab = "Years", ylab = "Catch in kt", main = "Total catch", 
-                                            scales = list(y = list(axs = "i")))
+                                            scales = list(alternating = 1, tck = c(1,0), y = list(axs = "i")))
   
   #9b: trends in catch by fleet as polygon
   if(Nfleets > 1){
     outPlots$totalCatchByFleet = .fit_totalCatchByFleetFUN(jjm.out, Nfleets,
                                                             xlab = "Years", ylab = "Catch by fleet in kt", 
                                                             main = "Total catch by fleet",
-                                                            scales=list(y = list(axs = "i")))
+                                                            scales = list(alternating = 1, tck = c(1,0),
+                                                                          y = list(axs = "i")))
   }
   
   # 10: Log residual total catch by fleet
   outPlots$catchResidualsByFleet = .fit_catchResidualsByFleetFUN(Nfleets, jjm.out,
-                                                                  xlab = "Years", ylab = "Residuals", 
-                                                                  main = "Catch residuals by fleet", 
-                                                                  lwd = 3, cex.axis = 1.2, font = 2)
+                                                                 xlab = "Years", ylab = "Residuals", 
+                                                                 main = "Catch residuals by fleet",
+                                                                 scales = list(alternating = 1, tck = c(1,0)),
+                                                                 lwd = 3, cex.axis = 1.2, font = 2)
   
   # 11: Absolute residual catch by fleet
   outPlots$absoluteResidualCatchByFleet = .fit_absoluteResidualCatchByFleetFUN(Nfleets, jjm.out,
@@ -277,7 +278,7 @@
     outPlots$residualsCatchAtAgeByFleet = .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages,
                                                                               xlab = "Years", ylab = "Absolute residual catch", 
                                                                               main = "Absolute residual catch by fleet",
-                                                                              scales = list(alternating = 3))
+                                                                              scales = list(alternating = 1, tck = c(1, 0)))
   }
   
   # 12b: Proportions catch by length modelled and observed
@@ -305,8 +306,9 @@
   # 14: Absolute catch by fleet modelled and observed
   cols  = rainbow(11)  
   outPlots$predictedObservedCatchesByFleet = .fit_predictedObservedCatchesByFleetFUN(Nfleets, cols, jjm.out,
-                                                                                      main = "Predicted and observed catches by fleet",
-                                                                                      xlab = "Years", ylab = "Thousand tonnes")
+                                                                                     scales = list(alternating = 1, tck = c(1,0)),
+                                                                                     main = "Predicted and observed catches by fleet",
+                                                                                     xlab = "Years", ylab = "Thousand tonnes")
   
   #-----------------------------------------------------------------------------
   #- Plots of the fit of the survey data
@@ -332,73 +334,83 @@
                                                                               xlab = "Years", ylab = "Log residuals", 
                                                                               main = "Standardized survey residuals",
                                                                               lwd = 3, cex.axis = 1.2, font = 2,
-                                                                              scales = list(y = list(draw = FALSE)))
+                                                                              scales = list(y = list(draw = FALSE),
+                                                                                            alternating = 1, tck = c(1, 0)))
   
   # 16b: standard deviation of time series variances
   outPlots$sdPerInputSeries = .fit_sdPerInputSeriesFUN(jjm.out,
                                                         main = "SD per input series", ylab = "SD", xlab = "Years",
-                                                        scales = list(alternating = 3))
+                                                        scales = list(alternating = 1, tck = c(1, 0)))
   
   #-----------------------------------------------------------------------------
   #- Plots of selectivity in fleet and survey + F's
   #-----------------------------------------------------------------------------  
   # 17: Selectivity at age in the fleet
   outPlots$selectivityFisheryByPentad = .fit_selectivityFisheryByPentadFUN(Nfleets, jjm.out, ages,
-                                                                            scale = list(alternating = FALSE),
+                                                                            scale = list(alternating = 3),
                                                                             main = "Selectivity of the Fishery by Pentad",
                                                                             xlab = "Age", ylab = "Selectivity")
   
   # 18: selecitivity at age in the survey
   outPlots$selectivitySurveyByPentad = .fit_selectivitySurveyByPentadFUN(Nsurveys, jjm.out, ages,
-                                                                          scale = list(alternating = FALSE),
+                                                                          scale = list(alternating = 3),
                                                                           main = "Selectivity of the survey by Pentad",
                                                                           xlab = "Age", ylab = "Selectivity")
   
   # 19a: F at age
   cols  = rev(heat.colors(11))  
   outPlots$fAtAGe = .fit_fAtAGeFUN(jjm.out, ages, cols,
-                                    xlab = "Age", ylab = "Years", main = "F at age")
+                                   scale = list(alternating = 1, tck = c(1,0)),
+                                   xlab = "Age", ylab = "Years", main = "F at age")
   
   # 19b: Prop F at age
   cols  = rainbow(length(ages))
   outPlots$fProportionAtAGe = .fit_fProportionAtAGeFUN(jjm.out, ages, cols,
-                                                        xlab = "Years", ylab = "Proportion of F at age", 
-                                                        main = "F proportion at age",
-                                                        ylim = c(0, 1), scales = list(y = list(axs = "i")))
+                                                       xlab = "Years", ylab = "Proportion of F at age", 
+                                                       main = "F proportion at age",
+                                                       ylim = c(0, 1), 
+                                                       scales = list(alternating = 1, tck = c(1,0),
+                                                                     y = list(axs = "i")))
   
   #19b: N at age
   cols = rev(heat.colors(11))  
   outPlots$nAtAGe = .fit_nAtAGeFUN(jjm.out, cols,
-                                    xlab = "Age", ylab = "Years", main = "N at age")
+                                   scales = list(alternating = 1, tck = c(1,0)),
+                                   xlab = "Age", ylab = "Years", main = "N at age")
   
   #19c: Prop N at age
   cols  = rainbow(length(ages))
   outPlots$nProportionAtAGe = .fit_nProportionAtAGeFUN(jjm.out, cols, ages,
-                                                        xlab = "Years", ylab = "Proportion of N at age", 
-                                                        main = "Proportion at age",
-                                                        ylim = c(0, 1), scales = list(y = list(axs = "i")))
+                                                       xlab = "Years", ylab = "Proportion of N at age", 
+                                                       main = "Proportion at age",
+                                                       ylim = c(0, 1), 
+                                                       scales = list(alternating = 1, tck = c(1,0),
+                                                                     y = list(axs = "i")))
   
   #20: Fisheries mean age  
   if(.an(ageFleets)[1] != 0){
     outPlots$fisheryMeanAge = .fit_fisheryMeanAgeFUN(jjm.out, ageFleets,
-                                                      lwd = 3, lty = c(1, 3), col = 1,
-                                                      ylab = "Age", xlab = "Years", main = "Fishery mean age")
+                                                     lwd = 3, lty = c(1, 3), col = 1,
+                                                     ylab = "Age", xlab = "Years", main = "Fishery mean age",
+                                                     scales = list(alternating = 1, tck = c(1,0),
+                                                                   y = list(axs = "i")))
   } 
   
   #20: Fisheries mean length  
   if(.an(lgtFleets)[1] != 0){
     outPlots$fisheryMeanLength = .fit_fisheryMeanLengthFUN(lgtFleets, jjm.out,
-                                                            lwd = 3, lty = c(1, 3), col = 1,
-                                                            ylab = "Length (cm)", xlab = "Years", 
-                                                            main = "Fishery mean length")
+                                                           lwd = 3, lty = c(1, 3), col = 1,
+                                                           ylab = "Length (cm)", xlab = "Years", 
+                                                           main = "Fishery mean length",
+                                                           scales = list(alternating = 1, tck = c(1,0)))
   }
   
   #21: Survey mean age
   if(.an(ageFleets)[1] != 0){
     outPlots$surveyMeanAge = .fit_surveyMeanAgeFUN(Nsurveys, jjm.out,
-                                                    lwd = 3, lty = c(1, 3), col = 1,
-                                                    ylab = "Age", xlab = "Years", main = "Survey mean age",
-                                                    scales = list(alternating = 3))
+                                                   lwd = 3, lty = c(1, 3), col = 1,
+                                                   ylab = "Age", xlab = "Years", main = "Survey mean age",
+                                                   scales = list(alternating = 1, tck = c(1,0)))
   }
   
   #-----------------------------------------------------------------------------
@@ -407,24 +419,26 @@
   # 22a: summary sheet with SSB, R, F and Biomass and Catch
   outPlots$summarySheet = .fit_summarySheetFUN(jjm.out,
                                                 main = NA,
-                                                scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                scales = list(alternating = 1, tck = c(1,0), 
+                                                              y = list(relation = "free", rot = 0),
                                                               axs = "i"))
   
   # 22b: Summary sheet 2
   outPlots$summarySheet2 = .fit_summarySheet2FUN(jjm.out,
                                                   main = NA, 
-                                                  scales = list(alternating = 1, y = list(relation = "free", rot = 0),
+                                                  scales = list(alternating = 1, tck = c(1,0), 
+                                                                y = list(relation = "free", rot = 0),
                                                                 axs = "i"))
   
   # 22b Uncertainties of key parameters
   outPlots$uncertaintyKeyParams = .fit_uncertaintyKeyParamsFUN(jjm.out,
-                                                                auto.key = list(space = "right", 
-                                                                                points = FALSE, 
-                                                                                lines = FALSE, 
-                                                                                type = "l", col = 1:3),
-                                                                col = 1:3, lwd = 2, 
-                                                                main = "Uncertainty of key parameters")
-  
+                                                               auto.key = list(space = "right", 
+                                                                               points = FALSE, 
+                                                                               lines = FALSE, 
+                                                                               type = "l", col = 1:3),
+                                                               col = 1:3, lwd = 2, 
+                                                               main = "Uncertainty of key parameters")
+                                                               
   # 23: Mature - immature ratio
   cols  = rainbow(length(ages))
   outPlots$matureInmatureFishes = .fit_matureInmatureFishesFUN(jjm.out, 
@@ -468,7 +482,8 @@
   outPlots$yieldSsbPerRecruit = .ypr_yieldSsbPerRecruitFUN(jjm.out,
                                                             main = "Yield and spawing stock biomass per recruit",
                                                             xlab = "Fishing mortality", ylab = "Spawing biomass / Yield per recruit",
-                                                            scales = list(alternating = 1, y = list(relation = "free", rot = 0)))
+                                                            scales = list(alternating = 1, tck = c(1,0),
+                                                                          y = list(relation = "free", rot = 0)))
   
 
   outPlots$kobePlot = .kobeFUN(jjm.out)
@@ -1238,7 +1253,8 @@
   ikey$lines$lwd        = 3
   
   pic = xyplot(data ~ year | as.factor(fleet), data = res,
-                groups = as.factor(classing),
+               groups = as.factor(classing),
+               sclaes = list(alternating = 1, tck = c(1,0)),
                 key = ikey,
                 panel = function(x, y){
                   first = 1:length(jjm.out$Yr)
@@ -1882,12 +1898,12 @@
 {
   for(iFlt in grep("Obs_catch_", names(jjm.out)))
     
-    summaryData = rbind(cbind(jjm.out$Yr, jjm.out$TotBiom[,-1], "Total biomass"),
-                        cbind(jjm.out$Yr, cbind(rowMeans(jjm.out$TotF[,-1]), 
-                                                rowMeans(jjm.out$TotF[,-1]), 
-                                                rowMeans(jjm.out$TotF[,-1]), 
-                                                rowMeans(jjm.out$TotF[,-1])), "Fishing mortality"),                  
-                        cbind(jjm.out$Yr, jjm.out$TotBiom_NoFish[,-1], "Unfished biomass"))
+    summaryData = rbind(cbind(jjm.out$Yr, jjm.out$TotBiom[ ,-1], "Total biomass"),
+                        cbind(jjm.out$Yr, cbind(rowMeans(jjm.out$TotF[ ,-1]), 
+                                                rowMeans(jjm.out$TotF[ ,-1]), 
+                                                rowMeans(jjm.out$TotF[ ,-1]), 
+                                                rowMeans(jjm.out$TotF[ ,-1])), "Fishing mortality"),                  
+                        cbind(jjm.out$Yr, jjm.out$TotBiom_NoFish[ ,-1], "Unfished biomass"))
   
   summaryData = rbind(cbind(summaryData[,c(1:2, 6)], "point"), 
                       cbind(summaryData[,c(1, 4, 6)], "lower"),
@@ -1897,8 +1913,8 @@
   summaryData = data.frame(summaryData, stringsAsFactors = FALSE)
   summaryData$class = factor(summaryData$class, ordered = FALSE,
                              levels = c("Unfished biomass", "Total biomass", "Fishing mortality"))
-  summaryData$year = as.integer(summaryData$year)
-  summaryData$data = as.numeric(summaryData$data)
+  summaryData$year   = as.integer(summaryData$year)
+  summaryData$data   = as.numeric(summaryData$data)
   
   alpha.f = 0.45
   
@@ -1969,8 +1985,7 @@
                data.frame(CV = jjm.out$R[,3]/jjm.out$R[,2], years = jjm.out$R[,1], class = "R"))
   
   pic = xyplot(CV ~ years, data = res, groups = class,
-                
-                type = "l", ...)
+               scales = list(alternating = 1, tck = c(1,0)), type = "l", ...)
   
   return(pic)
 }
@@ -1999,6 +2014,7 @@
   ikey$points$col = "white"
   
   pic = xyplot(data ~ year, data = res, groups = classing,
+               scales = list(alternating = 1, tck = c(1,0)),
                 type = "l", key = ikey,
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
@@ -2032,6 +2048,7 @@
   #ikey$points$col <- c("darkgrey", "white")
   
   pic <- xyplot(Rec ~ SSB, data = res, groups = class,
+                scales = list(alternating = 1, tck = c(1,0)),
                 #key = ikey,
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
@@ -2104,6 +2121,7 @@
   
   idxobs = list()
   pic = xyplot(Rec ~ SSB, data = res, groups = class,
+               scales = list(alternating = 1, tck = c(1,0)),
                panel = function(x, y, subscripts){
                  panel.grid(h = -1, v = -1)
                  
@@ -2157,6 +2175,7 @@
   ikey$lines$lty = c(1, 3)
   
   pic = xyplot(data ~ year, data = res, groups = class,
+               scales = list(alternating = 1, tck = c(1,0)),
                 key = ikey, type = "l",
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
@@ -2249,7 +2268,7 @@
   ikey$lines$lty = 1
   
   pic = xyplot(data ~ year, data = totres, type = "l", groups = scenario,
-                key = ikey,
+                key = ikey, scales = list(alternating = 1, tck = c(1,0)),
                 prepanel = function(...) {list(ylim = c(0, max(totres$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
@@ -2303,7 +2322,7 @@
   ikey$lines$lty = 1
   
   pic = xyplot(data ~ year, data = totres, type = "l", groups = scenario,
-                key = ikey,
+               key = ikey, scales = list(alternating = 1, tck = c(1,0)),
                 prepanel = function(...) {list(ylim = c(0, max(totres$data, na.rm = TRUE)))},
                 panel = function(x, y){
                   panel.grid(h = -1, v = -1)
@@ -2377,7 +2396,7 @@
   c <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = col, pch = 19, cex = 0.5)
 
   pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
-				main="Kobe plot") + 
+				main="Kobe plot", scales = list(alternating = 1, tck = c(1,0))) + 
 		layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
 		layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
 		layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
@@ -2603,20 +2622,21 @@
   Bar = barchart(value ~ as.character(year), data = res, groups = class, horizontal = FALSE,
                  origin = 0, col = colBar,  box.width = 1, ylab = "Deviation",
                  par.settings = list(superpose.polygon = list(col = labelCol)),
-                 scales = (x = list(rot = 90)),
+                 scales = list(alternating = 1, tck = c(1,0), x = list(rot = 90)),
                  auto.key = list(title = "", space = "right",
                                  text = labelLeg,
                                  x = 0.85, y = 1, cex = 1.5,
                                  points = FALSE, border = FALSE, 
                                  lines = FALSE))
   
-  Hist = histogram(~value|class, data = res[res$class != "Simulated", ], groups = class,
+  Hist = histogram( ~ value | class, data = res[res$class != "Simulated", ], groups = class,
                    xlab = "Deviation", type = "density",
+                   scales = list(alternating = 1, tck = c(1,0)),
                    ylim = c(0, 1.5*max(density(res$value[res$class != "Simulated"])[[2]])),
                    xlim = c(min(density(res$value[res$class != "Simulated"])[[1]]),
                             max(density(res$value[res$class != "Simulated"])[[1]])),
-                   panel = function(x, col = colBar,...){
-                     panel.histogram(x = x, ,col = colBar[packet.number()],...)
+                   panel = function(x, col = colBar, ...){
+                     panel.histogram(x = x, col = colBar[packet.number()],...)
                      panel.densityplot(x = x, darg = list(bw = 0.2, kernel = "gaussian"), 
                                        col = "black", lwd = 2, ...)
                      meanstat = round(mean(x), 3)

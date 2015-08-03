@@ -143,14 +143,14 @@ diagnostics <- function(outputObject, ...) {
     
     for(j in seq_along(jjm.stocks)){
       
-      output[[i]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
-                                  jjm.out = jjm.stocks[[j]], jjm.in = outputObject[[i]]$data
-                                  , ...)
-    }
+      output[[j]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
+                                  jjm.out  = jjm.stocks[[j]], 
+                                  jjm.in   = outputObject[[i]]$data, ...)
       
+    }
+    
+    names(output) = names(outputObject)
   }
-  
-  names(output) = names(outputObject)
   
   # Return a jjm.diag object
   class(output) = c("jjm.diag", class(output))
