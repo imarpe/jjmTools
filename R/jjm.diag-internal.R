@@ -2394,6 +2394,8 @@
   
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
   
+  dataxy = NULL
+  
   fMx = numeric(length(obj))
   bMx = numeric(length(obj))
   
@@ -2437,7 +2439,11 @@
       model = names(obj)
       
       n = length(B_Bmsy)
-      
+          
+      data1 = as.data.frame(cbind(x, y))
+      data1 = cbind(data1, model, name)
+      dataxy = rbind(dataxy, data1)
+           
       mypanel<-function(x,y,...){
         panel.xyplot(x, y, ...)
         panel.text(x + 0.05, y + 0.2, labels = range(years), ...)
@@ -2451,28 +2457,29 @@
     
   }
   
-  for(i in seq_along(obj)){
-    for(j in seq_along(obj[[i]]$output)){
+#   for(i in seq_along(obj)){
+#     for(j in seq_along(obj[[i]]$output)){
   
-          pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
-                   key = list(lines = list(col = cols[1:length(obj[[i]]$output)], lwd = 3),
-                              text = list(names(obj[[i]]$output)), ...
+          pic = xyplot(y ~ x | model, data = dataxy, groups = name, type = "n", xlim = xlim, ylim = ylim, 
+                       xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
+                       scales = list(alternating = 1, tck = c(1, 0)),
+                       key = list(lines = list(col = cols[1:length(obj[[i]]$output)], lwd = 3),
+                                  text = list(names(obj[[i]]$output)), ...
                    ), ...) + 
         layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
         layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
         layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
         layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) 
       
-    }
-  }
+#     }
+#   }
   
-  
-  for(i in seq_along(obj)){
-    for(j in seq_along(obj[[i]]$output)){
+#   for(i in seq_along(obj)){
+#     for(j in seq_along(obj[[i]]$output)){
       pic = pic + as.layer(b[[j]])
       pic = pic + as.layer(c[[j]])  
-    }
-  }
+#     }
+#   }
   
   return(pic)
  
