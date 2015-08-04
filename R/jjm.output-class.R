@@ -78,13 +78,19 @@
 	else { control = .read.ctl(filename = file.path(inputPath, paste0(model, ".ctl")),
 							   info = info.output, infoDat = info.data) }
   
+  #read par file
+  filePar = paste0(inputPath, "/arc/", model, ".par")
+  parameters = .read.par(filename = filePar, control = control,
+						   info = info.output, infoDat = info.data, version = version)
+  
   namesStock = paste0("Stock_", 1:length(Files)) # Puede ser modificado cuando se lea el ctl
   names(outputs) = namesStock
   
   output = list()												
   # Group in a list
   output[[1]]   = list(info = list(data = info.data, output = info.output),
-                       data = data, control = control, output = outputs)
+                       data = data, control = control, parameters = parameters,
+					   output = outputs)
   names(output) = modelName				  
   
   # Define jjm.output class
@@ -153,6 +159,7 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = NULL,
   names(pic) = namesPlot
 
   output = list()
+  output$parameters = .Parameters(object)
   output$like = .LikeTable(object)
   output$projections = .ProjTable(object, Projections = Projections,
                                   Fmult = Fmult, BiomProj = BiomProj, 

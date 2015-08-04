@@ -589,6 +589,73 @@ return(listCtl)
 
 }
 
+.read.par = function(filename, control, info, infoDat, version){
+
+  res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
+                   comment.char = "#", allowEscapes = TRUE)
+  res1      = strsplit(res1, "\t") 
+
+  fVector = NULL
+  for(i in seq_along(res1)){
+    res1[[i]] = paste(res1[[i]], collapse = " ")
+    Vector = strsplit(res1[[i]], " ")[[1]]
+    Vector = Vector [! Vector %in% ""]
+    fVector = c(fVector, Vector)
+  }
+  
+  listCtl = control
+  
+  if(version == "2015MS"){
+	  nReg = listCtl$nregbyStock
+	  nStock = info$nStock
+	  nPeriod = infoDat$year[2] - infoDat$year[1] + infoDat$age[2]
+	  diffRec = length(unique(listCtl$RecMatrix))
+	  diffGrow = length(unique(listCtl$GrowMatrix))
+	  diffN = length(unique(listCtl$NMatrix))
+  } else {
+	  nReg = 1
+	  nStock = 1
+	  nPeriod = infoDat$year[2] - infoDat$year[1] + infoDat$age[2]
+	  diffRec = 1
+	  diffGrow = 1
+	  diffN = 1
+
+  }
+  
+  fVector = as.numeric(fVector)
+  listPar = list()
+  cV = 1
+  listPar$N_Mort = fVector[cV:(cV + diffN - 1)]; cV = cV + diffN
+  
+  nparM = sum(listCtl$npars_mage)
+  if(nparM == 0) cV = cV 
+  if(nparM > 0)  {
+  #   listPar$Mage_offset = fVector[cV:(cV + nparM - 1)] 
+    cV = cV + nparM
+  }
+  
+  nranM = sum(listCtl$Nyrs_Random_walk_M)
+  if(nranM == 0) cV = cV 
+  if(nranM > 0)  {
+  #   listPar$M_rw = fVector[cV:(cV + nranM - 1)] ; 
+    cV = cV + nranM
+  }
+  
+  listPar$log_Linf = fVector[cV:(cV + diffGrow - 1)] ; cV = cV + diffGrow
+  listPar$log_k    = fVector[cV:(cV + diffGrow - 1)] ; cV = cV + diffGrow
+  listPar$log_Lo   = fVector[cV:(cV + diffGrow - 1)] ; cV = cV + diffGrow
+  listPar$log_sdage = fVector[cV:(cV + diffGrow - 1)] ; cV = cV + diffGrow
+  listPar$mean_log_rec = fVector[cV:(cV + diffRec - 1)] ; cV = cV + diffRec
+  listPar$steepness = fVector[cV:(cV + diffRec - 1)] ; cV = cV + diffRec
+  listPar$log_Rzero = fVector[cV:(cV + diffRec - 1)] ; cV = cV + diffRec
+  cV = cV + nStock * nPeriod
+  listPar$log_sigmar = fVector[cV:(cV + diffRec - 1)] ; cV = cV + diffRec
+
+  return(listPar)
+  
+}
+  
+
 
 .LikeTable = function(lstOuts){
 
