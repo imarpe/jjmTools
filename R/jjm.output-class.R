@@ -1,9 +1,9 @@
 
-.getJjmOutput = function(path, output, model, version, ...) {
+.getJjmOutput = function(path, output, model, ...) {
   
   # Define path of input
   inputPath   = path
-  #version = version
+
   
   Files = list.files(path = output, 
 					 pattern = paste0(model, ".*_R.rep"))
@@ -35,13 +35,16 @@
   }
   
   # Extract asociated .dat file
-  nameD = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 4, 
+  nameD = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 10, 
                       what = character(), sep = "\n", quiet = TRUE,
 					  comment.char = "#")
   nameD = nameD[! nameD %in% ""]
   dataName    = nameD
   modelName   = gsub(x = dataName[2], pattern = " ", replacement = "")
   dataName    = gsub(x = dataName[1], pattern = " ", replacement = "")
+  
+  # Find version:
+  version = .versionJJM(head = nameD)
   
   # Read .dat file
   data        = .read.dat(filename = file.path(inputPath, dataName),

@@ -607,6 +607,29 @@ return(listCtl)
   return(tab)
 }
 
+
+.versionJJM = function(head){
+
+  resx = strsplit(head, "\t")  
+  
+  tVector = NULL
+  for(i in seq_along(resx)){
+    res1[[i]] = paste(resx[[i]], collapse = " ")
+    Vector = strsplit(res1[[i]], " ")[[1]]
+    Vector = Vector [! Vector %in% ""]
+    tVector = c(tVector, Vector)
+  }
+  
+  x = tVector[4]
+  idx = length(grep("[a-z]", x))
+  if(idx > 0) out = "2015MS"
+  if(idx == 0) out = "2014"
+  
+  return(out)
+
+}
+
+
 .ProjTable = function(lstOuts, Projections, Fmult, BiomProj, CapProj, MRS){
 
 
