@@ -139,21 +139,25 @@ diagnostics <- function(outputObject, ...) {
   # Take an output object and get diagnostic plots extracting outputs, data and YPR
   output = list()
   
-  for(i in seq_along(outputObject)){
+  for(i in seq_along(outputObject)) {
      
-    jjm.stocks = outputObject[[i]]$output
+    jjmStocks = outputObject[[i]]$output
     
-    for(j in seq_along(jjm.stocks)){
+    output[[i]] = list()
+    
+    for(j in seq_along(jjmStocks)) {
       
-      output[[j]] <- .diagnostics(jjm.info = outputObject[[i]]$info$output,
-                                  jjm.out  = jjm.stocks[[j]], 
+      output[[i]][[j]] = .diagnostics(jjm.info = outputObject[[i]]$info$output,
+                                  jjm.out  = jjmStocks[[j]], 
                                   jjm.in   = outputObject[[i]]$data, ...)
       
     }
     
-    names(output) = names(outputObject)
+    names(output[[i]]) = names(jjmStocks)
+    
   }
   
+  names(output) = names(outputObject)
   # Return a jjm.diag object
   class(output) = c("jjm.diag", class(output))
   return(output)

@@ -383,7 +383,7 @@
   outPlots$nProportionAtAGe = .fit_nProportionAtAGeFUN(jjm.out, cols, ages,
                                                        xlab = "Years", ylab = "Proportion of N at age", 
                                                        main = "Proportion at age",
-                                                       ylim = c(0, 1), 
+                                                       ylim = c(0, 1),
                                                        scales = list(alternating = 1, tck = c(1,0),
                                                                      y = list(axs = "i")))
   
@@ -630,12 +630,14 @@
   yrs           = rev(sort(unique(res$year)))[1:10]
   
   pic = barchart(data ~ age | fleet* as.factor(year), data = subset(res, year %in% yrs),
-                  scales = list(rotation = 90, alternating = 3, y = list(axs = "i")), horizontal = FALSE,
-                  groups = fleet, strip = FALSE, strip.left = strip.custom(style = 1), reverse.rows = TRUE,
-                  panel = function(...){
-                    panel.grid(h = -1, v = -1)
-                    panel.barchart(...)
-                  }, ...)
+                 xlim = range(pretty(c(min(res$year), max(res$year)))),
+                 scales = list(rotation = 90, alternating = 3, y = list(axs = "i")), horizontal = FALSE,
+                 groups = fleet, strip = FALSE, strip.left = strip.custom(style = 1), reverse.rows = TRUE,
+                 panel = function(...){
+                   panel.grid(h = -1, v = -1)
+                   panel.barchart(...)
+                 }, ...)
+  
   
   return(pic)
 }
