@@ -59,7 +59,9 @@ print.summary.jjm.diag = function(x, ...) {
       paste("Variable", sQuote(var[!indVar]), "does not exist.") else
         paste("Variables", sQuote(var[!indVar]), "do not exist.")
     stop(msg)
-    }
+  }
+  
+  
  
   if(is.null(fleet)) {
     xx = x[[what[1]]][[var]]
@@ -77,7 +79,7 @@ print.summary.jjm.diag = function(x, ...) {
     }
   }
    
-  return(invisible())
+  return(invisible(NULL))
 }
                             
 plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL, ...) 
