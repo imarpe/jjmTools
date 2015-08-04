@@ -53,7 +53,8 @@
   # Generate extra info
   iFilename   = file.path(inputPath, dataName)
   info.data   = list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
-                      age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]))
+                      age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]),
+					  version = version)
   
   indices = NULL
   fisheries = NULL
@@ -71,7 +72,7 @@
   info.output = list(model = modelName, fisheryNames = fisheries, modelYears = outputs$Yr,
                      indexModel = indices, nStock = length(Files))
   
-  #read ctl
+  #read control file
   if(version == "2015MS"){ control = .read.ctlMS(filename = file.path(inputPath, paste0(model, ".ctl")),
 												 info = info.output, infoDat = info.data) }
 	else { control = .read.ctl(filename = file.path(inputPath, paste0(model, ".ctl")),
@@ -83,13 +84,14 @@
   output = list()												
   # Group in a list
   output[[1]]   = list(info = list(data = info.data, output = info.output),
-                       data = data, output = outputs)
+                       data = data, control = control, output = outputs)
   names(output) = modelName				  
   
   # Define jjm.output class
   class(output) = c("jjm.output")
   
   return(output)
+  
 }
 
 print.jjm.output = function(x, ...) {
@@ -98,15 +100,22 @@ print.jjm.output = function(x, ...) {
   
   obj = x[[i]]
   
+  cat("JJM version: ", obj$info$data$version, "\n")
   cat("Model name: ", obj$info$output$model, "\n")
-  cat("jjm.data from ", sQuote(obj$info$data$file), "\n", sep = "")
+  cat("Stock number: ", paste(obj$info$output$nStock, collapse = ", "), "\n")
+  
+  if(obj$info$data$version == "2015MS"){
+  stockNames = strsplit(obj$control$nameStock, "%")[[1]]
+  cat("Stock names: ", paste(stockNames, collapse = ", "), "\n")
+  }
+  
   cat("Number of variables: ", obj$info$data$variables, "\n", sep = "")
   cat("Years from: ", obj$info$data$year[1] ,"to", obj$info$data$year[2], "\n", sep = " ")
   cat("Ages from: ", obj$info$data$age[1] ,"to", obj$info$data$age[2], "\n", sep = " ")
   cat("Lengths from: ", obj$info$data$length[1] ,"to", obj$info$data$length[2], "\n", sep = " ")
   cat("Fisheries names: ", paste(obj$info$output$fisheryNames, collapse = ", "), "\n")
   cat("Associated indices: ", paste(obj$info$output$indexModel, collapse = ", "), "\n")
-  cat("Number of Stocks: ", paste(obj$info$output$nStock, collapse = ", "), "\n")
+  cat("jjm.data from ", sQuote(obj$info$data$file), "\n", sep = "")
   #cat("Projection years number: ", paste(length(obj$output$SSB_fut_1), collapse = ", "), "\n")
   cat(" ", "\n")
   

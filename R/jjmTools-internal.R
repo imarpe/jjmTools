@@ -250,7 +250,7 @@
   }
   
   #-Population data
-  if(version == "2015MS"){
+  if(version != "2015MS"){
 	  cols$Pwtatage = matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "weight"))
 	  cols$Pwtatage[] = na.omit(.an(res1[[counter]])); counter = counter + 1
 	  cols$Pmatatage = matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "maturity"))
@@ -459,7 +459,7 @@ return(listCtl)
 .read.ctl = function(filename, info, infoDat){
 
 Fishery = as.vector(info$fisheryNames)
-Index = as.vector(info$findexModel)
+Index = as.vector(info$indexModel)
 nFishery = length(Fishery)
 nIndex = length(Index)
 nAges = infoDat$age[2]
@@ -614,8 +614,8 @@ return(listCtl)
   
   tVector = NULL
   for(i in seq_along(resx)){
-    res1[[i]] = paste(resx[[i]], collapse = " ")
-    Vector = strsplit(res1[[i]], " ")[[1]]
+    resx[[i]] = paste(resx[[i]], collapse = " ")
+    Vector = strsplit(resx[[i]], " ")[[1]]
     Vector = Vector [! Vector %in% ""]
     tVector = c(tVector, Vector)
   }
