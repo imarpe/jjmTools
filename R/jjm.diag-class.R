@@ -79,7 +79,7 @@ print.summary.jjm.diag = function(x, ...) {
     }
   }
    
-  return(invisible(NULL))
+  return(invisible())
 }
                             
 plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL, ...) 
