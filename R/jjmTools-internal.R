@@ -267,7 +267,7 @@
 .read.ctlMS = function(filename, info, infoDat){
 
 Fishery = as.vector(info$fisheryNames)
-Index = as.vector(info$findexModel)
+Index = as.vector(info$indexModel)
 nFishery = length(Fishery)
 nIndex = length(Index)
 nAges = infoDat$age[2]

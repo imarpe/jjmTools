@@ -3,6 +3,7 @@
   
   # Define path of input
   inputPath   = path
+  #version = version
   
   Files = list.files(path = output, 
 					 pattern = paste0(model, ".*_R.rep"))
