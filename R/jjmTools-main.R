@@ -55,11 +55,13 @@ readJJM <- function(model, path = "", output="arc", modelName=model
 #' @param guess File with the initial guess for the parameters. If \code{NULL}, will use \code{model.par} in the output folder. 
 #' @param iprint iprint parameter for the JJM model, 100 by default.
 #' @param wait boolean, wait for the model to finish? Forced to be TRUE.
+#' @param temp character, path for a temporal directory to run models, if \code{NULL} a temporal folder is automaticaly created.
 #' @param ... Arguments passed from \code{system} function.
 #' @examples
 #' model = runJJM(models = "mod2.4")
 runJJM = function(models, path = "", output="arc", useGuess=FALSE, 
-                  guess=NULL, iprint=100, wait = TRUE, parallel=FALSE, ...)
+                  guess=NULL, iprint=100, wait = TRUE, parallel=FALSE, 
+                  temp=NULL, ...)
 {
   
   path   = normalizePath(path)
@@ -81,7 +83,10 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
   
   # Run models
   base  = getwd()
-  start = proc.time()  
+  start = proc.time() 
+  
+  if(is.null(temp)) temp = tempdir()
+  
   if(!isTRUE(parallel)) {
     
     cat("\nRunning models", paste(models, collapse=", "), "\n")
@@ -89,10 +94,8 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
     
     res = NULL
     for(i in seq_along(models)) {
-      model = models[i]
-      rtime = .runJJM(model=model, output=output, useGuess=useGuess, 
-                      guess=guess[i], iprint=iprint, wait=wait, ...)
-      .cleanad() # clean admb files
+      rtime = .runJJM(model=models[i], output=output, useGuess=useGuess, 
+                      guess=guess[i], iprint=iprint, wait=wait, temp=temp, ...)
       res = c(res, rtime)  
     }
     
@@ -102,13 +105,9 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
     cat("\tStarting at", as.character(Sys.time()), "\n")
     tempDir = tempdir()
     res = foreach(i=seq_along(models), .combine=c) %dopar% {
-      model = models[i]
       setwd(base)
-      tmpDir = .setParallelJJM(model=model, tmpDir=tempDir)  
-      setwd(tmpDir)
-      .cleanad()
-      .runJJM(model=model, output=output, useGuess=useGuess, 
-              guess=guess[i], iprint=iprint, wait=wait, ...)  
+      .runJJM(model=models[i], output=output, useGuess=useGuess, 
+              guess=guess[i], iprint=iprint, wait=wait, temp=temp, ...)  
     }  
     
   }
@@ -122,7 +121,9 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
   print(res)
   cat("\nEffective running time:", round(elapsed[3], 1), "s.\n")
   
-  return(invisible())
+  cat("\n Models were run at", temp, "folder.")
+  
+  return(invisible(temp))
 }
 
 # Diagnostics -------------------------------------------------------------
