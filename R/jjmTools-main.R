@@ -59,7 +59,7 @@ readJJM <- function(model, path = "", output="arc", modelName=model
 #' @param ... Arguments passed from \code{system} function.
 #' @examples
 #' model = runJJM(models = "mod2.4")
-runJJM = function(models, path = "", output="arc", useGuess=FALSE, 
+runJJM = function(models, path = ".", output="arc", useGuess=FALSE, 
                   guess=NULL, iprint=100, wait = TRUE, parallel=FALSE, 
                   temp=NULL, ...)
 {

@@ -501,7 +501,7 @@
 					#, projections = projectionsPlots, ypr = yprPlots,
                     # )
   
-  class(allPlots) = "jjm.diag"
+#   class(allPlots) = "jjm.diag"
   
   return(allPlots)
 }
