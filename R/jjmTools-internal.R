@@ -670,7 +670,6 @@ return(listCtl)
   namesPar = c("Natural Mortality", "log_Linf", "log_K", "log_Lo", "log_sdAge", 
                "mean_log_Rec", "Steepness", "log_Rzero", "log_sigmaR")
   
-  
   outMatrix = matrix(NA, ncol = length(namesCol), nrow = length(namesPar))
   rownames(outMatrix) = namesPar
   colnames(outMatrix) = namesCol
@@ -719,6 +718,96 @@ return(listCtl)
   
 }
 
+.ParTable = function(lstOuts){
+  
+  Out = list()
+  
+  for(m in seq_along(lstOuts)){ 
+  
+    version = lstOuts[[m]]$info$data$version
+    listPar = lstOuts[[m]]$parameters
+    listCtl = lstOuts[[m]]$control
+    nStock = lstOuts[[m]]$info$output$nStock
+      
+      if(version != "2015MS") { 
+		nReg = 1
+		countM = 1
+		countG = 1
+		countR = 1
+      } else {
+        nReg = lstOuts[[m]]$control$nregbyStock
+		countM = listCtl$NMatrix
+		countG = listCtl$GrowMatrix
+		countR = listCtl$RecMatrix
+      }
+    
+    namesCol = NULL
+    
+    for(i in 1:nStock){
+      for(k in 1:nReg[i]){
+        temp = paste0("Stock_", i, "_Reg_", k)
+        namesCol = c(namesCol, temp)
+      }
+    }
+    
+    
+    namesPar = c("Natural Mortality", "log_Linf", "log_K", "log_Lo", "log_sdAge", 
+                 "mean_log_Rec", "Steepness", "log_Rzero", "log_SigmaR")
+    
+    
+    outMatrix = matrix(NA, ncol = length(namesCol), nrow = length(namesPar))
+    rownames(outMatrix) = namesPar
+    colnames(outMatrix) = namesCol
+    
+    
+    for(i in 1:nrow(outMatrix)){
+      
+      if(i == 1){
+        for(k in seq_along(countM)){
+          if(k == 1) { outMatrix[i,k] = listPar[[i]][countM[k]] } 
+          if(k > 1) {
+            if(countM[k] != countM[k-1] | k == 1) { outMatrix[i,k] = listPar[[i]][countM[k]] 
+            } else { outMatrix[i,k] = NA }
+          }
+        }
+      }
+      
+      if(i > 1 & i < 6){
+        for(k in seq_along(countG)){
+          if(k == 1) { outMatrix[i,k] = listPar[[i]][countG[k]] } 
+          if(k > 1) {
+            if(countG[k] != countG[k-1] | k == 1) { outMatrix[i,k] = listPar[[i]][countG[k]] 
+            } else { outMatrix[i,k] = NA }
+          }
+        }
+      }
+      
+      if(i > 5 & i < 10){
+        for(k in seq_along(countR)){
+          if(k == 1) { outMatrix[i,k] = listPar[[i]][countR[k]] } 
+          if(k > 1) {
+            if(countR[k] != countR[k-1] | k == 1) { outMatrix[i,k] = listPar[[i]][countR[k]] 
+            } else { outMatrix[i,k] = NA }
+          }
+        }
+      }
+      
+    }
+  
+  Out[[m]] = outMatrix
+  
+  }
+  
+  Name = NULL
+  for(i in seq_along(lstOuts)){
+    Name[i] = lstOuts[[i]]$info$output$model
+  }  
+  
+  names(Out) = Name
+  
+  return(Out)
+  
+}
 
 
 .LikeTable = function(lstOuts){

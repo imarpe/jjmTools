@@ -175,6 +175,9 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = NULL,
 print.summary.jjm.output = function(x, ...) {
   
   
+  cat("\nParameter Table:\n\n")
+  print(x$parameters, ...)
+  
   cat("\nLikelihood Table:\n\n")
   print(x$like, ...)
   
