@@ -48,7 +48,14 @@ print.summary.jjm.diag = function(x, ...) {
   return(invisible())
 }
 
-.plotDiag = function(x, var, fleet, ...) {
+.plotDiagVar = function(x, var, fleet=NULL, ...) {
+  x = x[[var]]
+  if(!is.null(fleet) & all(fleet %in% names(x))) x = x[fleet]
+  if(inherits(x, "trellis")) print(update(x, ...)) else print(x)
+  return(invisible())
+}
+
+.plotDiag = function(x, var=NULL, fleet=NULL, ...) {
   
   if(is.null(var)) var = names(x)
   
@@ -61,27 +68,12 @@ print.summary.jjm.diag = function(x, ...) {
     stop(msg)
   }
   
-  
- 
-  if(is.null(fleet)) {
-    xx = x[[what[1]]][[var]]
-    # to be continued
-    if(class(xx)=="trellis") print(update(xx, ...)) else print(xx)      
-  } else {
-    Fleet = fleet %in% names(x[[what[1]]][[var]])
-    if(isTRUE(Fleet)) {
-      plot(update(x[[what[1]]][[var]][[fleet]], ...))
-    } else {
-      msg = paste("Fleet ", sQuote(fleet), " does not exist for variable ", 
-                 sQuote(var), ".", sep="")
-      stop(msg)
-      plot(update(x[[what[1]]][[var]], ...))
-    }
-  }
+  for(ivar in var) .plotDiagVar(x, var=ivar, fleet=fleet, ...)
    
   return(invisible())
 }
-                            
+
+
 plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL, ...) 
                           #var=NULL, fleet=NULL, ...)
 {
@@ -92,7 +84,7 @@ plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL
     gsub(pattern = "input", replacement = "data", x=what)
   }
   
-  if(any(is.na(match(what, c("input", "output")))))
+  if(any(is.na(match(what, c("data", "output")))))
     stop("Incorrect values for parameter 'what'.")
 
   if(isTRUE(pdf)) {
@@ -104,8 +96,11 @@ plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL
       dev.off()
       }
     } else { 
-      for(j in seq_along(x))
-        for(i in what) print(x[[j]][[i]]) 
+      
+      for(model in names(x))
+        for(stock in names(x[[model]]))
+          for(i in what)
+            .plotDiag(x=x[[model]][[stock]][[i]], var=var, fleet=fleet, ...)
     }
   
    return(invisible())

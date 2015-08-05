@@ -4,7 +4,7 @@
 \alias{runJJM}
 \title{Run a JJM model}
 \usage{
-runJJM(models, path = "", output = "arc", useGuess = FALSE,
+runJJM(models, path = ".", output = "arc", useGuess = FALSE,
   guess = NULL, iprint = 100, wait = TRUE, parallel = FALSE,
   temp = NULL, ...)
 }
