@@ -7,16 +7,22 @@ print.jjm.diag = function(x, ...) {
   
   obj = x[[i]]
   
-  cat(obj$info$model, "\n")
+  for(j in seq_along(obj)){
+    
+    OBJ = obj[[j]]  
+  
+    }
+  
+  cat(OBJ$info$model, "\n")
   
   }
   cat("\n")
   
-  cat("Input Plots:\n", paste(x[[1]]$info$data, collapse = "\n "), "\n\n")
-  cat("Output Plots:\n", paste(x[[1]]$info$output, collapse = "\n "), "\n\n")
- # cat("Projections Plots:\n", paste(x$info$projections, collapse = "\n "), "\n\n")
- # cat("YPR Plots:\n", paste(x$info$ypr, collapse = "\n "), "\n")
-  
+#   cat("Input Plots:\n", paste(x[[1]]$info$data, collapse = "\n "), "\n\n")
+#   cat("Output Plots:\n", paste(x[[1]]$info$output, collapse = "\n "), "\n\n")
+  cat("Input Plots:\n", paste(OBJ$info$data, collapse = "\n "), "\n\n")
+  cat("Output Plots:\n", paste(OBJ$info$output, collapse = "\n "), "\n\n")
+
   return(invisible())  
 }
 
