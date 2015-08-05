@@ -150,7 +150,7 @@ diagnostics <- function(outputObject, ...) {
       
       output[[i]][[j]] = .diagnostics(jjm.info = outputObject[[i]]$info$output,
                                   jjm.out  = jjmStocks[[j]], 
-                                  jjm.in   = outputObject[[i]]$data, ...)
+                                  jjm.in   = c(outputObject[[i]]$data, outputObject[[i]]$control), ...)
       
     }
     

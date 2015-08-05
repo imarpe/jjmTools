@@ -159,7 +159,7 @@ summary.jjm.output = function(object, Projections = FALSE, Fmult = NULL,
   names(pic) = namesPlot
 
   output = list()
-  output$parameters = .Parameters(object)
+  output$parameters = .ParTable(object)
   output$like = .LikeTable(object)
   output$projections = .ProjTable(object, Projections = Projections,
                                   Fmult = Fmult, BiomProj = BiomProj, 
