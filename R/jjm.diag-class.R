@@ -81,7 +81,7 @@ print.summary.jjm.diag = function(x, ...) {
 }
 
 
-plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL,
+plot.jjm.diag = function(x, what = c("data", "output"), model=NULL, stock=NULL, 
                          var=NULL, fleet=NULL, ...) {
   what = tolower(what)
   
@@ -93,21 +93,16 @@ plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL
   if(any(is.na(match(what, c("data", "output")))))
     stop("Incorrect values for parameter 'what'.")
 
-  if(isTRUE(pdf)) {
-
-    for(j in seq_along(x)) {
-      file = if(is.null(file)) paste0("Plots_", x[[j]]$info$model, ".pdf") else file
-      pdf(file = paste0(file, ".pdf"), ...)
-      for(i in what) print(x[[j]][[i]])
-      dev.off()
-      }
-    } else { 
-      
-      for(model in names(x))
-        for(stock in names(x[[model]]))
-          for(i in what)
-            .plotDiag(x=x[[model]][[stock]][[i]], var=var, fleet=fleet, ...)
-    }
+  if(is.null(model)) model = names(x)
+  stocks = stock
   
+  for(imodel in model) {
+    if(is.null(stock)) stocks = names(x[[imodel]])
+    for(istock in stocks)
+      for(i in what)
+        .plotDiag(x=x[[imodel]][[istock]][[i]], var=var, fleet=fleet, ...)
+    
+  }
+    
    return(invisible())
 }
