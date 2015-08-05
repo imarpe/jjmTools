@@ -1254,11 +1254,12 @@ if(Projections){
   Files = list.files(pattern = "For_R_[[:digit:]].rep")
   
   # copy outputs to 'output' folder
-  file.copy(from="jjm.par",   to=.to(".par",   output, model), overwrite = TRUE)
-  file.copy(from="jjm.rep",   to=.to(".rep",   output, model), overwrite = TRUE)
-  file.copy(from="jjm.std",   to=.to(".std",   output, model), overwrite = TRUE)
-  file.copy(from="jjm.cor",   to=.to(".cor",   output, model), overwrite = TRUE)
-  file.copy(from="fprof.yld", to=.to(".yld",   output, model), overwrite = TRUE)
+  file.copy(from="jjm.par",   to=.to(".par", output, model), overwrite = TRUE)
+  file.copy(from="jjm.rep",   to=.to(".rep", output, model), overwrite = TRUE)
+  file.copy(from="jjm.std",   to=.to(".std", output, model), overwrite = TRUE)
+  file.copy(from="jjm.cor",   to=.to(".cor", output, model), overwrite = TRUE)
+  file.copy(from="fprof.yld", to=.to(".yld", output, model), overwrite = TRUE)
+  file.copy(from=paste0(model,".prj"), to=.to(".prj", output, model), overwrite = TRUE)
   
   for(i in seq_along(Files)){
 	file.copy(from = Files[i], 
