@@ -9,16 +9,16 @@ Authors@R: c( person("Ricardo", "Oliveros-Ramos", email =
     "roliveros@imarpe.gob.pe", role = c("cre", "aut")), person("Wencheng",
     "Lau-Medrano", role = "aut"), person("Giancarlo", "Moron", role = "aut"),
     person("Niels", "Hintzen", email = "niels.hintzen@wur.nl", role = "aut"),
-    person("Erick", "Chacon Montalvan", role = "ctb"), person("Vilma", "Romero
-    Romero", role = "ctb"), person("Enrique", "Ramos-Vasquez", role = "ctb"))
+    person("Enrique", "Ramos-Vasquez", role = "ctb"))
 License: GPL-2
 Depends:
     PBSadmb,
     RColorBrewer,
     doBy,
-    doSNOW,
     foreach,
-	latticeExtra,
-	gridExtra
+    knitr,
+    pander,
+    latticeExtra,
+    gridExtra
 LazyData: TRUE
 Encoding:  utf-8

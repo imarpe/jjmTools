@@ -4,7 +4,7 @@
 
 
 # Code to read in final data ----------------------------------------------
-.read.dat = function(filename, version){
+.read.dat = function(filename){
   ###-Read in the raw datafile-###
   res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
                     comment.char = "#", allowEscapes = TRUE)
@@ -250,12 +250,10 @@
   }
   
   #-Population data
-  if(version != "2015MS"){
-	  cols$Pwtatage = matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "weight"))
-	  cols$Pwtatage[] = na.omit(.an(res1[[counter]])); counter = counter + 1
-	  cols$Pmatatage = matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "maturity"))
-	  cols$Pmatatage[] = na.omit(.an(res1[[counter]])); counter = counter + 1
-  }
+  cols$Pwtatage = matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "weight"))
+  cols$Pwtatage[] = na.omit(.an(res1[[counter]])); counter = counter + 1
+  cols$Pmatatage = matrix(NA, ncol = 1, nrow = nA, dimnames = list(age = As[1]:As[2], "maturity"))
+  cols$Pmatatage[] = na.omit(.an(res1[[counter]])); counter = counter + 1
   cols$Pspwn = numeric()
   cols$Pspwn = na.omit(.an(res1[[counter]])); counter = counter + 1
   cols$Pageerr = matrix(NA, ncol = nA, nrow = nA, dimnames = list(age = As[1]:As[2], age = As[1]:As[2]))
@@ -264,340 +262,13 @@
   return(cols)
 }
 
-.read.ctlMS = function(filename, info, infoDat){
-
-Fishery = as.vector(info$fisheryNames)
-Index = as.vector(info$indexModel)
-nFishery = length(Fishery)
-nIndex = length(Index)
-nAges = infoDat$age[2]
-nStock = info$nStock
-
-res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
-                 comment.char = "#", allowEscapes = TRUE)
-res1      = strsplit(res1, "\t")
-
-fVector = NULL
-for(i in seq_along(res1)){
-  res1[[i]] = paste(res1[[i]], collapse = " ")
-  Vector = strsplit(res1[[i]], " ")[[1]]
-  Vector = Vector [! Vector %in% ""]
-  fVector = c(fVector, Vector)
-}
-
-listCtl = list()
-cV = 1
-listCtl$dataFile  = fVector[cV] ;cV = cV + 1
-listCtl$modelName = fVector[cV] ;cV = cV + 1
-listCtl$nStocks   = as.numeric(fVector[cV]) ;cV = cV + 1
-listCtl$nameStock = fVector[cV] ;cV = cV + 1
-
-
-fVector = fVector[- c(1,2,3,4)]
-fVector = as.numeric(fVector)
-
-cV = 1
-VFishery = fVector[cV:(3*(nFishery + nIndex))]
-MFishery = matrix(VFishery, ncol = (nFishery + nIndex), byrow = TRUE)
-cV = cV + (3*(nFishery + nIndex))
-
-listCtl$SelMatrix = MFishery
-
-listCtl$nregbyStock = fVector[cV:(cV + nStock - 1)]; cV = cV + nStock
-listCtl$SrType      = fVector[cV]; cV = cV + 1
-listCtl$AgeError    = fVector[cV]; cV = cV + 1
-listCtl$Retro       = fVector[cV]; cV = cV + 1
-
-listCtl$RecMatrix   = fVector[cV:(cV + sum(listCtl$nregbyStock) - 1)]; cV = cV + sum(listCtl$nregbyStock)
-
-diffRec = length(unique(listCtl$RecMatrix))
-
-VSteep = fVector[cV:(cV + 3*diffRec - 1)]
-MSteep = matrix(VSteep, nrow = 3, byrow = TRUE)
-listCtl$Steepness   = MSteep
-cV = cV + 3*diffRec
-
-VSigma = fVector[cV:(cV + 3*diffRec - 1)]
-MSigma = matrix(VSigma, nrow = 3, byrow = TRUE)
-listCtl$SigmaR   = MSigma
-cV = cV + 3*diffRec
-
-listCtl$phase_Rzero   = fVector[cV:(cV + diffRec - 1)]
-cV = cV + diffRec
-
-listCtl$Nyrs_sr   = fVector[cV:(cV + diffRec - 1)]
-cV = cV + diffRec
-
-Llist = length(listCtl)
-for(i in seq_along(listCtl$Nyrs_sr)){
-  listCtl[[paste0("Nyrs_sr_", i)]] = fVector[cV:(cV + listCtl$Nyrs_sr[i] - 1)]
-  cV = cV + listCtl$Nyrs_sr[i]
-}
-
-nShift = sum(listCtl$nregbyStock - 1)
-listCtl$RegShift = fVector[cV:(cV + nShift - 1)]
-cV = cV + nShift
-
-listCtl$GrowMatrix   = fVector[cV:(cV + sum(listCtl$nregbyStock) - 1)] 
-cV = cV + sum(listCtl$nregbyStock)
-
-diffGrow = length(unique(listCtl$GrowMatrix))
-
-VLinf = fVector[cV:(cV + 3*diffGrow - 1)]
-MLinf = matrix(VLinf, nrow = 3, byrow = TRUE)
-listCtl$Linf   = MLinf
-cV = cV + 3*diffGrow
-
-VK = fVector[cV:(cV + 3*diffGrow - 1)]
-MK = matrix(VK, nrow = 3, byrow = TRUE)
-listCtl$K   = MK
-cV = cV + 3*diffGrow
-
-VLo_len = fVector[cV:(cV + 3*diffGrow - 1)]
-MLo_len = matrix(VLo_len, nrow = 3, byrow = TRUE)
-listCtl$Lo_len   = MLo_len
-cV = cV + 3*diffGrow
-
-VSigma_len = fVector[cV:(cV + 3*diffGrow - 1)]
-MSigma_len = matrix(VSigma_len, nrow = 3, byrow = TRUE)
-listCtl$Sigma_len   = MSigma_len
-cV = cV + 3*diffGrow
-
-listCtl$NMatrix   = fVector[cV:(cV + sum(listCtl$nregbyStock) - 1)] 
-cV = cV + sum(listCtl$nregbyStock)
-
-diffN = length(unique(listCtl$NMatrix))
-
-VN_Mort = fVector[cV:(cV + 3*diffN - 1)]
-MN_Mort = matrix(VN_Mort, nrow = 3, byrow = TRUE)
-listCtl$N_Mort   = MN_Mort
-cV = cV + 3*diffN
-
-listCtl$npars_mage  = fVector[cV:(cV + diffN - 1)]
-cV = cV + diffN
-
-nparM = sum(listCtl$npars_mage)
-if(nparM == 0) cV = cV 
-if(nparM > 0)  {
-  listCtl$ages_M_changes = fVector[cV:(cV + nparM - 1)] ; cV = cV + nparM
-  listCtl$Mage_in = fVector[cV:(cV + nparM - 1)] ; cV = cV + nparM
-}
-
-listCtl$phase_Mage = fVector[cV:(cV + diffN - 1)] ; cV = cV + diffN
-listCtl$Phase_Random_walk_M = fVector[cV:(cV + nStock - 1)]; cV = cV + nStock
-listCtl$Nyrs_Random_walk_M = fVector[cV:(cV + nStock - 1)]; cV = cV + nStock
-
-nranM = sum(listCtl$Nyrs_Random_walk_M)
-if(nranM == 0) cV = cV 
-if(nranM > 0)  {
-  listCtl$RW_M_yrs = fVector[cV:(cV + nranM - 1)] ; cV = cV + nranM
-  listCtl$RW_M_sigmas = fVector[cV:(cV + nranM - 1)] ; cV = cV + nranM
-}
-
-Vcatch = fVector[cV:(cV + 3*nIndex - 1)]
-Mcatch = matrix(Vcatch, ncol = nIndex, byrow = TRUE)
-listCtl$qMatrix = Mcatch
-cV = cV + (3*nIndex)
-
-Vqpow = fVector[cV:(cV + 3*nIndex - 1)]
-Mqpow = matrix(Vqpow, ncol = nIndex, byrow = TRUE)
-listCtl$qpowMatrix = Mqpow
-cV = cV + (3*nIndex)
-
-listCtl$RW_q_phases = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
-listCtl$RW_walk_q   = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
-
-nWalkq = sum(listCtl$RW_walk_q)
-if(nWalkq == 0) cV = cV 
-if(nWalkq > 0)  {
-  listCtl$RW_q_yrs = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
-  listCtl$RW_q_sigmas = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
-}
-
-listCtl$q_agemin = fVector[cV:(cV + nIndex - 1)]; cV = cV + nIndex
-listCtl$q_agemax = fVector[cV:(cV + nIndex - 1)]; cV = cV + nIndex
-
-listCtl$junk = fVector[cV]; cV = cV + 1
-listCtl$n_proj_yrs = fVector[cV]; cV = cV + 1
-
-FshInd = c(Fishery, Index)
-
-
-  for(i in seq_along(FshInd)){
-    listCtl[[paste0(FshInd[i], "_info")]] = fVector[cV:(cV + 5)]
-    cV = cV + 6
-    if(listCtl[[paste0(FshInd[i], "_info")]][6] == 0) {
-      listCtl[[paste0(FshInd[i], "_selbyage")]] = fVector[cV:(cV + nAges - 1)]
-      cV = cV + nAges
-    } else {
-      nChan = listCtl[[paste0(FshInd[i], "_info")]][6]
-      listCtl[[paste0(FshInd[i], "_selchangeYear")]] = fVector[cV:(cV + nChan - 1)] ; cV = cV + nChan
-      listCtl[[paste0(FshInd[i], "_selchange")]] = fVector[cV:(cV + nChan - 1)] ; cV = cV + nChan
-      listCtl[[paste0(FshInd[i], "_selbyage")]] = fVector[cV:(cV + nAges - 1)]
-      cV = cV + nAges
-    }
-  }
-
-
-wtatage = fVector[cV:(cV + nStock*nAges - 1)]
-Mwaa = matrix(wtatage, ncol = nAges, byrow = TRUE)
-listCtl$wtatage = Mwaa
-cV = cV + nStock*nAges
-
-mtatage = fVector[cV:(cV + nStock*nAges - 1)]
-Mmaa = matrix(mtatage, ncol = nAges, byrow = TRUE)
-listCtl$mtatage = Mmaa
-cV = cV + nStock*nAges
-
-listCtl$test = fVector[cV]
-
-return(listCtl)
-
-}
-
-
-.read.ctl = function(filename, info, infoDat){
-
-Fishery = as.vector(info$fisheryNames)
-Index = as.vector(info$indexModel)
-nFishery = length(Fishery)
-nIndex = length(Index)
-nAges = infoDat$age[2]
-nStock = info$nStock
-
-res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
-                 comment.char = "#", allowEscapes = TRUE)
-res1      = strsplit(res1, "\t")
-
-fVector = NULL
-for(i in seq_along(res1)){
-  res1[[i]] = paste(res1[[i]], collapse = " ")
-  Vector = strsplit(res1[[i]], " ")[[1]]
-  Vector = Vector [! Vector %in% ""]
-  fVector = c(fVector, Vector)
-}
-
-listCtl = list()
-cV = 1
-listCtl$dataFile  = fVector[cV] ;cV = cV + 1
-listCtl$modelName = fVector[cV] ;cV = cV + 1
-
-fVector = fVector[- c(1,2)]
-fVector = as.numeric(fVector)
-
-cV = 1
-VFishery = fVector[cV:(2*(nFishery + nIndex))]
-MFishery = matrix(VFishery, ncol = (nFishery + nIndex), byrow = TRUE)
-cV = cV + (2*(nFishery + nIndex))
-
-listCtl$SelMatrix = MFishery
-
-listCtl$SrType      = fVector[cV]; cV = cV + 1
-listCtl$AgeError    = fVector[cV]; cV = cV + 1
-listCtl$Retro       = fVector[cV]; cV = cV + 1
-
-listCtl$Steepness   = fVector[cV:(cV + 2)]
-cV = cV + 3
-
-listCtl$SigmaR   = fVector[cV:(cV + 2)]
-cV = cV + 3
-
-listCtl$yrs_sr   = fVector[cV:(cV + 1)]
-cV = cV + 2
-
-listCtl$Linf   = fVector[cV:(cV + 2)]
-cV = cV + 3
-listCtl$K   = fVector[cV:(cV + 2)]
-cV = cV + 3
-listCtl$Lo_len   = fVector[cV:(cV + 2)]
-cV = cV + 3
-listCtl$Sigma_len   = fVector[cV:(cV + 2)]
-cV = cV + 3
-listCtl$N_Mort   = fVector[cV:(cV + 2)]
-cV = cV + 3
-
-
-listCtl$npars_mage  = fVector[cV]
-cV = cV + 1
-
-nparM = listCtl$npars_mage
-if(nparM == 0) cV = cV 
-if(nparM > 0)  {
-  listCtl$Mage_in = fVector[cV:(cV + nparM - 1)] ; cV = cV + nparM
-}
-
-listCtl$phase_Mage = fVector[cV] ; cV = cV + 1
-listCtl$Phase_Random_walk_M = fVector[cV]; cV = cV + 1
-listCtl$Nyrs_Random_walk_M = fVector[cV]; cV = cV + 1
-
-nranM = listCtl$Nyrs_Random_walk_M
-if(nranM == 0) cV = cV 
-if(nranM > 0)  {
-  listCtl$RW_M_yrs = fVector[cV:(cV + nranM - 1)] ; cV = cV + nranM
-  listCtl$RW_M_sigmas = fVector[cV:(cV + nranM - 1)] ; cV = cV + nranM
-}
-
-
-Vcatch = fVector[cV:(cV + 3*nIndex - 1)]
-Mcatch = matrix(Vcatch, ncol = nIndex, byrow = TRUE)
-listCtl$qMatrix = Mcatch
-cV = cV + (3*nIndex)
-
-Vqpow = fVector[cV:(cV + 3*nIndex - 1)]
-Mqpow = matrix(Vqpow, ncol = nIndex, byrow = TRUE)
-listCtl$qpowMatrix = Mqpow
-cV = cV + (3*nIndex)
-
-listCtl$RW_q_phases = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
-listCtl$RW_walk_q   = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
-
-nWalkq = sum(listCtl$RW_walk_q)
-if(nWalkq == 0) cV = cV 
-if(nWalkq > 0)  {
-  listCtl$RW_q_yrs = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
-  listCtl$RW_q_sigmas = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
-}
-
-listCtl$q_agemin = fVector[cV:(cV + nIndex - 1)]; cV = cV + nIndex
-listCtl$q_agemax = fVector[cV:(cV + nIndex - 1)]; cV = cV + nIndex
-
-listCtl$junk = fVector[cV]; cV = cV + 1
-listCtl$n_proj_yrs = fVector[cV]; cV = cV + 1
-
-FshInd = c(Fishery, Index)
-
-
-for(i in seq_along(FshInd)){
-  listCtl[[paste0(FshInd[i], "_info")]] = fVector[cV:(cV + 5)]
-  cV = cV + 6
-  if(listCtl[[paste0(FshInd[i], "_info")]][6] == 0) {
-    listCtl[[paste0(FshInd[i], "_selbyage")]] = fVector[cV:(cV + nAges - 1)]
-    cV = cV + nAges
-  } else {
-    nChan = listCtl[[paste0(FshInd[i], "_info")]][6]
-    listCtl[[paste0(FshInd[i], "_selchangeYear")]] = fVector[cV:(cV + nChan - 1)] ; cV = cV + nChan
-    listCtl[[paste0(FshInd[i], "_selchange")]] = fVector[cV:(cV + nChan - 1)] ; cV = cV + nChan
-    listCtl[[paste0(FshInd[i], "_selbyage")]] = fVector[cV:(cV + nAges - 1)]
-    cV = cV + nAges
-  }
-}
-
-listCtl$test = fVector[cV]
-
-
-return(listCtl)
-
-}
-
-
 .LikeTable = function(lstOuts){
 
   Name = NULL
   Outs = list()
   for(i in seq_along(lstOuts)){
-    for(j in seq_along(lstOuts[[i]]$output))
     Name[i] = lstOuts[[i]]$info$output$model
-    Outs[[i]] = lstOuts[[i]]$output[[j]]
+    Outs[[i]] = lstOuts[[i]]$output
 	}
  
   names(Outs) = Name
@@ -607,31 +278,7 @@ return(listCtl)
   return(tab)
 }
 
-
-.versionJJM = function(head){
-
-  resx = strsplit(head, "\t")  
-  
-  tVector = NULL
-  for(i in seq_along(resx)){
-    resx[[i]] = paste(resx[[i]], collapse = " ")
-    Vector = strsplit(resx[[i]], " ")[[1]]
-    Vector = Vector [! Vector %in% ""]
-    tVector = c(tVector, Vector)
-  }
-  
-  x = tVector[4]
-  idx = length(grep("[a-z]", x))
-  if(idx > 0) out = "2015MS"
-  if(idx == 0) out = "2014"
-  
-  return(out)
-
-}
-
-
 .ProjTable = function(lstOuts, Projections, Fmult, BiomProj, CapProj, MRS){
-
 
 if(Projections){
 		
@@ -651,19 +298,14 @@ if(Projections){
 		if(is.null(Fmult)) Fs = c(0, 0.5, 0.75, 1, 1.25)
 		else Fs = Fmult
 		
-		##################
-		#for(i in seq_along(lstOuts)){
-		#  for(j in seq_along(lstOuts[[i]]$output)){
-		#    if(is.null(MRS)) mrs = mean(lstOuts[[i]]$output[[j]]$msy_mt[,10])
-		#    else mrs = MRS
-		#    }
-		#}
+		if(is.null(MRS)) mrs = mean(lstOuts[[1]]$output$msy_mt[,10])
+		else mrs = MRS
 
-		mrs = MRS
-		
 		Name = NULL
+		Outs = list()
 		for(i in seq_along(lstOuts)){
 			Name[i] = lstOuts[[i]]$info$output$model
+			Outs[[i]] = lstOuts[[i]]$output
 		}
 		
 		
@@ -673,30 +315,13 @@ if(Projections){
 			Name[i] = paste(xa[[1]][1], xb, sep = "_")
 		}
 		
+		names(Outs) = Name
 		
 	tableTot = list()
 	
-	for(i in seq_along(lstOuts)){
-	
-		Outs = list()
-		for(j in seq_along(lstOuts[[i]]$output)){
-			Outs[[j]] = lstOuts[[i]]$output[[j]]
-		}
+	for(i in seq_along(Outs)){
 		
-	namesStock = paste0("Stock_", 1:length(Outs)) 
-				
-	tableTot[[i]] = list()	
-		
-	for(j in seq_along(Outs)){
-	
-	
-
-		 if(is.null(MRS))  mrs = mean(Outs[[j]]$msy_mt[,10])
-		 if(!is.null(MRS)) mrs = MRS
-		
-	
-		
-	fut = do.call(rbind,lapply(Outs[[j]][grep("SSB_fut_",names(Outs[[j]]))],
+	fut = do.call(rbind,lapply(Outs[[i]][grep("SSB_fut_",names(Outs[[i]]))],
                    function(y){return(y[,1:3])}))
 		
 	#fut = do.call(rbind, lapply(Outs, function(x){
@@ -705,19 +330,18 @@ if(Projections){
   
 	  fut = as.data.frame(fut, stringsAsFactors = F)
 	  colnames(fut) = c("year", "SSB", "SD")
-	  fut$modelscenario = paste(rep(names(Outs)[j], each=nrow(Outs[[j]]$SSB_fut_1) *
-									   length(grep("SSB_fut_", names(Outs[[j]])))),
+	  fut$modelscenario = paste(rep(names(Outs)[i], each=nrow(Outs[[i]]$SSB_fut_1) *
+									   length(grep("SSB_fut_", names(Outs[[i]])))),
 								 paste("Scen",
-									   rep(1:length(grep("SSB_fut_", names(Outs[[j]]))), each=nrow(Outs[[j]]$SSB_fut_1)),
+									   rep(1:length(grep("SSB_fut_", names(Outs[[i]]))), each=nrow(Outs[[i]]$SSB_fut_1)),
 									   sep="_"),
 								 sep="_")
-	  fut$nModel = i
   
   assdato = mrs
   
   partName = NULL
-  for(k in seq_along(Bp)){
-    part = c(Bp[k], Bp[k])
+  for(j in seq_along(Bp)){
+    part = c(Bp[j], Bp[j])
     partName = c(partName, part)
   }
   
@@ -730,44 +354,41 @@ if(Projections){
     
     #tabla[[i]] = matrix(NA, ncol = length(namesTabla[[2]]), nrow = length(Fs), dimnames = namesTabla)
 	tabla = matrix(NA, ncol = length(namesTabla), nrow = length(Fs))
-    rsktable  = matrix(NA, nrow = 1, ncol = length(grep("SSB_fut_", names(Outs[[j]]))),
-                        dimnames = list(names(Outs)[j], 1:length(grep("SSB_fut_",names(Outs[[j]])))))
+    rsktable  = matrix(NA, nrow = 1, ncol = length(grep("SSB_fut_", names(Outs[[i]]))),
+                        dimnames = list(names(Outs)[i], 1:length(grep("SSB_fut_",names(Outs[[i]])))))
     
-    for(k in seq_along(Bp)){
+    for(j in seq_along(Bp)){
       
-      futdat = subset(fut, year == Bp[k] & fut$nModel == i)
+      futdat = subset(fut, year == Bp[j] &
+                         paste("Model_", unlist(strsplit(fut$modelscenario,"_"))[seq(2, nrow(fut)*4, 4)],sep="") == names(Outs)[i])
       Bs = futdat[,2][c(5:4,2:1,3)]
       rsktable[1,] = (1 - pnorm(mrs, futdat$SSB, futdat$SD))*100
       tabla[,1] = Fs
-      tabla[,(k*2)] = round(Bs)
-      tabla[,(k*2+1)] = round(rsktable[1,][c(5:4,2:1,3)])
+      tabla[,(j*2)] = round(Bs)
+      tabla[,(j*2+1)] = round(rsktable[1,][c(5:4,2:1,3)])
       
     }
   #}
   
   catchPrj = list()
   for(k in seq_along(Cp)){
-    catchPrj[[k]] = unlist(lapply(Outs[[j]][grep("Catch_fut_",names(Outs[[j]]))],
+    catchPrj[[k]] = unlist(lapply(Outs[[i]][grep("Catch_fut_",names(Outs[[i]]))],
                                   function(y){y[y[,1]==Cp[k],2]}))
   }
   
   seqPos = (length(Bp)*2+2):length(namesTabla)
 
-    for(k in seq_along(seqPos)){
-      tabla[,seqPos[k]] = round(catchPrj[[k]][c(5:4,2:1,3)])
+    for(j in seq_along(seqPos)){
+      tabla[,seqPos[j]] = round(catchPrj[[j]][c(5:4,2:1,3)])
     }
 	
 	colnames(tabla) = namesTabla
 	tabla = as.data.frame(tabla)
-	tableTot[[i]][[j]] = tabla
+	tableTot[[i]] = tabla
 	
 	}
 	
-	names(tableTot[[i]]) = namesStock
-	
-	}
-	
-	names(tableTot) = Name
+	names(tableTot) = names(Outs)
 	
 	}
 	

@@ -59,3 +59,17 @@ report.jjm.diag = function(object, format="latex", tangle=FALSE, tidy=TRUE, verb
   
   return(invisible())
 }
+
+# report.jjm.diag = function(object, format="latex") {
+#   
+#   pichon = object
+#   f = system.file("reports", "jjmDiag.Rmd", package = "jjmTools")
+#   f = "test.Rmd"
+#   knit(f)
+#   knit(f, tangle=TRUE)
+#   f2 = gsub(pattern = ".Rmd", replacement = "\\.md", f)
+#   pandoc(f2, format=format)
+#   
+# }
+# report(mod1)
+# report(mod2)
