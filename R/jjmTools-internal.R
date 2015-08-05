@@ -1678,10 +1678,14 @@ if(Projections){
   return(dat)
 }
 
-.runJJM = function(model, output, useGuess, guess, iprint, wait, ...) {
+.runJJM = function(model, output, useGuess, guess, iprint, wait, temp=NULL, ...) {
   
   cat("\nRunning model", model, "|", 
       as.character(Sys.time()), "\n")
+
+  tmpDir = .setParallelJJM(model=model, tmpDir=temp)  
+  setwd(tmpDir)
+  .cleanad()
   
   jjm = if(isTRUE(useGuess) & !is.na(guess)) {
     sprintf("jjm -nox -ind %s.ctl -ainp %s -iprint %d", 
