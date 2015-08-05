@@ -150,12 +150,12 @@ diagnostics <- function(outputObject, ...) {
     for(j in seq_along(jjmStocks)) {
 	
 		if(version != "2015MS")	{
-			outputObject[[i]]$data$wt_temp = outputObject[[i]]$control$Pwtatage
-			outputObject[[i]]$data$mt_temp = outputObject[[i]]$control$Pwtatage
+			outputObject[[i]]$data$wt_temp = outputObject[[i]]$data$Pwtatage
+			outputObject[[i]]$data$mt_temp = outputObject[[i]]$data$Pmatatage
 			toJjm.in = outputObject[[i]]$data
 		} else {
-			outputObject[[i]]$control$wt_temp = outputObject[[i]]$control$Pwtatage[,j]
-			outputObject[[i]]$control$mt_temp = outputObject[[i]]$control$Pmatatage[,j]
+			outputObject[[i]]$control$wt_temp = t(outputObject[[i]]$control$Pwtatage)[,j]
+			outputObject[[i]]$control$mt_temp = t(outputObject[[i]]$control$Pmatatage)[,j]
 			toJjm.in = c(outputObject[[i]]$data, outputObject[[i]]$control)
 		}
 	  
