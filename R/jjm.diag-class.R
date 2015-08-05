@@ -1,4 +1,5 @@
 
+
 print.jjm.diag = function(x, ...) {
   
   cat("Model name (s):\n")
@@ -54,10 +55,10 @@ print.summary.jjm.diag = function(x, ...) {
   return(invisible())
 }
 
-.plotDiagVar = function(x, var, fleet=NULL, ...) {
-  x = x[[var]]
+.plotDiagVar = function(x, fleet=NULL, ...) {
   if(!is.null(fleet) & all(fleet %in% names(x))) x = x[fleet]
-  if(inherits(x, "trellis")) print(update(x, ...)) else print(x)
+  if(inherits(x, "trellis")) print(update(x, ...)) else 
+    lapply(x, FUN=.plotDiagVar, fleet=NULL, ...)
   return(invisible())
 }
 
@@ -74,20 +75,19 @@ print.summary.jjm.diag = function(x, ...) {
     stop(msg)
   }
   
-  for(ivar in var) .plotDiagVar(x, var=ivar, fleet=fleet, ...)
+  for(ivar in var) .plotDiagVar(x[[ivar]], fleet=fleet, ...)
    
   return(invisible())
 }
 
 
-plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL, ...) 
-                          #var=NULL, fleet=NULL, ...)
-{
+plot.jjm.diag = function(x, what = c("data", "output"), pdf = FALSE, file = NULL,
+                         var=NULL, fleet=NULL, ...) {
   what = tolower(what)
   
   if(any(grepl(pattern = "input", x=what))) {
     message("Parameter what='input' is deprecated, use 'data' instead.")
-    gsub(pattern = "input", replacement = "data", x=what)
+    what = gsub(pattern = "input", replacement = "data", x=what)
   }
   
   if(any(is.na(match(what, c("data", "output")))))
