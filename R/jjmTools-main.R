@@ -143,14 +143,23 @@ diagnostics <- function(outputObject, ...) {
   for(i in seq_along(outputObject)) {
      
     jjmStocks = outputObject[[i]]$output
-    
+    version = outputObject[[i]]$info$data$version
+	
     output[[i]] = list()
     
     for(j in seq_along(jjmStocks)) {
-      
+	
+		if(version != "2015MS")	{
+			toJjm.in = outputObject[[i]]$data
+		} else {
+			outputObject[[i]]$control$wt_temp = outputObject[[i]]$control$Pwtatage[,j]
+			outputObject[[i]]$control$mt_temp = outputObject[[i]]$control$Pmatatage[,j]
+			toJjm.in = c(outputObject[[i]]$data, outputObject[[i]]$control)
+		}
+	  
       output[[i]][[j]] = .diagnostics(jjm.info = outputObject[[i]]$info$output,
                                   jjm.out  = jjmStocks[[j]], 
-                                  jjm.in   = c(outputObject[[i]]$data, outputObject[[i]]$control), ...)
+                                  jjm.in   = toJjm.in, ...)
       
     }
     

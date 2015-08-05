@@ -768,8 +768,8 @@
 
 .input_weightPopulationFUN = function(jjm.in, ages, ...)
 {
-  res = data.frame(year = 1, data = jjm.in$Pwtatage, age = ages)
-  pic = xyplot(weight~age, data = res,
+  res = data.frame(year = 1, data = jjm.in$wt_temp, age = ages)
+  pic = xyplot(data~age, data = res,
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
                   panel.xyplot(..., type = "b", pch = 19, cex = 0.6, lwd = 2, col = 1)
@@ -780,8 +780,8 @@
 
 .input_maturityPopulationFUN = function(jjm.in, ages, ...)
 {
-  res = data.frame(year = 1, data = jjm.in$Pmatatage, age = ages)
-  pic = xyplot(maturity~age, data = res,
+  res = data.frame(year = 1, data = jjm.in$mt_temp, age = ages)
+  pic = xyplot(data~age, data = res,
                 panel = function(...){
                   panel.grid(h = -1, v = -1)
                   panel.xyplot(..., type = "b", pch = 19, cex = 0.6, lwd = 2, col = 1)

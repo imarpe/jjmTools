@@ -440,12 +440,12 @@ FshInd = c(Fishery, Index)
 
 
 wtatage = fVector[cV:(cV + nStock*nAges - 1)]
-Mwaa = matrix(wtatage, ncol = nAges, byrow = TRUE)
+Mwaa = matrix(wtatage, nrow = nAges, byrow = FALSE)
 listCtl$Pwtatage = Mwaa
 cV = cV + nStock*nAges
 
 mtatage = fVector[cV:(cV + nStock*nAges - 1)]
-Mmaa = matrix(mtatage, ncol = nAges, byrow = TRUE)
+Mmaa = matrix(mtatage, nrow = nAges, byrow = FALSE)
 listCtl$Pmatatage = Mmaa
 cV = cV + nStock*nAges
 
