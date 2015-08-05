@@ -59,7 +59,7 @@ readJJM <- function(model, path = "", output="arc", modelName=model
 #' @param ... Arguments passed from \code{system} function.
 #' @examples
 #' model = runJJM(models = "mod2.4")
-runJJM = function(models, path = ".", output="arc", useGuess=FALSE, 
+runJJM = function(models, path = ".", output="arc", exec="jjm", useGuess=FALSE, 
                   guess=NULL, iprint=100, wait = TRUE, parallel=FALSE, 
                   temp=NULL, ...)
 {
@@ -72,6 +72,8 @@ runJJM = function(models, path = ".", output="arc", useGuess=FALSE,
   output = normalizePath(output, mustWork = FALSE)
   if(!file.exists(output)) dir.create(output)
 
+  exec = gsub("\\.exe$", "", exec)
+  
   # Set lower case for model name and filter repeated names
   models = .checkModels(models)
   if(length(models)<1) {
@@ -94,7 +96,7 @@ runJJM = function(models, path = ".", output="arc", useGuess=FALSE,
     
     res = NULL
     for(i in seq_along(models)) {
-      rtime = .runJJM(model=models[i], output=output, useGuess=useGuess, 
+      rtime = .runJJM(model=models[i], output=output, exec=exec, useGuess=useGuess, 
                       guess=guess[i], iprint=iprint, wait=wait, temp=temp, ...)
       res = c(res, rtime)  
     }
@@ -106,7 +108,7 @@ runJJM = function(models, path = ".", output="arc", useGuess=FALSE,
     tempDir = tempdir()
     res = foreach(i=seq_along(models), .combine=c) %dopar% {
       setwd(base)
-      .runJJM(model=models[i], output=output, useGuess=useGuess, 
+      .runJJM(model=models[i], output=output, exec=exec, useGuess=useGuess, 
               guess=guess[i], iprint=iprint, wait=wait, temp=temp, ...)  
     }  
     

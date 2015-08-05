@@ -1807,7 +1807,7 @@ if(Projections){
   return(guess)
 }
 
-.setParallelJJM = function(model, tmpDir=NULL) {
+.setParallelJJM = function(model, exec, tmpDir=NULL) {
   
   if(is.null(tmpDir)) tmpDir = tempdir()
   tmpDir = file.path(tmpDir, model)
@@ -1831,20 +1831,20 @@ if(Projections){
   return(dat)
 }
 
-.runJJM = function(model, output, useGuess, guess, iprint, wait, temp=NULL, ...) {
+.runJJM = function(model, output, exec, useGuess, guess, iprint, wait, temp=NULL, ...) {
   
   cat("\nRunning model", model, "|", 
       as.character(Sys.time()), "\n")
 
-  tmpDir = .setParallelJJM(model=model, tmpDir=temp)  
+  tmpDir = .setParallelJJM(model=model, exec=exec, tmpDir=temp)  
   setwd(tmpDir)
   .cleanad()
   
   jjm = if(isTRUE(useGuess) & !is.na(guess)) {
-    sprintf("jjm -nox -ind %s.ctl -ainp %s -iprint %d", 
-            model, guess, iprint)
+    sprintf("%s -nox -ind %s.ctl -ainp %s -iprint %d", 
+            exec, model, guess, iprint)
   } else {
-    sprintf("jjm -nox -ind %s.ctl -iprint %d", model, iprint)
+    sprintf("%s -nox -ind %s.ctl -iprint %d", exec, model, iprint)
   }
   
   start   = proc.time()  
