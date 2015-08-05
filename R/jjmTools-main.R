@@ -58,7 +58,7 @@ readJJM <- function(model, path = "", output="arc", modelName=model
 #' @param ... Arguments passed from \code{system} function.
 #' @examples
 #' model = runJJM(models = "mod2.4")
-runJJM = function(models, path = "", output="arc", useGuess=FALSE, 
+runJJM = function(models, path = ".", output="arc", useGuess=FALSE, 
                   guess=NULL, iprint=100, wait = TRUE, parallel=FALSE, ...)
 {
   
@@ -82,6 +82,8 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
   # Run models
   base  = getwd()
   start = proc.time()  
+  tempDir = tempdir()
+  
   if(!isTRUE(parallel)) {
     
     cat("\nRunning models", paste(models, collapse=", "), "\n")
@@ -90,6 +92,9 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
     res = NULL
     for(i in seq_along(models)) {
       model = models[i]
+      tmpDir = .setParallelJJM(model=model, tmpDir=tempDir)  
+      setwd(tmpDir)
+      .cleanad()
       rtime = .runJJM(model=model, output=output, useGuess=useGuess, 
                       guess=guess[i], iprint=iprint, wait=wait, ...)
       .cleanad() # clean admb files
@@ -100,7 +105,6 @@ runJJM = function(models, path = "", output="arc", useGuess=FALSE,
     
     cat("\nRunning models", paste(models, collapse=", "), "in parallel.\n")
     cat("\tStarting at", as.character(Sys.time()), "\n")
-    tempDir = tempdir()
     res = foreach(i=seq_along(models), .combine=c) %dopar% {
       model = models[i]
       setwd(base)
