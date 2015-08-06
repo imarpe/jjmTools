@@ -328,14 +328,16 @@ cV = cV + diffRec
 listCtl$Nyrs_sr   = fVector[cV:(cV + diffRec - 1)]
 cV = cV + diffRec
 
-Llist = length(listCtl)
 for(i in seq_along(listCtl$Nyrs_sr)){
   listCtl[[paste0("Nyrs_sr_", i)]] = fVector[cV:(cV + listCtl$Nyrs_sr[i] - 1)]
   cV = cV + listCtl$Nyrs_sr[i]
 }
 
 nShift = sum(listCtl$nregbyStock - 1)
-listCtl$RegShift = fVector[cV:(cV + nShift - 1)]
+if(nShift == 0) { listCtl$RegShift = NA }
+if(nShift > 0) {
+	listCtl$RegShift = fVector[cV:(cV + nShift - 1)]
+}
 cV = cV + nShift
 
 listCtl$GrowMatrix   = fVector[cV:(cV + sum(listCtl$nregbyStock) - 1)] 
@@ -377,8 +379,11 @@ listCtl$npars_mage  = fVector[cV:(cV + diffN - 1)]
 cV = cV + diffN
 
 nparM = sum(listCtl$npars_mage)
-if(nparM == 0) cV = cV 
-if(nparM > 0)  {
+if(nparM == 0) { 
+listCtl$ages_M_changes = NA
+listCtl$Mage_in        = NA
+cV = cV } 
+if(nparM > 0) {
   listCtl$ages_M_changes = fVector[cV:(cV + nparM - 1)] ; cV = cV + nparM
   listCtl$Mage_in = fVector[cV:(cV + nparM - 1)] ; cV = cV + nparM
 }
@@ -388,8 +393,11 @@ listCtl$Phase_Random_walk_M = fVector[cV:(cV + nStock - 1)]; cV = cV + nStock
 listCtl$Nyrs_Random_walk_M = fVector[cV:(cV + nStock - 1)]; cV = cV + nStock
 
 nranM = sum(listCtl$Nyrs_Random_walk_M)
-if(nranM == 0) cV = cV 
-if(nranM > 0)  {
+if(nranM == 0) { 
+listCtl$RW_M_yrs = NA
+listCtl$RW_M_sigmas = NA
+cV = cV } 
+if(nranM > 0) {
   listCtl$RW_M_yrs = fVector[cV:(cV + nranM - 1)] ; cV = cV + nranM
   listCtl$RW_M_sigmas = fVector[cV:(cV + nranM - 1)] ; cV = cV + nranM
 }
@@ -405,10 +413,13 @@ listCtl$qpowMatrix = Mqpow
 cV = cV + (3*nIndex)
 
 listCtl$RW_q_phases = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
-listCtl$RW_walk_q   = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
+listCtl$RW_nyrs_q   = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
 
-nWalkq = sum(listCtl$RW_walk_q)
-if(nWalkq == 0) cV = cV 
+nWalkq = sum(listCtl$RW_nyrs_q)
+if(nWalkq == 0){ 
+listCtl$RW_q_yrs = NA
+listCtl$RW_q_sigmas = NA
+cV = cV }
 if(nWalkq > 0)  {
   listCtl$RW_q_yrs = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
   listCtl$RW_q_sigmas = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
@@ -427,6 +438,8 @@ FshInd = c(Fishery, Index)
     listCtl[[paste0(FshInd[i], "_info")]] = fVector[cV:(cV + 5)]
     cV = cV + 6
     if(listCtl[[paste0(FshInd[i], "_info")]][6] == 0) {
+      listCtl[[paste0(FshInd[i], "_selchangeYear")]] = NA
+      listCtl[[paste0(FshInd[i], "_selchange")]] = NA
       listCtl[[paste0(FshInd[i], "_selbyage")]] = fVector[cV:(cV + nAges - 1)]
       cV = cV + nAges
     } else {
@@ -521,7 +534,9 @@ listCtl$npars_mage  = fVector[cV]
 cV = cV + 1
 
 nparM = listCtl$npars_mage
-if(nparM == 0) cV = cV 
+if(nparM == 0) {
+  listCtl$Mage_in = NA
+cV = cV} 
 if(nparM > 0)  {
   listCtl$Mage_in = fVector[cV:(cV + nparM - 1)] ; cV = cV + nparM
 }
@@ -531,7 +546,10 @@ listCtl$Phase_Random_walk_M = fVector[cV]; cV = cV + 1
 listCtl$Nyrs_Random_walk_M = fVector[cV]; cV = cV + 1
 
 nranM = listCtl$Nyrs_Random_walk_M
-if(nranM == 0) cV = cV 
+if(nranM == 0) {
+  listCtl$RW_M_yrs = NA
+  listCtl$RW_M_sigmas = NA
+cV = cV }
 if(nranM > 0)  {
   listCtl$RW_M_yrs = fVector[cV:(cV + nranM - 1)] ; cV = cV + nranM
   listCtl$RW_M_sigmas = fVector[cV:(cV + nranM - 1)] ; cV = cV + nranM
@@ -552,7 +570,10 @@ listCtl$RW_q_phases = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
 listCtl$RW_walk_q   = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
 
 nWalkq = sum(listCtl$RW_walk_q)
-if(nWalkq == 0) cV = cV 
+if(nWalkq == 0) {
+  listCtl$RW_q_yrs = NA
+  listCtl$RW_q_sigmas = NA
+cV = cV }
 if(nWalkq > 0)  {
   listCtl$RW_q_yrs = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
   listCtl$RW_q_sigmas = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
@@ -571,6 +592,8 @@ for(i in seq_along(FshInd)){
   listCtl[[paste0(FshInd[i], "_info")]] = fVector[cV:(cV + 5)]
   cV = cV + 6
   if(listCtl[[paste0(FshInd[i], "_info")]][6] == 0) {
+    listCtl[[paste0(FshInd[i], "_selchangeYear")]] = NA
+    listCtl[[paste0(FshInd[i], "_selchange")]] = NA
     listCtl[[paste0(FshInd[i], "_selbyage")]] = fVector[cV:(cV + nAges - 1)]
     cV = cV + nAges
   } else {
