@@ -224,3 +224,14 @@ exFiles = function(fileName, type, version = "2015MS", nameFishery,
 	return(outList)
 	
 }
+
+
+# Write jjm files ---------------------------------------------------------------
+
+writeJJM = function(object, outFile){
+		
+	.writeFiles(object = object, outFile = outFile)
+	
+	return(invisible(NULL))
+	
+}

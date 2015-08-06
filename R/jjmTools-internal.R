@@ -958,6 +958,41 @@ if(Projections){
   
 }
 
+.writeFiles = function(object, outFiles){
+
+  xa = object
+  idx = names(which(!is.na(xa)))
+  
+  listCtl = list()
+  for(i in seq_along(idx)){
+    listCtl[[i]] = xa[[idx[i]]]
+  }
+  names(listCtl) = idx
+  
+  
+    for(i in seq_along(listCtl)){  
+    
+    if(class(listCtl[[i]]) == "matrix") {
+      listCtl[[i]] = listCtl[[i]]
+    } else {
+        listCtl[[i]] = t(as.matrix(listCtl[[i]]))
+    }
+  }
+  
+  fnlist <- function(x, fil){  nams = paste("#", names(x), sep = "") 
+                               for (i in seq_along(x) ){ 
+                                 cat(nams[i], "\n", file = fil, append = TRUE)
+                                  for(j in 1:nrow(x[[i]])) { 
+                                    cat(x[[i]][j,], "\n", file = fil, append = TRUE)
+                                  }
+                               }
+  }
+  
+  outname = outFiles
+  fnlist(listCtl, outname)
+
+}
+
 
 #.Fut_SSB_SD = function(lstOuts){
 #  if(class(lstOuts)[1] == 'jjm.output') {
