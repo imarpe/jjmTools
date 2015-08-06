@@ -1021,7 +1021,7 @@
   scalar          = 3/max(resids,na.rm=T)
   residRange      = range(resids,na.rm=T)
   ikey            = simpleKey(text=as.character(round(seq(residRange[1],residRange[2],length.out=6),2)),
-                               points=T,lines=F,columns = 2)
+                               points=T,lines=F,columns = 2, cex = 1.5)
   ikey$points$cex = abs(round(seq(residRange[1],residRange[2],length.out=6),2))*scalar
   ikey$points$col = 1
   ikey$points$pch = ifelse(round(seq(residRange[1],residRange[2],length.out=6),2)>0,19,1)
@@ -1060,7 +1060,7 @@
   scalar          = 3/max(resids, na.rm = TRUE)
   residRange      = range(resids, na.rm = TRUE)
   ikey            = simpleKey(text = .ac(round(seq(residRange[1], residRange[2], length.out = 6), 2)),
-                               points = TRUE, lines = FALSE, columns = 2)
+                               points = TRUE, lines = FALSE, columns = 2, cex = 1.5)
   ikey$points$cex = abs(round(seq(residRange[1], residRange[2], length.out = 6), 2))*scalar
   ikey$points$col = 1
   ikey$points$pch = ifelse(test = round(seq(residRange[1], residRange[2], length.out = 6),2) > 0, yes = 19, no = 1)
@@ -1112,7 +1112,7 @@
   res$cohort = (res$year - res$age) %% length(ages) + 1
   
   ikey          = simpleKey(text = c("Observed", "Predicted"),
-                             points = TRUE, lines = FALSE, rect = TRUE, columns = 2)
+                             points = TRUE, lines = FALSE, rect = TRUE, columns = 2, cex = 1.5)
   ikey$rectangles$alpha = c(1, 0)
   ikey$rectangles$col   = "white"
   ikey$rectangles$lty   = c(1, 0)
@@ -1190,7 +1190,7 @@
   res$cohort = res$length
   
   ikey                  = simpleKey(text = c("Observed", "Predicted"),
-                                     points = TRUE, lines = FALSE, rect = TRUE, columns = 2)
+                                     points = TRUE, lines = FALSE, rect = TRUE, columns = 2, cex = 1.5)
   ikey$rectangles$alpha = c(1, 0)
   ikey$rectangles$col   = "white"
   ikey$rectangles$lty   = c(1, 0)
@@ -1245,8 +1245,8 @@
   res$year = .an(.ac(res$year))
   res$data = .an(.ac(res$data))
   
-  ikey                  = simpleKey(text = c("Observed","Predicted"),
-                                     points = FALSE, lines = TRUE, rect = TRUE, columns = 2)
+  ikey                  = simpleKey(text = c("Observed","Predicted"), cex = 1.5,
+                                    points = FALSE, lines = TRUE, rect = TRUE, columns = 2)
   ikey$rectangles$alpha = c(1,0)
   ikey$rectangles$col   = "grey"
   ikey$rectangles$lty   = c(1,0)
@@ -1309,7 +1309,7 @@
   tot$data[which(tot$data<0)] = NA
   res                         = tot
   
-  ikey            = simpleKey(text = c("Observed", "Predicted"), points = TRUE, lines = TRUE, columns = 2)
+  ikey            = simpleKey(text = c("Observed", "Predicted"), points = TRUE, lines = TRUE, columns = 2, cex = 1.5)
   
   ikey$lines$lty  = c(0, 1)
   ikey$lines$lwd  = c(0, 2)
@@ -1373,7 +1373,7 @@
   res$cohort = (res$year - res$age) %% length(ages) + 1
   
   ikey                  = simpleKey(text = c("Observed","Predicted"),
-                                     points = TRUE, lines = FALSE, rect = TRUE, columns = 2)
+                                     points = TRUE, lines = FALSE, rect = TRUE, columns = 2, cex = 1.5)
   ikey$rectangles$alpha = c(1, 0)
   ikey$rectangles$col   = "white"
   ikey$rectangles$lty   = c(1, 0)
@@ -2009,7 +2009,7 @@
   res$classing = as.factor(res$classing)
   
   ikey           = simpleKey(text = c("Mature", "Immature"),
-                              points = FALSE, lines = TRUE, columns = 2)
+                              points = FALSE, lines = TRUE, columns = 2, cex = 1.5)
   ikey$lines$col = 1
   ikey$lines$lwd = 3
   ikey$lines$lty = c(3, 1)
@@ -2171,7 +2171,7 @@
   res$year      = .an(res$year)
   
   ikey           = simpleKey(text = c("Fished", "Unfished"),
-                              points = FALSE, lines = TRUE, columns = 2)
+                              points = FALSE, lines = TRUE, columns = 2, cex = 1.5)
   ikey$lines$col = c(1, 1)
   ikey$lines$lwd = c(2, 2)
   ikey$lines$lty = c(1, 3)
