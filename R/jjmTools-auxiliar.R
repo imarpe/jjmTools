@@ -26,3 +26,8 @@ makeTransparent = function(..., alpha=0.5) {
                 col = makeTransparent(fill), border = FALSE,
                 ...)
 }
+
+.splitPor = function(obj){
+	out = strsplit(obj, "%")[[1]]
+	return(out)
+}

@@ -198,22 +198,33 @@ combineModels <- function(...)
 
 # Read external files ---------------------------------------------------------------
 
-exFiles = function(fileName, type, version = "2015MS", nameFishery,
-					nameIndex, nAges, nStock, ...){
+readExFiles = function(fileName, type, version = "2015MS", parameters = FALSE,  
+					   parData, nameFishery, nameIndex, nAges, nStock){
 	
 	if( type != "data" & type != "control") stop("File must be data or control type")
 	
 	if(type == "data"){
-		outList = .read.dat(filename = fileName, version = version)
+		outList = .read.datEx(filename = fileName, version = version)
 	}
 	
 	if(type == "control"){
+		if(parameters){
+			info = list()
+			info$fisheryNames = .splitPor(parData$nameFish)
+			info$indexModel = .splitPor(parData$nameIndex)
+			info$nStock = nStock
+			infoDat = list()
+			infoDat$age = c(1, parData$LastAge)
+		} 
+		if(!parameters){
 			info = list()
 			info$fisheryNames = nameFishery
 			info$indexModel = nameIndex
 			info$nStock = nStock
 			infoDat = list()
 			infoDat$age = c(1, nAges)
+		}
+			
 		if(version != "2015MS"){ 
 			outList = .read.ctl(filename = fileName, info = info, infoDat = infoDat)
 			} else {

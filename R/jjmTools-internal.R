@@ -264,9 +264,7 @@
   return(cols)
 }
 
-.read.datEx = function(filename){ 
-  
-  filename = "mod1_ms.dat"
+.read.datEx = function(filename, version){ 
   
   res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
                    comment.char = "#", allowEscapes = TRUE)
@@ -440,6 +438,11 @@
     Mtemp = matrix(Vtemp, nrow = nYears, byrow = TRUE)
     listCtl[[paste0("Index_", i, "_wt-at-age")]] = Mtemp
     cV = cV + nYears*nBinAge
+  }
+  
+  if(version != "2015MS"){
+	listCtl$popwtatage = fVector[cV:(cV + nBinAge - 1)]; cV = cV + nBinAge
+	listCtl$popmtatage = fVector[cV:(cV + nBinAge - 1)]; cV = cV + nBinAge
   }
   
   listCtl$monthSpaw = fVector[cV]; cV = cV + 1
