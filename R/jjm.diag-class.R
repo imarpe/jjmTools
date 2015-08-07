@@ -60,7 +60,7 @@ print.summary.jjm.diag = function(x, ...) {
   if(inherits(x, "trellis")) {
     x = update(x, ...) 
     if(isTRUE(plot)) print(x) 
-    } else x = lapply(x, FUN=.plotDiagVar, fleet=NULL, ...)
+    } else x = lapply(x, FUN=.plotDiagVar, fleet=NULL, plot=plot, ...)
   
   out = if(isTRUE(plot)) NULL else x
   
@@ -85,10 +85,10 @@ print.summary.jjm.diag = function(x, ...) {
     return(invisible())
   }
   
-  out = NULL
+  out = list()
   
-  for(ivar in var) 
-    out = c(out, .plotDiagVar(x[[ivar]], fleet=fleet, plot=plot, ...))
+  for(i in seq_along(var)) 
+    out[[i]] = .plotDiagVar(x[[var[i]]], fleet=fleet, plot=plot, ...)
    
   return(invisible(out))
   
@@ -109,15 +109,37 @@ plot.jjm.diag = function(x, what = c("data", "output"), model=NULL, stock=NULL,
 
   if(is.null(model)) model = names(x)
   stocks = stock
-  
-  for(imodel in model) {
-    if(is.null(stock)) stocks = names(x[[imodel]])
-    for(istock in stocks)
-      for(i in what)
-        .plotDiag(x=x[[imodel]][[istock]][[i]], var=var, fleet=fleet, 
-                  plot=plot, ...)
+
+  if(isTRUE(plot)) {
+    
+    for(imodel in model) {
+      if(is.null(stock)) stocks = names(x[[imodel]])
+      for(istock in stocks)
+        for(i in what)
+          .plotDiag(x=x[[imodel]][[istock]][[i]], var=var, fleet=fleet, 
+                    plot=plot, ...)
+      
+    }
+    
+    return(invisible())
+    
+  } else {
+    
+    out = list()
+    j = 1
+    
+    for(imodel in model) {
+      if(is.null(stock)) stocks = names(x[[imodel]])
+      for(istock in stocks)
+        for(i in what) {
+          out[j] = .plotDiag(x=x[[imodel]][[istock]][[i]], var=var, fleet=fleet, 
+                             plot=plot, ...)
+          j = j+1
+        }
+    }
+    
+    return(invisible(out))
     
   }
-    
-   return(invisible())
+  
 }
