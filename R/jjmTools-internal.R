@@ -958,7 +958,7 @@ if(Projections){
   
 }
 
-.writeFiles = function(object, outFiles){
+.writeFiles = function(object, outFile){
 
   xa = object
   idx = names(which(!is.na(xa)))
@@ -988,7 +988,7 @@ if(Projections){
                                }
   }
   
-  outname = outFiles
+  outname = outFile
   fnlist(listCtl, outname)
 
 }
