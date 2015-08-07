@@ -199,9 +199,10 @@ combineModels <- function(...)
 # Read external files ---------------------------------------------------------------
 
 readExFiles = function(fileName, type, version = "2015MS", parameters = FALSE,  
-					   parData, nameFishery, nameIndex, nAges, nStock){
+					   parData, nameFishery, nameIndex, nAges, nStock = NULL){
 	
 	if( type != "data" & type != "control") stop("File must be data or control type")
+	if(is.null(nStock)) stop("The number of stocks is necessary")
 	
 	if(type == "data"){
 		outList = .read.datEx(filename = fileName, version = version)
