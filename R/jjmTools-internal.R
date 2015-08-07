@@ -264,6 +264,205 @@
   return(cols)
 }
 
+.read.datEx = function(filename){ 
+  
+  filename = "mod1_ms.dat"
+  
+  res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
+                   comment.char = "#", allowEscapes = TRUE)
+  res1      = strsplit(res1, "\t")
+  
+  fVector = NULL
+  for(i in seq_along(res1)){
+    res1[[i]] = paste(res1[[i]], collapse = " ")
+    Vector = strsplit(res1[[i]], " ")[[1]]
+    Vector = Vector [! Vector %in% ""]
+    fVector = c(fVector, Vector)
+  }
+  
+  
+  
+  listCtl = list()
+  cV = 1
+  listCtl$FirstYear  = fVector[cV] ;cV = cV + 1
+  listCtl$LastYear = fVector[cV] ;cV = cV + 1
+  listCtl$FirstAge   = fVector[cV] ;cV = cV + 1
+  listCtl$LastAge = fVector[cV] ;cV = cV + 1
+  listCtl$NLenInt = fVector[cV] ;cV = cV + 1
+  listCtl$LengthBin = fVector[cV:(cV + as.numeric(listCtl$NLenInt) - 1)] ;cV = cV + as.numeric(listCtl$NLenInt)
+  listCtl$NFisheries = fVector[cV] ;cV = cV + 1
+  listCtl$nameFish = fVector[cV] ;cV = cV + 1
+  
+  nYears = as.numeric(listCtl$LastYear) - as.numeric(listCtl$FirstYear) + 1
+  nFisheries = as.numeric(listCtl$NFisheries)
+  
+  VCatch = fVector[cV:(cV + nFisheries*nYears - 1)]
+  MCatch = matrix(VCatch, nrow = nFisheries, byrow = TRUE)
+  listCtl$Catch   = MCatch
+  cV = cV + nFisheries*nYears
+  
+  VCatchCV = fVector[cV:(cV + nFisheries*nYears - 1)]
+  MCatchCV = matrix(VCatchCV, nrow = nFisheries, byrow = TRUE)
+  listCtl$CatchCV   = MCatchCV
+  cV = cV + nFisheries*nYears
+  
+  listCtl$nYrsFAge = fVector[cV:(cV + nFisheries - 1)]; cV = cV + nFisheries
+  listCtl$nYrsFLength = fVector[cV:(cV + nFisheries - 1)]; cV = cV + nFisheries
+  listCtl$nYrsFAge = as.numeric(listCtl$nYrsFAge)
+  listCtl$nYrsFLength = as.numeric(listCtl$nYrsFLength)  
+  
+  for(i in seq_along(listCtl$nYrsFAge)){
+    if(listCtl$nYrsFAge[i] > 0) {
+      listCtl[[paste0("Fishery_", i, "_Age_Yr")]] = fVector[cV:(cV + listCtl$nYrsFAge[i] - 1)]
+      cV = cV + listCtl$nYrsFAge[i]
+    }
+  }
+  
+  for(i in seq_along(listCtl$nYrsFLength)){
+    if(listCtl$nYrsFLength[i] > 0) {
+      listCtl[[paste0("Fishery_", i, "_Length_Yr")]] = fVector[cV:(cV + listCtl$nYrsFLength[i] - 1)]
+      cV = cV + listCtl$nYrsFLength[i]
+    }
+  }
+  
+  for(i in seq_along(listCtl$nYrsFAge)){
+    if(listCtl$nYrsFAge[i] > 0) {
+      listCtl[[paste0("Fishery_", i, "_Age_SamSize")]] = fVector[cV:(cV + listCtl$nYrsFAge[i] - 1)]
+      cV = cV + listCtl$nYrsFAge[i]
+    }
+  }
+  
+  for(i in seq_along(listCtl$nYrsFLength)){
+    if(listCtl$nYrsFLength[i] > 0) {
+      listCtl[[paste0("Fishery_", i, "_Length_SamSize")]] = fVector[cV:(cV + listCtl$nYrsFLength[i] - 1)]
+      cV = cV + listCtl$nYrsFLength[i]
+    }
+  }
+  
+  nBinAge = as.numeric(listCtl$LastAge)
+  for(i in seq_along(listCtl$nYrsFAge)){
+    if(listCtl$nYrsFAge[i] > 0) {
+      Vtemp = fVector[cV:(cV + listCtl$nYrsFAge[i]*nBinAge - 1)]
+      Mtemp = matrix(Vtemp, nrow = listCtl$nYrsFAge[i], byrow = TRUE)
+      listCtl[[paste0("Fishery_", i, "_AgeMatrix")]] = Mtemp
+      cV = cV + listCtl$nYrsFAge[i]*nBinAge
+    }
+  }
+  
+  nBinLen = as.numeric(listCtl$NLenInt)
+  for(i in seq_along(listCtl$nYrsFAge)){
+    if(listCtl$nYrsFLength[i] > 0) {
+      Vtemp = fVector[cV:(cV + listCtl$nYrsFLength[i]*nBinLen - 1)]
+      Mtemp = matrix(Vtemp, nrow = listCtl$nYrsFLength[i], byrow = TRUE)
+      listCtl[[paste0("Fishery_", i, "_LengthMatrix")]] = Mtemp
+      cV = cV + listCtl$nYrsFLength[i]*nBinLen
+    }
+  }
+  
+  nFish = as.numeric(listCtl$NFisheries)
+  for(i in 1:nFish){
+      Vtemp = fVector[cV:(cV + nYears*nBinAge - 1)]
+      Mtemp = matrix(Vtemp, nrow = nYears, byrow = TRUE)
+      listCtl[[paste0("Fishery_", i, "_wt-at-age")]] = Mtemp
+      cV = cV + nYears*nBinAge
+  }
+  
+  listCtl$nIndex = fVector[cV]; cV = cV + 1
+  listCtl$nameIndex = fVector[cV]; cV = cV + 1
+  
+  listCtl$nIndex = as.numeric(listCtl$nIndex)
+  listCtl$nObsIndex = fVector[cV:(cV + listCtl$nIndex - 1)]; cV = cV + listCtl$nIndex 
+  listCtl$nObsIndex = as.numeric(listCtl$nObsIndex)
+  
+  for(i in seq_along(listCtl$nObsIndex)){
+    if(listCtl$nObsIndex[i] > 0) {
+      listCtl[[paste0("Index_", i, "_Yr")]] = fVector[cV:(cV + listCtl$nObsIndex[i] - 1)]
+      cV = cV + listCtl$nObsIndex[i]
+    }
+  }
+  
+  listCtl$monthIndex = fVector[cV:(cV + listCtl$nIndex - 1)]; cV = cV + listCtl$nIndex 
+  
+  for(i in seq_along(listCtl$nObsIndex)){
+    if(listCtl$nObsIndex[i] > 0) {
+      listCtl[[paste0("Index_", i, "_biomass")]] = fVector[cV:(cV + listCtl$nObsIndex[i] - 1)]
+      cV = cV + listCtl$nObsIndex[i]
+    }
+  }
+  
+  for(i in seq_along(listCtl$nObsIndex)){
+    if(listCtl$nObsIndex[i] > 0) {
+      listCtl[[paste0("Index_", i, "_biomass_sd")]] = fVector[cV:(cV + listCtl$nObsIndex[i] - 1)]
+      cV = cV + listCtl$nObsIndex[i]
+    }
+  }
+  
+  listCtl$IndexAgeDat = fVector[cV:(cV + listCtl$nIndex - 1)]; cV = cV + listCtl$nIndex
+  listCtl$IndexLenDat = fVector[cV:(cV + listCtl$nIndex - 1)]; cV = cV + listCtl$nIndex
+  listCtl$IndexAgeDat = as.numeric(listCtl$IndexAgeDat)
+  listCtl$IndexLenDat = as.numeric(listCtl$IndexLenDat)
+  
+  for(i in seq_along(listCtl$IndexAgeDat)){
+    if(listCtl$IndexAgeDat[i] > 0) {
+      listCtl[[paste0("Index_", i, "_Age_Yrs")]] = fVector[cV:(cV + listCtl$IndexAgeDat[i] - 1)]
+      cV = cV + listCtl$IndexAgeDat[i]
+    }
+  }
+  
+  for(i in seq_along(listCtl$IndexAgeDat)){
+    if(listCtl$IndexAgeDat[i] > 0) {
+      listCtl[[paste0("Index_", i, "_Age_SamSize")]] = fVector[cV:(cV + listCtl$IndexAgeDat[i] - 1)]
+      cV = cV + listCtl$IndexAgeDat[i]
+    }
+  }
+  
+  for(i in seq_along(listCtl$IndexAgeDat)){
+    if(listCtl$IndexAgeDat[i] > 0) {
+      Vtemp = fVector[cV:(cV + listCtl$IndexAgeDat[i]*nBinAge - 1)]
+      Mtemp = matrix(Vtemp, nrow = listCtl$IndexAgeDat[i], byrow = TRUE)
+      listCtl[[paste0("Index_", i, "_AgeMatrix")]] = Mtemp
+      cV = cV + listCtl$IndexAgeDat[i]*nBinAge
+    }
+  }
+  
+  for(i in seq_along(listCtl$IndexLenDat)){
+    if(listCtl$IndexLenDat[i] > 0) {
+      Vtemp = fVector[cV:(cV + listCtl$IndexLenDat[i]*nBinLen - 1)]
+      Mtemp = matrix(Vtemp, nrow = listCtl$IndexLenDat[i], byrow = TRUE)
+      listCtl[[paste0("Index_", i, "_LengthMatrix")]] = Mtemp
+      cV = cV + listCtl$IndexLenDat[i]*nBinLen
+    }
+  }
+  
+  nInd = as.numeric(listCtl$nIndex)
+  for(i in 1:nInd){
+    Vtemp = fVector[cV:(cV + nYears*nBinAge - 1)]
+    Mtemp = matrix(Vtemp, nrow = nYears, byrow = TRUE)
+    listCtl[[paste0("Index_", i, "_wt-at-age")]] = Mtemp
+    cV = cV + nYears*nBinAge
+  }
+  
+  listCtl$monthSpaw = fVector[cV]; cV = cV + 1
+
+  listCtl$LastAge = as.numeric(listCtl$LastAge)
+
+    Vtemp = fVector[cV:(cV + (listCtl$LastAge^2) - 1)]
+    Mtemp = matrix(Vtemp, nrow = listCtl$LastAge, byrow = TRUE)
+    listCtl$ageErrorMatrix = Mtemp
+  
+  posChar = which(names(listCtl) == "nameFish" | names(listCtl) == "nameIndex")
+  lenList = length(listCtl)
+  finList = 1:lenList
+  finList = finList[-c(posChar)]
+  
+  for(i in finList){
+    class(listCtl[[i]]) = "numeric"
+  }
+  
+  return(listCtl)
+  
+}
+
 .read.ctlMS = function(filename, info, infoDat){
 
 Fishery = as.vector(info$fisheryNames)
