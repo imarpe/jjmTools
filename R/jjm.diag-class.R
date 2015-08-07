@@ -55,14 +55,19 @@ print.summary.jjm.diag = function(x, ...) {
   return(invisible())
 }
 
-.plotDiagVar = function(x, fleet=NULL, ...) {
+.plotDiagVar = function(x, fleet=NULL, plot=TRUE, ...) {
   if(!is.null(fleet) & all(fleet %in% names(x))) x = x[fleet]
-  if(inherits(x, "trellis")) print(update(x, ...)) else 
-    lapply(x, FUN=.plotDiagVar, fleet=NULL, ...)
-  return(invisible())
+  if(inherits(x, "trellis")) {
+    x = update(x, ...) 
+    if(isTRUE(plot)) print(x) 
+    } else x = lapply(x, FUN=.plotDiagVar, fleet=NULL, ...)
+  
+  out = if(isTRUE(plot)) NULL else x
+  
+  return(invisible(out))
 }
 
-.plotDiag = function(x, var=NULL, fleet=NULL, ...) {
+.plotDiag = function(x, var=NULL, fleet=NULL, plot=TRUE, ...) {
   
   if(is.null(var)) var = names(x)
   
@@ -75,14 +80,23 @@ print.summary.jjm.diag = function(x, ...) {
     stop(msg)
   }
   
-  for(ivar in var) .plotDiagVar(x[[ivar]], fleet=fleet, ...)
+  if(isTRUE(plot)) {
+    for(ivar in var) .plotDiagVar(x[[ivar]], fleet=fleet, plot=plot, ...)
+    return(invisible())
+  }
+  
+  out = NULL
+  
+  for(ivar in var) 
+    out = c(out, .plotDiagVar(x[[ivar]], fleet=fleet, plot=plot, ...))
    
-  return(invisible())
+  return(invisible(out))
+  
 }
 
 
 plot.jjm.diag = function(x, what = c("data", "output"), model=NULL, stock=NULL, 
-                         var=NULL, fleet=NULL, ...) {
+                         var=NULL, fleet=NULL, plot=TRUE, ...) {
   what = tolower(what)
   
   if(any(grepl(pattern = "input", x=what))) {
@@ -100,7 +114,8 @@ plot.jjm.diag = function(x, what = c("data", "output"), model=NULL, stock=NULL,
     if(is.null(stock)) stocks = names(x[[imodel]])
     for(istock in stocks)
       for(i in what)
-        .plotDiag(x=x[[imodel]][[istock]][[i]], var=var, fleet=fleet, ...)
+        .plotDiag(x=x[[imodel]][[istock]][[i]], var=var, fleet=fleet, 
+                  plot=plot, ...)
     
   }
     
