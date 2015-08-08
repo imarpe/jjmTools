@@ -55,45 +55,6 @@ print.summary.jjm.diag = function(x, ...) {
   return(invisible())
 }
 
-.plotDiagVar = function(x, fleet=NULL, plot=TRUE, ...) {
-  if(!is.null(fleet) & all(fleet %in% names(x))) x = x[fleet]
-  if(inherits(x, "trellis")) {
-    x = update(x, ...) 
-    if(isTRUE(plot)) print(x) 
-    } else x = lapply(x, FUN=.plotDiagVar, fleet=NULL, plot=plot, ...)
-  
-  out = if(isTRUE(plot)) NULL else x
-  
-  return(invisible(out))
-}
-
-.plotDiag = function(x, var=NULL, fleet=NULL, plot=TRUE, ...) {
-  
-  if(is.null(var)) var = names(x)
-  
-  indVar = var %in% names(x)
-
-  if(any(!indVar)) {
-    msg = if(sum(!indVar)==1) 
-      paste("Variable", sQuote(var[!indVar]), "does not exist.") else
-        paste("Variables", sQuote(var[!indVar]), "do not exist.")
-    stop(msg)
-  }
-  
-  if(isTRUE(plot)) {
-    for(ivar in var) .plotDiagVar(x[[ivar]], fleet=fleet, plot=plot, ...)
-    return(invisible())
-  }
-  
-  out = list()
-  
-  for(i in seq_along(var)) 
-    out[[i]] = .plotDiagVar(x[[var[i]]], fleet=fleet, plot=plot, ...)
-   
-  return(invisible(out))
-  
-}
-
 
 plot.jjm.diag = function(x, what = c("data", "output"), model=NULL, stock=NULL, 
                          var=NULL, fleet=NULL, plot=TRUE, ...) {
