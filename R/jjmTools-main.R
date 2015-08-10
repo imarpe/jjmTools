@@ -200,13 +200,14 @@ readExFiles = function(fileName, type, version = "2015MS", parameters = FALSE,
 					   parData, nameFishery, nameIndex, nAges, nStock = NULL){
 	
 	if( type != "data" & type != "control") stop("File must be data or control type")
-	if(is.null(nStock)) stop("The number of stocks is necessary")
 	
 	if(type == "data"){
 		outList = .read.datEx(filename = fileName, version = version)
 	}
 	
 	if(type == "control"){
+		if(is.null(nStock)) stop("The number of stocks is necessary")
+
 		if(parameters){
 			info = list()
 			info$fisheryNames = .splitPor(parData$nameFish)
@@ -243,5 +244,32 @@ writeJJM = function(object, outFile){
 	.writeFiles(object = object, outFile = outFile)
 	
 	return(invisible(NULL))
+	
+}
+
+
+# Read jjm config ---------------------------------------------------------------
+
+readConfig = function(data, control, configName, ...){
+		
+  output <- .getJjmCongif(data = data, control = control, 
+							configName = configName, ...)
+  
+  if(length(configName) > 1)
+    warning("The condition has length > 1 and only the first element will be used")
+  
+  
+  return(output)
+	
+}
+
+
+# Combine jjm config ---------------------------------------------------------------
+
+combineConfig = function(...){
+		
+  output <- .combineConfig(...)
+  
+  return(output)
 	
 }
