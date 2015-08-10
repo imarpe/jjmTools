@@ -1,44 +1,47 @@
 
-
 print.jjm.diag = function(x, ...) {
   
   cat("Model name (s):\n")
+  
+  cat(names(x), "\n")
+  
+  cat("\n")
   
   for(i in seq_along(x)) {
   
   obj = x[[i]]
   
   for(j in seq_along(obj)){
-    
-    OBJ = obj[[j]]  
-  
+    OBJ = obj[[j]]
+    #cat(paste(names(x[[i]])[j]), "\n\n")
+    cat(paste(names(x[[i]])[j]), "Input Plots:\n", paste(OBJ$info$data, collapse = "\n "), "\n\n")
+    cat(paste(names(x[[i]])[j]), "Output Plots:\n", paste(OBJ$info$output, collapse = "\n "), "\n\n")  
     }
   
-  cat(OBJ$info$model, "\n")
-  
   }
-  cat("\n")
   
-#   cat("Input Plots:\n", paste(x[[1]]$info$data, collapse = "\n "), "\n\n")
-#   cat("Output Plots:\n", paste(x[[1]]$info$output, collapse = "\n "), "\n\n")
-  cat("Input Plots:\n", paste(OBJ$info$data, collapse = "\n "), "\n\n")
-  cat("Output Plots:\n", paste(OBJ$info$output, collapse = "\n "), "\n\n")
-
   return(invisible())  
 }
 
+
 summary.jjm.diag = function(object,...) {
   
-  namesPlots = names(object[[1]]$info)[-1]
-  
-  output = lapply(namesPlots, .getResume, object = object[[1]])
-  
+  for(i in seq_along(object)){
+    obj = object[[i]]
+    for(j in seq_along(obj)){
+      OBJ = obj[[j]]
+      namesPlots = names(OBJ$info)[-1]
+      output = lapply(namesPlots, .getResume, object = OBJ)
+    }
+  }
+
   names(output) = namesPlots
   
   class(output) = "summary.jjm.diag"
   
   return(output)  
 }
+
 
 print.summary.jjm.diag = function(x, ...) {
   
