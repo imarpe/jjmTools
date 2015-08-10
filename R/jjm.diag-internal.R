@@ -1964,7 +1964,7 @@
                                   ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
                                   main = "Stock Recruitment")
 								  }
-  
+ 
   pic3 = grid.arrange(pic1, pic2)
   
   return(pic3)
