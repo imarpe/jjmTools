@@ -1933,12 +1933,8 @@
                   # Total biomass
                   if(panel.number() == 1){
                     panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey",
-                                  border = NA)
+                                  border = NA, )
                     panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
-                    #if(endvalue){
-                    #  ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1],0), pos=2, offset=1, cex=0.9,
-                    #        font = 2)
-                    #}
                   }
                   
                   
@@ -1946,10 +1942,6 @@
                   if(panel.number() == 2){
                     panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
                     panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
-                    #if(endvalue){
-                    #  ltext(x=rev(x)[1], y=rev(y)[1], labels=round(rev(y)[1],0), pos=2, offset=1, cex=0.9,
-                    #        font = 2)
-                    #}
                   }
                   
                   
@@ -1973,7 +1965,7 @@
                                   main = "Stock Recruitment")
 								  }
   
-  pic3 = arrangeGrob(pic1, pic2)
+  pic3 = grid.arrange(pic1, pic2)
   
   return(pic3)
 }
