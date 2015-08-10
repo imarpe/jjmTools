@@ -45,7 +45,6 @@ readJJM <- function(model, path = "", output="arc", modelName=model
 
 # Run JJM model -----------------------------------------------------------
 
-
 #' @title Run a JJM model
 #' @description Function to run one or several JJM models
 #' @param models String with the name of the models to be run.
@@ -61,8 +60,7 @@ readJJM <- function(model, path = "", output="arc", modelName=model
 #' model = runJJM(models = "mod2.4")
 runJJM = function(models, path = ".", output="arc", exec="jjm", useGuess=FALSE, 
                   guess=NULL, iprint=100, wait = TRUE, parallel=FALSE, 
-                  temp=NULL, ...)
-{
+                  temp=NULL, ...) {
   
   path   = normalizePath(path)
   # Set working directory in /admb directory to run model
