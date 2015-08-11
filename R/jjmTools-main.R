@@ -9,8 +9,8 @@
 #' @name jjmTools-package
 #' @aliases jjmTools-package jjmTools
 #' @docType package
-#' @author Ricardo Oliveros-Ramos, Wencheng Lau-Medrano, Giancarlo Moron and
-#' Niels Hintzen
+#' @author Ricardo Oliveros-Ramos, Wencheng Lau-Medrano, Giancarlo Moron 
+#' Josymar Torrejon and Niels Hintzen
 #' @seealso Joint Jack Mackerel Repository
 #' \code{\link{https://github.com/SPRFMO/jack_mackerel}}
 #' @keywords jjmTools
@@ -28,20 +28,14 @@ NULL
 #' @param ... Extra arguments
 #' @examples
 #' readJJM(model = "mod2.4")
-readJJM <- function(model, path = "", output="arc", modelName=model 
-					, ...) {
+#' @export
+readJJM = function(model, path = "", output="arc", ...) {
   
-  path <- .getPath(path)
-  
-  output <- .getJjmOutput(path = path, output=output, model = model
-						  , ...)      
-  
-  if(length(modelName) > 1)
-    warning("The condition has length > 1 and only the first element will be used")
-  
+  path = .getPath(path)
+  output = .getJjmOutput(path=path, output=output, model=model, ...)      
+    
   return(output)
 }
-
 
 # Run JJM model -----------------------------------------------------------
 
@@ -58,82 +52,11 @@ readJJM <- function(model, path = "", output="arc", modelName=model
 #' @param ... Arguments passed from \code{system} function.
 #' @examples
 #' model = runJJM(models = "mod2.4")
+#' @export
 runJJM = function(models, ...) {
   UseMethod("runJJM")
 }
 
-.checkExecutable = function(exec, version) {
-  # TO_DO: system.file
-  if(is.null(exec))
-    exec = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
-  
-  exec = normalizePath(exec, mustWork = FALSE)
-  
-  if(!file.exists(exec)) 
-    stop(sprintf("Executable file %s not found.", exec))
-  
-  return(exec)
-  
-}
-
-runJJM.default = function(models, output="arc", exec=NULL, version=NULL, 
-                          useGuess=FALSE, guess=NULL, iprint=100, wait = TRUE, 
-                          parallel=FALSE, temp=NULL, ...) {
-
-  oldwd = getwd()
-  on.exit(setwd(oldwd))
-  
-  output = normalizePath(output, mustWork = FALSE)
-  if(!file.exists(output)) dir.create(output, recursive = TRUE)
-
-  exec   = .checkExecutable(exec=exec, version=version)
-  models = .checkModels(models)
-  guess  = .checkGuess(models, guess, output) 
-  
-  # Run models
-  base  = getwd()
-  start = proc.time() 
-  
-  if(is.null(temp)) temp = tempdir()
-  
-  if(!isTRUE(parallel)) {
-    
-    cat("\nRunning models", paste(models, collapse=", "), "\n")
-    cat("\tStarting at", as.character(Sys.time()), "\n")
-    
-    res = NULL
-    for(i in seq_along(models)) {
-      rtime = .runJJM(model=models[i], output=output, exec=exec, useGuess=useGuess, 
-                      guess=guess[i], iprint=iprint, wait=wait, temp=temp, ...)
-      res = c(res, rtime)  
-    }
-    
-  } else {
-    
-    cat("\nRunning models", paste(models, collapse=", "), "in parallel.\n")
-    cat("\tStarting at", as.character(Sys.time()), "\n")
-    tempDir = tempdir()
-    res = foreach(i=seq_along(models), .combine=c) %dopar% {
-      setwd(base)
-      .runJJM(model=models[i], output=output, exec=exec, useGuess=useGuess, 
-              guess=guess[i], iprint=iprint, wait=wait, temp=temp, ...)  
-    }  
-    
-  }
-  
-  setwd(base)
-  cat("\tEnded at", as.character(Sys.time()), "\n")
-  
-  elapsed = proc.time() - start
-  names(res) = models
-  cat("\nModel runs finished.\nTotal models run time:\n")
-  print(res)
-  cat("\nEffective running time:", round(elapsed[3], 1), "s.\n")
-  
-  cat("\n Models were run at", temp, "folder.")
-  
-  return(invisible(temp))
-}
 
 # Diagnostics -------------------------------------------------------------
 
@@ -144,7 +67,8 @@ runJJM.default = function(models, output="arc", exec=NULL, version=NULL,
 #' @examples
 #' model <- readJJM(modelName = "mod2.4")
 #' diagnostics(outputObject = model)
-diagnostics <- function(outputObject, ...) {
+#' @export
+diagnostics = function(outputObject, ...) {
   
   # Take an output object and get diagnostic plots extracting outputs, data and YPR
   output = list()
@@ -194,10 +118,11 @@ diagnostics <- function(outputObject, ...) {
 #' mod2 <- runJJM(modelName = "mod2.2")
 #' mod3 <- runJJM(modelName = "mod2.3")
 #' 
-#' mod_123 <- combineModels(mod1, mod2, mod3)
-combineModels <- function(...)
+#' mod_123 = combineModels(mod1, mod2, mod3)
+#' @export
+combineModels = function(...)
 {
-  output <- .combineModels(...)
+  output = .combineModels(...)
   
   return(output)
 }
