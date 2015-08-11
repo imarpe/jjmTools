@@ -58,27 +58,36 @@ readJJM <- function(model, path = "", output="arc", modelName=model
 #' @param ... Arguments passed from \code{system} function.
 #' @examples
 #' model = runJJM(models = "mod2.4")
-runJJM = function(models, path = ".", output="arc", exec="jjm", useGuess=FALSE, 
-                  guess=NULL, iprint=100, wait = TRUE, parallel=FALSE, 
-                  temp=NULL, ...) {
+runJJM = function(models, ...) {
+  UseMethod("runJJM")
+}
+
+.checkExecutable = function(exec, version) {
+  # TO_DO: system.file
+  if(is.null(exec))
+    exec = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
   
-  path   = normalizePath(path)
-  # Set working directory in /admb directory to run model
+  exec = normalizePath(exec, mustWork = FALSE)
+  
+  if(!file.exists(exec)) 
+    stop(sprintf("Executable file %s not found.", exec))
+  
+  return(exec)
+  
+}
+
+runJJM.default = function(models, output="arc", exec=NULL, version=NULL, 
+                          useGuess=FALSE, guess=NULL, iprint=100, wait = TRUE, 
+                          parallel=FALSE, temp=NULL, ...) {
+
   oldwd = getwd()
-  setwd(path)
   on.exit(setwd(oldwd))
-  output = normalizePath(output, mustWork = FALSE)
-  if(!file.exists(output)) dir.create(output)
-
-  exec = gsub("\\.exe$", "", exec)
   
-  # Set lower case for model name and filter repeated names
-  models = .checkModels(models)
-  if(length(models)<1) {
-    cat("No models to be run.")
-    return(invisible())
-  }
+  output = normalizePath(output, mustWork = FALSE)
+  if(!file.exists(output)) dir.create(output, recursive = TRUE)
 
+  exec   = .checkExecutable(exec=exec, version=version)
+  models = .checkModels(models)
   guess  = .checkGuess(models, guess, output) 
   
   # Run models

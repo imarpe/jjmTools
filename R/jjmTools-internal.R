@@ -1984,6 +1984,9 @@ if(Projections){
     message(msg)
     models = models[check]
   }
+  
+  if(length(models)<1) stop("No models to be run.")
+
   return(models)
 }
 
@@ -2011,14 +2014,28 @@ if(Projections){
   
   ctl = paste0(model, ".ctl") # ctl file
   dat = .getDatFile(ctl)
-  execs = c("jjm", "jjm.exe")
-  jjm = execs[file.exists(execs)]
+
+  jjm = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
   
   file.copy(from=ctl, to=tmpDir, overwrite=TRUE)
   file.copy(from=dat, to=tmpDir, overwrite=TRUE)
-  file.copy(from=jjm, to=tmpDir, overwrite=TRUE)
+  file.copy(from=exec, to=file.path(tmpDir, jjm), overwrite=TRUE)
   
   return(tmpDir)
+  
+}
+
+.checkExecutable = function(exec, version) {
+  # TO_DO: system.file
+  if(is.null(exec))
+    exec = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
+  
+  exec = normalizePath(exec, mustWork = FALSE)
+  
+  if(!file.exists(exec)) 
+    stop(sprintf("Executable file %s not found.", exec))
+  
+  return(exec)
   
 }
 
@@ -2029,16 +2046,17 @@ if(Projections){
 
 .runJJM = function(model, output, exec, useGuess, guess, iprint, wait, temp=NULL, ...) {
   
-  cat("\nRunning model", model, "|", 
-      as.character(Sys.time()), "\n")
+  cat("\nRunning model", model, "|", as.character(Sys.time()), "\n")
 
   tmpDir = .setParallelJJM(model=model, exec=exec, tmpDir=temp)  
   setwd(tmpDir)
   .cleanad()
+
+  exec = if(Sys.info()[["sysname"]]=="Windows") "jjm" else "./jjm"
   
   jjm = if(isTRUE(useGuess) & !is.na(guess)) {
-    sprintf("%s -nox -ind %s.ctl -ainp %s -iprint %d", 
-            exec, model, guess, iprint)
+    sprintf("%s -nox -ind %s.ctl -ainp %s -iprint %d", exec,
+            model, guess, iprint)
   } else {
     sprintf("%s -nox -ind %s.ctl -iprint %d", exec, model, iprint)
   }
@@ -2050,7 +2068,7 @@ if(Projections){
   cat("\n\tModel run finished. Time elapsed =", elapsed[3],"s.")
   cat("\n\tCopying output files...")
   
-  Files = list.files(pattern = "For_R_[[:digit:]].rep")
+  Files = list.files(pattern = "_R_?[0-9]*\\.rep")
   
   # copy outputs to 'output' folder
   file.copy(from="jjm.par",   to=.to(".par",   output, model), overwrite = TRUE)
@@ -2059,7 +2077,7 @@ if(Projections){
   file.copy(from="jjm.cor",   to=.to(".cor",   output, model), overwrite = TRUE)
   file.copy(from="fprof.yld", to=.to(".yld",   output, model), overwrite = TRUE)
   
-  for(i in seq_along(Files)){
+  for(i in seq_along(Files)) {
 	file.copy(from = Files[i], 
 			  to=.to(paste0("_", i, "_R.rep"), output, model), overwrite = TRUE)
   }
