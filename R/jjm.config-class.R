@@ -21,7 +21,7 @@ print.summary.jjm.config = function(x, ...) {
 
 # runJJM ------------------------------------------------------------------
 
-runJJM.default = function(models, output="arc", exec=NULL, version=NULL, 
+runJJM.default = function(models, path=NULL, output="results", input=NULL, exec=NULL, version=NULL, 
                           useGuess=FALSE, guess=NULL, iprint=100, wait = TRUE, 
                           parallel=FALSE, temp=NULL, ...) {
   
@@ -30,6 +30,8 @@ runJJM.default = function(models, output="arc", exec=NULL, version=NULL,
   
   output = normalizePath(output, mustWork = FALSE)
   if(!file.exists(output)) dir.create(output, recursive = TRUE)
+  
+  if(!is.null(path)) models = file.path(path, models)
   
   exec   = .checkExecutable(exec=exec, version=version)
   models = .checkModels(models)
@@ -48,8 +50,9 @@ runJJM.default = function(models, output="arc", exec=NULL, version=NULL,
     
     res = NULL
     for(i in seq_along(models)) {
-      rtime = .runJJM(model=models[i], output=output, exec=exec, useGuess=useGuess, 
-                      guess=guess[i], iprint=iprint, wait=wait, temp=temp, ...)
+      rtime = .runJJM(model=models[i], output=output, input=input, exec=exec, 
+                      useGuess=useGuess, guess=guess[i], iprint=iprint, 
+                      wait=wait, temp=temp, ...)
       res = c(res, rtime)  
     }
     

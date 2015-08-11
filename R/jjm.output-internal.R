@@ -757,3 +757,32 @@
   return(pic)
 	
 }
+
+.getInfo = function(data, output, version, model) {
+  info.data   = list(file = attr(data, "filename"), 
+                     variables = length(names(data)), 
+                     year=c(data$years[1], data$years[2]),
+                     age = c(data$ages[1], data$ages[2]), 
+                     length = c(data$lengths[1], data$lengths[2]),
+                     version = version)
+  
+  indices = NULL
+  fisheries = NULL
+  
+  for(i in seq_along(output)){
+    tempI = output[[i]]$Index_names
+    tempF = output[[i]]$Fshry_names
+    indices = c(indices, tempI)
+    fisheries = c(fisheries, tempF)
+  }
+  
+  indices = unique(indices)
+  fisheries = unique(fisheries)
+  
+  info.output = list(model=model, fisheryNames=fisheries, modelYears=output$Yr,
+                     indexModel=indices, nStock=length(output))
+  
+  info = list(data = info.data, output = info.output)
+  
+  return(info)
+}

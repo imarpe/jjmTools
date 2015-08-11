@@ -1,98 +1,50 @@
 
 .getJjmOutput = function(path, output, model, ...) {
   
-  # Define path of input
+  # paths
   inputPath   = path
-
+  ctl = paste0(model, ".ctl")
+  dat = .getDatFile(ctl, input=NULL) # path to dat file
+  yld = file.path(output, paste0(model, ".yld")) # add path
+  par = paste0(inputPath, "/arc/", model, ".par")
   
-  Files = list.files(path = output, 
-					 pattern = paste0(model, ".*_R.rep"))
+  # basic info
+  modelName = .getModelName(ctl)
+  version = .versionJJM(ctl)
   
-  # Set files .rep and .yld
-  outpts = NULL
-  for(i in seq_along(Files)){
-	temp = file.path(output, Files[i])
-	outpts = c(outpts, temp) 	
-  }
+  Files = list.files(path = output, pattern = paste0(model, ".*_R.rep"))
+  Files = file.path(output, Files)
+  necesaryFiles = file.path(inputPath, c(ctl, Files))
   
-  
-  yprName     = file.path(output, paste0(model, ".yld"))
-  ypr         = .readYPR(file.path(inputPath, yprName))  
-	
-  # Verify if files exist
-  necesaryFiles = c(paste0(model, ".ctl"), outpts)
-  necesaryFiles = file.path(inputPath, necesaryFiles)
-
   for(ifile in necesaryFiles)
     if(!file.exists(ifile))
-      stop(paste0("File", ifile, " doesn't exist, please check the name or the path."))
+      stop(paste0("File ", ifile, " doesn't exist, please check the name or the path."))
+  
+  data  = .readDat(filename = file.path(inputPath, dat), version=version)
+  control = .readCtl(filename=ctl, info, version=version)
+  parameters = .readPar(filename=par, control=control, info=info, version=version)
   
   # Read files .rep and .yld
-  outputs = list(length(Files))
-  for(i in seq_along(Files)){
-	  outputs[[i]] = readList(file.path(inputPath, outpts[i]))
-	  outputs[[i]]$YPR = ypr
+  
+  .readOutputsJJM = function(files, yld=NULL) {
+    ypr = if(!is.null(yld)) .readYPR(yld) else NULL # should be a list by stock
+    outputs = list(length(files))
+    for(i in seq_along(files)) {
+      outputs[[i]] = readList(file.path(inputPath, files[i])) # add validation
+      outputs[[i]]$YPR = ypr
+    }
+    names(outputs) = paste0("Stock_", 1:length(files)) # Puede ser modificado cuando se lea el ctl
+    
   }
   
-  # Extract asociated .dat file
-  nameD = scan(file = file.path(inputPath, paste0(model, ".ctl")), nlines = 10, 
-                      what = character(), sep = "\n", quiet = TRUE,
-					  comment.char = "#")
-  nameD = nameD[! nameD %in% ""]
-  dataName    = nameD
-  modelName   = gsub(x = dataName[2], pattern = " ", replacement = "")
-  dataName    = gsub(x = dataName[1], pattern = " ", replacement = "")
+  info = .getInfo(data=data, output=outputs, version=version, model=modelName)
   
-  # Find version:
-  version = .versionJJM(head = nameD)
-  
-  # Read .dat file
-  data        = .read.dat(filename = file.path(inputPath, dataName),
-						  version = version)
-
-  # Generate extra info
-  iFilename   = file.path(inputPath, dataName)
-  info.data   = list(file = iFilename, variables = length(names(data)), year=c(data$years[1], data$years[2]),
-                      age = c(data$ages[1], data$ages[2]), length = c(data$lengths[1], data$lengths[2]),
-					  version = version)
-  
-  indices = NULL
-  fisheries = NULL
-  
-  for(i in seq_along(Files)){
-		tempI = outputs[[i]]$Index_names
-		tempF = outputs[[i]]$Fshry_names
-	    indices = c(indices, tempI)
-	    fisheries = c(fisheries, tempF)
-  }
-  
-  indices = unique(indices)
-  fisheries = unique(fisheries)
-  
-  info.output = list(model = modelName, fisheryNames = fisheries, modelYears = outputs$Yr,
-                     indexModel = indices, nStock = length(Files))
-  
-  #read control file
-  if(version == "2015MS"){ control = .read.ctlMS(filename = file.path(inputPath, paste0(model, ".ctl")),
-												 info = info.output, infoDat = info.data) }
-	else { control = .read.ctl(filename = file.path(inputPath, paste0(model, ".ctl")),
-							   info = info.output, infoDat = info.data) }
-  
-  #read par file
-  filePar = paste0(inputPath, "/arc/", model, ".par")
-  parameters = .read.par(filename = filePar, control = control,
-						   info = info.output, infoDat = info.data, version = version)
-  
-  namesStock = paste0("Stock_", 1:length(Files)) # Puede ser modificado cuando se lea el ctl
-  names(outputs) = namesStock
-  
-  output = list()												
   # Group in a list
-  output[[1]]   = list(info = list(data = info.data, output = info.output),
-                       data = data, control = control, parameters = parameters,
-					   output = outputs)
-  names(output) = modelName				  
-  
+
+  output = list()  											
+  output[[modelName]] = list(info = info, data = data, control = control, 
+                             parameters = parameters, output = outputs)
+				  
   # Define jjm.output class
   class(output) = c("jjm.output")
   
