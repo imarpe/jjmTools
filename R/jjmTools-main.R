@@ -29,7 +29,7 @@ NULL
 #' @examples
 #' readJJM(model = "mod2.4")
 #' @export
-readJJM = function(model, path = "", output="arc", ...) {
+readJJM = function(model, path = "", output="results", input=NULL, ...) {
   
   path = .getPath(path)
   output = .getJjmOutput(path=path, output=output, model=model, ...)      

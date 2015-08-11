@@ -2006,13 +2006,13 @@ if(Projections){
   return(guess)
 }
 
-.setParallelJJM = function(model, exec, tmpDir=NULL) {
+.setParallelJJM = function(model, input, exec, tmpDir=NULL) {
   
   if(is.null(tmpDir)) tmpDir = tempdir()
   tmpDir = file.path(tmpDir, model)
   if(!file.exists(tmpDir)) dir.create(tmpDir)
   
-  ctl = paste0(model, ".ctl") # ctl file
+  ctl = file.path(input, paste0(model, ".ctl")) # ctl file
   dat = .getDatFile(ctl)
 
   jjm = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
@@ -2041,14 +2041,17 @@ if(Projections){
 
 .getDatFile = function(ctl) {
   dat = scan(ctl, nlines=1, what="character", quote = "#")
+  dat = normalizePath(file.path(dirname(ctl), dat))
   return(dat)
 }
 
-.runJJM = function(model, output, exec, useGuess, guess, iprint, wait, temp=NULL, ...) {
+.runJJM = function(model, output, input, exec, useGuess, guess, iprint, wait, temp=NULL, ...) {
   
   cat("\nRunning model", model, "|", as.character(Sys.time()), "\n")
 
-  tmpDir = .setParallelJJM(model=model, exec=exec, tmpDir=temp)  
+  input = if(is.null(input)) getwd() else normalizePath(input)
+  
+  tmpDir = .setParallelJJM(model=model, input=input, exec=exec, tmpDir=temp)  
   setwd(tmpDir)
   .cleanad()
 
