@@ -62,20 +62,6 @@ runJJM = function(models, ...) {
   UseMethod("runJJM")
 }
 
-.checkExecutable = function(exec, version) {
-  # TO_DO: system.file
-  if(is.null(exec))
-    exec = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
-  
-  exec = normalizePath(exec, mustWork = FALSE)
-  
-  if(!file.exists(exec)) 
-    stop(sprintf("Executable file %s not found.", exec))
-  
-  return(exec)
-  
-}
-
 runJJM.default = function(models, output="arc", exec=NULL, version=NULL, 
                           useGuess=FALSE, guess=NULL, iprint=100, wait = TRUE, 
                           parallel=FALSE, temp=NULL, ...) {
