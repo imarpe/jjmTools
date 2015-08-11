@@ -266,7 +266,7 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 ```
 
 
-```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("object", "Uncertainty of key parameters"), fig.pos='h', results='hide', warning=FALSE}
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("object", "Uncertainty of key parameters"), fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "uncertaintyKeyParams",
       scales = list(x = list(cex = 2), y = list(cex = 2)), 
       main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "CV", cex = 2),
@@ -279,7 +279,7 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 ```
 
 
-```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("object", "Estimated mature biomass (solid line) and the estimated inmature biomass measured in thousand tonnes"), fig.pos='h', results='hide', warning=FALSE}
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("object", "Estimated mature biomass (solid line) and the estimated inmature biomass measured in thousand tonnes"), fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "matureInmatureFishes",
       scales = list(x = list(cex = 2), y = list(cex = 2)), 
       main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "Biomass in kt", cex = 2),
@@ -305,7 +305,7 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 ```
 
 
-```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("object", "Estimated total biomass (solid line) and the estimated total biomass that would have occurred if no fishing had taken place, 1970-2014"), fig.pos='h', results='hide', warning=FALSE}
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("object", "Estimated total biomass (solid line) and the estimated total biomass that would have occurred if no fishing had taken place, 1970-2014"), fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "fishedUnfishedBiomass",
       scales = list(x = list(cex = 2), y = list(cex = 2)), 
       main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "Total Biomass", cex = 2),
