@@ -1,13 +1,14 @@
 ---
 title: "STOCK SUMMARY (Joint Jack Mackerel Model)"
-author: "INSTITUTO DEL MAR DEL PERU (IMARPE)"
+author: ''
 date: '`r Sys.Date()`'
 output:
+  html_document:
+    fig_caption: yes
   pdf_document:
     fig_caption: yes
     keep_tex: yes
-  html_document:
-    fig_caption: yes
+    number_sections: yes
   word_document:
     fig_caption: yes
 header-includes:
@@ -15,9 +16,11 @@ header-includes:
 - \usepackage{fullpage}
 - \usepackage{fancyhdr}
 - \usepackage[utf8]{inputenc}
+- \renewcommand{\thesection}{\Roman{section}.}
 ---
 
 ```{r setup, cache=FALSE, include=FALSE}
+library(knitr)
 output <- opts_knit$get("rmarkdown.pandoc.to")
 usingLatex <- (output=="latex") 
 
@@ -58,7 +61,7 @@ tab <- local({
 ```
 
 \begin{centering}
-\section{Section one: Fit of catch data}
+\section{Fit of catch data}
 \end{centering}
 ```{r echo=FALSE, fig.width = 15, fig.height = 14, fig.cap = fig$cap("object", "Total catch estimation over time."),  fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "totalCatch", 
@@ -124,7 +127,7 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 
 \newpage
 \begin{centering}
-\section{Section two: Fit of survey data}
+\section{Fit of survey data}
 \end{centering}
 \vspace{2cm}
 ```{r echo=FALSE, fig.width = 12, fig.height = 11, fig.cap = fig$cap("object", "Model fit to different indices. Vertical bars represent 2 standard deviations around the observations."), fig.pos='h', results='hide', warning=FALSE}
@@ -170,7 +173,7 @@ do.call(grid.arrange, c(pic, list(heights = c(2, 1))))
 
 \newpage
 \begin{centering}
-\section{Section three: Fleet and Survey Sel and $F$}
+\section{Fleet and Survey Sel and $F$}
 \end{centering}
 \vspace{2cm}
 ```{r echo=FALSE, fig.width = 12, fig.height = 11, fig.cap = fig$cap("object", "Estimates of selectivity by fishery over time. Each cell represents a 5-year period."), fig.pos='h', results='hide', warning=FALSE}
@@ -247,7 +250,7 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 
 \newpage
 \begin{centering}
-\section{Section four: Stock summary}
+\section{Stock summary}
 \end{centering}
 \vspace{2cm}
 ```{r echo=FALSE, fig.width = 12, fig.height = 11, fig.cap = fig$cap("object", "Summary of stock assessment. Biomass (total and unfished) is measured in thousand tonnes, recruitment is measured in thousands,  and harvest (fishing mortality) as a rate per year."), fig.pos='h', results='hide', warning=FALSE}
