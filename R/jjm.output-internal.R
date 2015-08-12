@@ -786,3 +786,15 @@
   
   return(info)
 }
+
+.readOutputsJJM = function(files, yld=NULL) {
+  ypr = if(!is.null(yld)) .readYPR(yld) else NULL # should be a list by stock
+  outputs = list()
+  for(i in seq_along(files)) {
+    outputs[[i]] = readList(files[i]) # add validation
+    outputs[[i]]$YPR = ypr
+  }
+  names(outputs) = paste0("Stock_", 1:length(files)) # Puede ser modificado cuando se lea el ctl
+  return(outputs)
+  
+}
