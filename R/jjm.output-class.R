@@ -1,5 +1,5 @@
 
-.getJjmOutput = function(path, output, model, ...) {
+.getJjmOutput = function(path, output, input, model, ...) {
   
   # paths
   inputPath   = path
@@ -7,49 +7,28 @@
   dat = .getDatFile(ctl, input=NULL) # path to dat file
   yld = file.path(output, paste0(model, ".yld")) # add path
   par = paste0(inputPath, "/arc/", model, ".par")
-  
   # basic info
   modelName = .getModelName(ctl)
   version = .versionJJM(ctl)
   
-  Files = list.files(path = output, pattern = paste0(model, ".*_R.rep"))
-  Files = file.path(output, Files)
-  necesaryFiles = file.path(inputPath, c(ctl, Files))
-  
-  for(ifile in necesaryFiles)
-    if(!file.exists(ifile))
-      stop(paste0("File ", ifile, " doesn't exist, please check the name or the path."))
+  files = list.files(path = output, pattern = paste0(model, ".*_R.rep"))
+  files = file.path(output, Files)
   
   data  = .readDat(filename = file.path(inputPath, dat), version=version)
   control = .readCtl(filename=ctl, info, version=version)
   parameters = .readPar(filename=par, control=control, info=info, version=version)
   
   # Read files .rep and .yld
-  
-  .readOutputsJJM = function(files, yld=NULL) {
-    ypr = if(!is.null(yld)) .readYPR(yld) else NULL # should be a list by stock
-    outputs = list(length(files))
-    for(i in seq_along(files)) {
-      outputs[[i]] = readList(file.path(inputPath, files[i])) # add validation
-      outputs[[i]]$YPR = ypr
-    }
-    names(outputs) = paste0("Stock_", 1:length(files)) # Puede ser modificado cuando se lea el ctl
-    
-  }
-  
+  outputs = .readOutputsJJM(files=files, yld=yld)
   info = .getInfo(data=data, output=outputs, version=version, model=modelName)
   
   # Group in a list
-
   output = list()  											
   output[[modelName]] = list(info = info, data = data, control = control, 
                              parameters = parameters, output = outputs)
 				  
-  # Define jjm.output class
   class(output) = c("jjm.output")
-  
   return(output)
-  
 }
 
 print.jjm.output = function(x, ...) {

@@ -65,7 +65,7 @@ runJJM = function(models, ...) {
 #' @param outputObject Object ob class outputs.
 #' @param ... Extra arguments
 #' @examples
-#' model <- readJJM(modelName = "mod2.4")
+#' model = readJJM(modelName = "mod2.4")
 #' diagnostics(outputObject = model)
 #' @export
 diagnostics = function(outputObject, ...) {
