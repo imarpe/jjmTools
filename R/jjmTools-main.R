@@ -29,12 +29,34 @@ NULL
 #' @examples
 #' readJJM(model = "mod2.4")
 #' @export
-readJJM = function(model, path = "", output="results", input=NULL, ...) {
+readJJM = function(model, path = NULL, output="results", input=NULL, 
+                   version="2015MS", ...) {
   
-  path = .getPath(path)
-  output = .getJjmOutput(path=path, output=output, model=model, ...)      
-    
-  return(output)
+  ctl  = .getCtlFile(model=model, path=path) # path to ctl file
+  dat  = .getDatFile(ctl=ctl, input=input) # path to dat file
+  yld  = .getYldFile(model=model, output=output)
+  par  = .getParFile(model=model, output=output)
+  reps = .getRepFiles(model=model, output=output)
+
+  # basic info
+  
+  modelName = .getModelName(ctl)  
+
+  outputs    = .readOutputsJJM(files=reps, yld=yld)
+  data       = .readDat(dat=dat, version=.versionJJM(ctl))
+  info       = .getInfo(data=data, output=outputs, model=modelName)
+  control    = .readCtl(ctl=ctl, info=info)
+  parameters = .readPar(par=par, control=control, info=info)
+  
+  
+  # Group in a list
+  output = list()    										
+  output[[modelName]] = list(info = info, data = data, control = control, 
+                             parameters = parameters, output = outputs)
+  
+  class(output) = c("jjm.output")
+  return(output)  
+  
 }
 
 # Run JJM model -----------------------------------------------------------

@@ -21,9 +21,10 @@ print.summary.jjm.config = function(x, ...) {
 
 # runJJM ------------------------------------------------------------------
 
-runJJM.default = function(models, path=NULL, output="results", input=NULL, exec=NULL, version=NULL, 
-                          useGuess=FALSE, guess=NULL, iprint=100, wait = TRUE, 
-                          parallel=FALSE, temp=NULL, ...) {
+runJJM.default = function(models, path=NULL, output="results", input=NULL, 
+                          exec=NULL, version=NULL, useGuess=FALSE, guess=NULL, 
+                          iprint=100, wait = TRUE, parallel=FALSE, 
+                          temp=NULL, ...) {
   
   oldwd = getwd()
   on.exit(setwd(oldwd))

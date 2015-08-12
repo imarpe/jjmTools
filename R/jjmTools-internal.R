@@ -2,9 +2,9 @@
 # Internal functions ------------------------------------------------------
 
 # Code to read in final data ----------------------------------------------
-.readDat = function(filename, version) {
+.readDat = function(dat, version) {
   ###-Read in the raw datafile-###
-  res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
+  res1      = scan(file = dat, what = 'numeric', quiet = TRUE, sep = "\n",
                     comment.char = "#", allowEscapes = TRUE)
   res1      = strsplit(res1, "\t")
   
@@ -260,7 +260,8 @@
   cols$Pageerr[] = matrix(na.omit(.an(unlist(res1[counter:(counter + nA - 1)]))),
                            ncol = nA, nrow = nA, byrow = TRUE); counter = counter + nA
   
-  attr(cols, which = "filename") = filename
+  attr(cols, which = "filename") = dat
+  attr(cols, which = "version")  = version
   return(cols)
   
 }
@@ -467,15 +468,22 @@
   
 }
 
-.readCtl = function(ctl, info, version) {
+.readCtl = function(ctl, info) {
+  
+  version = .versionJJM(ctl)
+  
   control = if(version == "2015MS")
     .read.ctlMS(filename = ctl, info=info$output, infoDat=info$data) else 
       .read.ctl(filename = ctl, info=info$output, infoDat=info$data)
+  
+  attr(control, which = "filename") = ctl
+  attr(control, which = "version")  = version
+  
   return(control)
 }
 
 
-.read.ctlMS = function(filename, info, infoDat){
+.read.ctlMS = function(filename, info, infoDat) {
 
 Fishery = as.vector(info$fisheryNames)
 Index = as.vector(info$indexModel)
@@ -498,10 +506,10 @@ for(i in seq_along(res1)){
 
 listCtl = list()
 cV = 1
-listCtl$dataFile  = fVector[cV] ;cV = cV + 1
-listCtl$modelName = fVector[cV] ;cV = cV + 1
-listCtl$nStocks   = as.numeric(fVector[cV]) ;cV = cV + 1
-listCtl$nameStock = fVector[cV] ;cV = cV + 1
+listCtl$dataFile  = fVector[cV]; cV = cV + 1
+listCtl$modelName = fVector[cV]; cV = cV + 1
+listCtl$nStocks   = as.numeric(fVector[cV]); cV = cV + 1
+listCtl$nameStock = fVector[cV]; cV = cV + 1
 
 
 fVector = fVector[- c(1,2,3,4)]
@@ -545,7 +553,7 @@ for(i in seq_along(listCtl$Nyrs_sr)){
 }
 
 nShift = sum(listCtl$nregbyStock - 1)
-if(nShift == 0) { listCtl$RegShift = NA }
+if(nShift == 0) listCtl$RegShift = NA
 if(nShift > 0) {
 	listCtl$RegShift = fVector[cV:(cV + nShift - 1)]
 }
@@ -627,10 +635,11 @@ listCtl$RW_q_phases = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
 listCtl$RW_nyrs_q   = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
 
 nWalkq = sum(listCtl$RW_nyrs_q)
-if(nWalkq == 0){ 
-listCtl$RW_q_yrs = NA
-listCtl$RW_q_sigmas = NA
-cV = cV }
+if(nWalkq == 0) { 
+  listCtl$RW_q_yrs = NA
+  listCtl$RW_q_sigmas = NA
+  cV = cV
+}
 if(nWalkq > 0)  {
   listCtl$RW_q_yrs = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
   listCtl$RW_q_sigmas = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
@@ -822,14 +831,16 @@ return(listCtl)
 
 }
 
-.readPar = function(filename, control, info, version){
+.readPar = function(par, control, info){
 
-  res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
+  version = attr(control, which = "version")
+  
+  res1      = scan(file = par, what = 'numeric', quiet = TRUE, sep = "\n",
                    comment.char = "#", allowEscapes = TRUE)
   res1      = strsplit(res1, "\t") 
 
   fVector = NULL
-  for(i in seq_along(res1)){
+  for(i in seq_along(res1)) {
     res1[[i]] = paste(res1[[i]], collapse = " ")
     Vector = strsplit(res1[[i]], " ")[[1]]
     Vector = Vector [! Vector %in% ""]
@@ -841,14 +852,14 @@ return(listCtl)
   if(version == "2015MS"){
 	  nReg = listCtl$nregbyStock
 	  nStock = info$output$nStock
-	  nPeriod = info$output$data$year[2] - info$output$data$year[1] + info$output$data$age[2]
+	  nPeriod = info$data$year[2] - info$data$year[1] + info$data$age[2]
 	  diffRec = length(unique(listCtl$RecMatrix))
 	  diffGrow = length(unique(listCtl$GrowMatrix))
 	  diffN = length(unique(listCtl$NMatrix))
   } else {
 	  nReg = 1
 	  nStock = 1
-	  nPeriod = info$output$data$year[2] - info$output$data$year[1] + info$output$data$age[2]
+	  nPeriod = info$data$year[2] - info$data$year[1] + info$data$age[2]
 	  diffRec = 1
 	  diffGrow = 1
 	  diffN = 1
@@ -2052,15 +2063,41 @@ if(Projections){
   
 }
 
+.getCtlFile = function(model, path) {
+  ctl = paste0(model, ".ctl")
+  ctl = if(is.null(path)) ctl else file.path(path, ctl)
+  ctl = normalizePath(ctl, mustWork=FALSE)
+  return(ctl)
+}
+
 .getDatFile = function(ctl, input=NULL) {
-  if(is.null(input)) input = dirname(ctl)
-  dat = scan(ctl, nlines=1, what="character", comment.char = "#")
-  dat = normalizePath(file.path(input, dat))
+  if(is.null(input)) input = dirname(normalizePath(ctl, mustWork=FALSE))
+  dat = scan(ctl, nlines=1, what="character", comment.char = "#", quiet=TRUE)
+  dat = normalizePath(file.path(input, dat), mustWork=FALSE)
   return(dat)
 }
 
+.getOutFile = function(model, output, ext) {
+  out = file.path(output, paste0(model, ext)) # add path
+  out = normalizePath(out)
+  return(out)
+}
+
+.getParFile = function(model, output) .getOutFile(model, output, ext=".par")
+.getYldFile = function(model, output) .getOutFile(model, output, ext=".yld")
+
+.getRepFiles = function(model, output) {
+  output = normalizePath(output, mustWork=FALSE)
+  files = list.files(path = output, pattern = paste0(model, "_[0-9]*_R.rep$"))
+  files = file.path(output, files)    
+  return(files)
+}
+
+
+
 .getModelName = function(ctl) {
-  modelName = scan(ctl, nlines=2, what="character", comment.char = "#")[2]
+  modelName = scan(ctl, nlines=2, what="character", comment.char = "#",
+                   quiet=TRUE)[2]
   modelName = gsub(x = modelName, pattern = " ", replacement = "")
   return(modelName)
 }

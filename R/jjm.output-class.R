@@ -1,35 +1,4 @@
 
-.getJjmOutput = function(path, output, input, model, ...) {
-  
-  # paths
-  inputPath   = path
-  ctl = paste0(model, ".ctl")
-  dat = .getDatFile(ctl, input=NULL) # path to dat file
-  yld = file.path(output, paste0(model, ".yld")) # add path
-  par = paste0(inputPath, "/arc/", model, ".par")
-  # basic info
-  modelName = .getModelName(ctl)
-  version = .versionJJM(ctl)
-  
-  files = list.files(path = output, pattern = paste0(model, ".*_R.rep"))
-  files = file.path(output, Files)
-  
-  data  = .readDat(filename = file.path(inputPath, dat), version=version)
-  control = .readCtl(filename=ctl, info, version=version)
-  parameters = .readPar(filename=par, control=control, info=info, version=version)
-  
-  # Read files .rep and .yld
-  outputs = .readOutputsJJM(files=files, yld=yld)
-  info = .getInfo(data=data, output=outputs, version=version, model=modelName)
-  
-  # Group in a list
-  output = list()  											
-  output[[modelName]] = list(info = info, data = data, control = control, 
-                             parameters = parameters, output = outputs)
-				  
-  class(output) = c("jjm.output")
-  return(output)
-}
 
 print.jjm.output = function(x, ...) {
   
