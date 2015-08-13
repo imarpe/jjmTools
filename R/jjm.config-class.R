@@ -103,6 +103,22 @@ runJJM.default = function(models, path=NULL, output="results", input=NULL,
 }
 
 
-runJJM.jjm.config = function(models, ....) {
+runJJM.jjm.config = function(models, path=NULL, output="results", input=NULL, 
+							exec=NULL, version=NULL, useGuess=FALSE, guess=NULL, 
+							iprint=100, wait = TRUE, parallel=FALSE, 
+							temp=NULL, ...) {
+  
+  modNames = names(models)
+  if(is.null(temp)) temp = tempdir()
+  
+  for(i in seq_along(models)){
+	writeJJM(object = models[[i]]$Dat) 
+  }
+  
+  runJJM.default(models = modNames, path=path, output=output, input=input, 
+                 exec=exec, version=version, useGuess=useGuess, guess=guess, 
+                 iprint=iprint, wait = wait, parallel=parallel, 
+                 temp=temp, ...)
+  
   return(invisible())
 }
