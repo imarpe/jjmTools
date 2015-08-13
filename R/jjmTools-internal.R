@@ -363,7 +363,7 @@
   for(i in 1:nFish){
       Vtemp = fVector[cV:(cV + nYears*nBinAge - 1)]
       Mtemp = matrix(Vtemp, nrow = nYears, byrow = TRUE)
-      listCtl[[paste0("Fishery_", i, "_wt-at-age")]] = Mtemp
+      listCtl[[paste0("Fishery_", i, "_wtatage")]] = Mtemp
       cV = cV + nYears*nBinAge
   }
   
