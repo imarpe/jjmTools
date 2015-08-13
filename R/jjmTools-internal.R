@@ -75,7 +75,7 @@
   }
   
   #cols$Fagesample = matrix(NA, ncol = nF, nrow = nY, 
-                            dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
+  #                          dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   #for(iFs in 1:nF){
   #  if(cols$FnumyearsA[iFs] > 0){
   #    wFyears = rownames(cols$Fageyears)[which(is.na(cols$Fageyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
@@ -85,7 +85,7 @@
   #}
   
   #cols$Flengthsample = matrix(NA, ncol = nF, nrow = nY, 
-                               dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
+  #                             dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   #for(iFs in 1:nF){
   #  if(cols$FnumyearsL[iFs] > 0){
   #    lFyears = rownames(cols$Flengthyears)[which(is.na(cols$Flengthyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
@@ -197,7 +197,7 @@
   }
   
   #cols$Iagesample = matrix(NA, ncol = nI, nrow = nY, 
-                            dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
+  #                          dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
   #for(iSu in 1:nI){
   #  if(cols$Inumageyears[iSu] > 0){
   #    wIyears = rownames(cols$Iyearsage)[which(is.na(cols$Iyearsage[,paste("index", iSu, sep = "")]) == FALSE)]
@@ -301,10 +301,10 @@
   listCtl$Catch   = MCatch
   cV = cV + nFisheries*nYears
   
-  VCatchCV = fVector[cV:(cV + nFisheries*nYears - 1)]
-  MCatchCV = matrix(VCatchCV, nrow = nFisheries, byrow = TRUE)
-  listCtl$CatchCV   = MCatchCV
-  cV = cV + nFisheries*nYears
+  #VCatchCV = fVector[cV:(cV + nFisheries*nYears - 1)]
+  #MCatchCV = matrix(VCatchCV, nrow = nFisheries, byrow = TRUE)
+  #listCtl$CatchCV   = MCatchCV
+  #cV = cV + nFisheries*nYears
   
   listCtl$nYrsFAge = fVector[cV:(cV + nFisheries - 1)]; cV = cV + nFisheries
   listCtl$nYrsFLength = fVector[cV:(cV + nFisheries - 1)]; cV = cV + nFisheries
