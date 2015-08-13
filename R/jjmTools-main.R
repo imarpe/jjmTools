@@ -152,8 +152,10 @@ combineModels = function(...)
 
 # Read external files ---------------------------------------------------------------
 
-readExFiles = function(fileName, type, version = "2015MS", parameters = FALSE,  
+readExFiles = function(fileName, type, path = NULL, version = "2015MS", parameters = FALSE,  
 					   parData, nameFishery, nameIndex, nAges, nStock = NULL){
+	
+    fileName = if(is.null(path)) fileName else file.path(path, fileName)
 	
 	if( type != "data" & type != "control") stop("File must be data or control type")
 	
@@ -195,7 +197,7 @@ readExFiles = function(fileName, type, version = "2015MS", parameters = FALSE,
 
 # Write jjm files ---------------------------------------------------------------
 
-writeJJM = function(object, outFile){
+writeJJM = function(object, outFile, path = NULL){
 		
 	.writeFiles(object = object, outFile = outFile)
 	

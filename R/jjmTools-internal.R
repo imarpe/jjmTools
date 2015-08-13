@@ -301,10 +301,10 @@
   listCtl$Catch   = MCatch
   cV = cV + nFisheries*nYears
   
-  #VCatchCV = fVector[cV:(cV + nFisheries*nYears - 1)]
-  #MCatchCV = matrix(VCatchCV, nrow = nFisheries, byrow = TRUE)
-  #listCtl$CatchCV   = MCatchCV
-  #cV = cV + nFisheries*nYears
+  VCatchCV = fVector[cV:(cV + nFisheries*nYears - 1)]
+  MCatchCV = matrix(VCatchCV, nrow = nFisheries, byrow = TRUE)
+  listCtl$CatchCV   = MCatchCV
+  cV = cV + nFisheries*nYears
   
   listCtl$nYrsFAge = fVector[cV:(cV + nFisheries - 1)]; cV = cV + nFisheries
   listCtl$nYrsFLength = fVector[cV:(cV + nFisheries - 1)]; cV = cV + nFisheries
@@ -438,7 +438,7 @@
   for(i in 1:nInd){
     Vtemp = fVector[cV:(cV + nYears*nBinAge - 1)]
     Mtemp = matrix(Vtemp, nrow = nYears, byrow = TRUE)
-    listCtl[[paste0("Index_", i, "_wt-at-age")]] = Mtemp
+    listCtl[[paste0("Index_", i, "_wtatage")]] = Mtemp
     cV = cV + nYears*nBinAge
   }
   
