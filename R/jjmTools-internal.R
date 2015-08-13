@@ -44,10 +44,10 @@
                               dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
   cols$Fcaton[]     = matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))),
                               ncol = nF, nrow = nY); counter = counter + nF
-  #cols$Fcatonerr    = matrix(NA, ncol = nF, nrow = nY, dimnames = list(years = Ys[1]:Ys[2],
-  #                                                                     paste("fishery", 1:nF, sep = "")))
-  #cols$Fcatonerr[]  = matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))), 
-  #                            ncol = nF, nrow = nY); counter = counter + nF
+  cols$Fcatonerr    = matrix(NA, ncol = nF, nrow = nY, dimnames = list(years = Ys[1]:Ys[2],
+                                                                       paste("fishery", 1:nF, sep = "")))
+  cols$Fcatonerr[]  = matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))), 
+                              ncol = nF, nrow = nY); counter = counter + nF
   cols$FnumyearsA   = matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
   cols$FnumyearsA[] = na.omit(.an(unlist(res1[counter:(counter+nF-1)]))); counter = counter + nF
   cols$FnumyearsL   = matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
@@ -74,25 +74,25 @@
     }
   }
   
-  #cols$Fagesample = matrix(NA, ncol = nF, nrow = nY, 
-  #                          dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
-  #for(iFs in 1:nF){
-  #  if(cols$FnumyearsA[iFs] > 0){
-  #    wFyears = rownames(cols$Fageyears)[which(is.na(cols$Fageyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
-  #    cols$Fagesample[wFyears, paste("fishery", iFs, sep = "")] = na.omit(.an(unlist(res1[counter])))
-  #    counter = counter + 1
-  #  }
-  #}
+  cols$Fagesample = matrix(NA, ncol = nF, nrow = nY, 
+                            dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
+  for(iFs in 1:nF){
+    if(cols$FnumyearsA[iFs] > 0){
+      wFyears = rownames(cols$Fageyears)[which(is.na(cols$Fageyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
+      cols$Fagesample[wFyears, paste("fishery", iFs, sep = "")] = na.omit(.an(unlist(res1[counter])))
+      counter = counter + 1
+    }
+  }
   
-  #cols$Flengthsample = matrix(NA, ncol = nF, nrow = nY, 
-  #                             dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
-  #for(iFs in 1:nF){
-  #  if(cols$FnumyearsL[iFs] > 0){
-  #    lFyears = rownames(cols$Flengthyears)[which(is.na(cols$Flengthyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
-  #    cols$Flengthsample[lFyears, paste("fishery", iFs, sep = "")] = na.omit(.an(unlist(res1[counter])))
-  #    counter = counter + 1
-  #  }
-  #}
+  cols$Flengthsample = matrix(NA, ncol = nF, nrow = nY, 
+                               dimnames = list(years = Ys[1]:Ys[2], paste("fishery", 1:nF, sep = "")))
+  for(iFs in 1:nF){
+    if(cols$FnumyearsL[iFs] > 0){
+      lFyears = rownames(cols$Flengthyears)[which(is.na(cols$Flengthyears[,paste("fishery", iFs, sep = "")]) == FALSE)]
+      cols$Flengthsample[lFyears, paste("fishery", iFs, sep = "")] = na.omit(.an(unlist(res1[counter])))
+      counter = counter + 1
+    }
+  }
   
   cols$Fagecomp = array(NA, dim = c(nY, nA, nF), 
                          dimnames = list(years = Ys[1]:Ys[2], age = As[1]:As[2], paste("fishery", 1:nF, sep = "")))
@@ -159,14 +159,14 @@
     }
   }
   
-  #cols$Indexerr = matrix(NA, ncol = nI, nrow = nY, dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
-  #for(iSu in 1:nI){
-  #  if(cols$Inumyears[iSu] > 0){
-  #    wIyears = rownames(cols$Iyears)[which(is.na(cols$Iyears[,paste("index", iSu, sep = "")]) == FALSE)]
-  #    cols$Indexerr[wIyears, paste("index", iSu, sep = "")] = na.omit(.an(res1[[counter]]))
-  #    counter = counter + 1
-  #  }
-  #}
+  cols$Indexerr = matrix(NA, ncol = nI, nrow = nY, dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
+  for(iSu in 1:nI){
+    if(cols$Inumyears[iSu] > 0){
+      wIyears = rownames(cols$Iyears)[which(is.na(cols$Iyears[,paste("index", iSu, sep = "")]) == FALSE)]
+      cols$Indexerr[wIyears, paste("index", iSu, sep = "")] = na.omit(.an(res1[[counter]]))
+      counter = counter + 1
+    }
+  }
   
   cols$Inumageyears = matrix(NA, ncol = nI, nrow = 1, dimnames = list("years", paste("index", 1:nI, sep = "")))
   cols$Inumageyears[] = na.omit(.an(unlist(res1[counter:(counter + cols$Inum - 1)])))
@@ -196,15 +196,15 @@
     }
   }
   
-  #cols$Iagesample = matrix(NA, ncol = nI, nrow = nY, 
-  #                          dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
-  #for(iSu in 1:nI){
-  #  if(cols$Inumageyears[iSu] > 0){
-  #    wIyears = rownames(cols$Iyearsage)[which(is.na(cols$Iyearsage[,paste("index", iSu, sep = "")]) == FALSE)]
-  #    cols$Iagesample[wIyears,iSu] = na.omit(.an(res1[[counter]]))
-  #    counter = counter + 1
-  #  }
-  #}
+  cols$Iagesample = matrix(NA, ncol = nI, nrow = nY, 
+                            dimnames = list(years = Ys[1]:Ys[2], paste("index", 1:nI, sep = "")))
+  for(iSu in 1:nI){
+    if(cols$Inumageyears[iSu] > 0){
+      wIyears = rownames(cols$Iyearsage)[which(is.na(cols$Iyearsage[,paste("index", iSu, sep = "")]) == FALSE)]
+      cols$Iagesample[wIyears,iSu] = na.omit(.an(res1[[counter]]))
+      counter = counter + 1
+    }
+  }
   cols$Ipropage = array(NA, dim = c(nY, nA, nI), 
                          dimnames = list(years = Ys[1]:Ys[2], age = As[1]:As[2], paste("index", 1:nI, sep = "")))
   for(iSu in 1:nI){
