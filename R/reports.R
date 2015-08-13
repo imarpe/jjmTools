@@ -1,9 +1,9 @@
 
-report = function(...) {
+report = function(object, format, output, ...) {
   UseMethod("report")
 }
 
-report.jjm.output = function(object, format="latex", Fmult = NULL,
+report.jjm.output = function(object, format="latex", output=NULL, Fmult = NULL,
                              BiomProj = NULL, CapProj = NULL, verbose=TRUE,
                              MRS = NULL, tangle=FALSE, tidy=TRUE, ...) {
   
@@ -14,48 +14,45 @@ report.jjm.output = function(object, format="latex", Fmult = NULL,
   
   modelName = deparse(substitute(object))
   
-  f = system.file("reports", "report-jjm.output.Rmd", package = "jjmTools")
-  knit(f)
+  if(is.null(output)) output = getwd()
+  
+  skeleton = system.file("reports", "report-jjm.output.Rmd", package = "jjmTools")
+  
   if(isTRUE(tangle)) {
-    knit(f, tangle=TRUE)
-    f1 = gsub(pattern = ".Rmd", replacement = "\\.R", f)
+    knit(skeleton, tangle=TRUE)
+    f1 = gsub(pattern = ".Rmd", replacement = "\\.R", skeleton)
     file.rename(from=basename(f1), to=paste0(modelName, ".R"))
   }
-  f2 = gsub(pattern = ".Rmd", replacement = "\\.md", f)
-  f3 = gsub(pattern = ".Rmd", replacement = "\\.pdf", f)
-  pandoc(basename(f2), format=format)
+  
   outputFile = paste0(modelName, "_output.pdf")
-  file.rename(from=basename(f3), to=outputFile)
+  render(skeleton, "pdf_document", output_file=outputFile, output_dir=output)
   
-  if(isTRUE(tidy)) file.remove(basename(f2))
-
-  if(isTRUE(verbose)) shell.exec(outputFile)
+  if(isTRUE(open)) shell.exec(outputFile)
   
-  return(invisible(paste0(modelName, ".pdf")))
+  return(invisible(file.path(output, outputFile)))
+  
 }
 
-report.jjm.diag = function(object, format="latex", tangle=FALSE, tidy=TRUE, verbose=TRUE, ...) {
+report.jjm.diag = function(object, format="latex", output=NULL, tangle=FALSE, 
+                           tidy=TRUE, open=TRUE, ...) {
   
   modelName = deparse(substitute(object))
   
-  f = system.file("reports", "report-jjm.diag.Rmd", package = "jjmTools")
-  knit(f)
+  if(is.null(output)) output = getwd()
+  
+  skeleton = system.file("reports", "report-jjm.diag.Rmd", package = "jjmTools")
+  
   if(isTRUE(tangle)) {
-    knit(f, tangle=TRUE)
-    f1 = gsub(pattern = ".Rmd", replacement = "\\.R", f)
+    knit(skeleton, tangle=TRUE)
+    f1 = gsub(pattern = ".Rmd", replacement = "\\.R", skeleton)
     file.rename(from=basename(f1), to=paste0(modelName, ".R"))
   }
-  f2 = gsub(pattern = ".Rmd", replacement = "\\.md", f)
-  f3 = gsub(pattern = ".Rmd", replacement = "\\.pdf", f)
-  pandoc(basename(f2), format=format)
+  
   outputFile = paste0(modelName, "_diag.pdf")
-  file.rename(from=basename(f3), to=outputFile)
+  render(skeleton, c("all"), output_file=outputFile, output_dir=output)
   
-  if(isTRUE(tidy)) file.remove(basename(f2))
+  if(isTRUE(open)) shell.exec(outputFile)
   
-  if(isTRUE(verbose)) shell.exec(outputFile)
+  return(invisible(file.path(output, outputFile)))
   
-  return(invisible(paste0(modelName, ".pdf")))
-  
-  return(invisible())
 }

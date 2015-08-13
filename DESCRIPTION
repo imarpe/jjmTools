@@ -1,14 +1,14 @@
 Package: jjmTools
 Type: Package
 Title: Graphics and diagnostics tools for SPRFMO's Joint Jack Mackerel model
-Version: 0.2
-Date: 2014-10-05
+Version: 0.3
+Date: 2015-08-12
 Description: Graphics and diagnostics tools for SPRFMO's Joint Jack Mackerel model
 Authors@R: c( person("Ricardo", "Oliveros-Ramos", email = "roliveros@imarpe.gob.pe", role = c("cre", "aut")), person("Wencheng",
-    "Lau-Medrano", role = "aut"), person("Giancarlo", "Moron", role = "aut"),
+    "Lau-Medrano", role = "aut"), person("Giancarlo", "Moron", role = "aut"), person("Josymar", "Torrejon-Magallanes", role = "aut"),
     person("Niels", "Hintzen", email = "niels.hintzen@wur.nl", role = "aut"),
     person("Enrique", "Ramos-Vasquez", role = "ctb"))
 License: GPL-2
-Depends: PBSadmb, RColorBrewer, doBy, foreach, knitr, pander, latticeExtra, gridExtra
+Depends: PBSadmb, rmarkdown, doBy, foreach, pander, latticeExtra, gridExtra, RColorBrewer
 LazyData: TRUE
 Encoding: utf-8

@@ -757,3 +757,44 @@
   return(pic)
 	
 }
+
+.getInfo = function(data, output, model) {
+  info.data   = list(file = attr(data, "filename"), 
+                     variables = length(names(data)), 
+                     year=c(data$years[1], data$years[2]),
+                     age = c(data$ages[1], data$ages[2]), 
+                     length = c(data$lengths[1], data$lengths[2]),
+                     version = attr(data, "version"))
+  
+  indices = NULL
+  fisheries = NULL
+  
+  for(i in seq_along(output)) {
+    tempI = output[[i]]$Index_names
+    tempF = output[[i]]$Fshry_names
+    indices = c(indices, tempI)
+    fisheries = c(fisheries, tempF)
+  }
+  
+  indices = unique(indices)
+  fisheries = unique(fisheries)
+  
+  info.output = list(model=model, fisheryNames=fisheries, modelYears=output$Yr,
+                     indexModel=indices, nStock=length(output))
+  
+  info = list(data = info.data, output = info.output)
+  
+  return(info)
+}
+
+.readOutputsJJM = function(files, yld=NULL) {
+  ypr = if(!is.null(yld)) .readYPR(yld) else NULL # should be a list by stock
+  outputs = list()
+  for(i in seq_along(files)) {
+    outputs[[i]] = readList(files[i]) # add validation
+    outputs[[i]]$YPR = ypr
+  }
+  names(outputs) = paste0("Stock_", 1:length(files)) # Puede ser modificado cuando se lea el ctl
+  return(outputs)
+  
+}

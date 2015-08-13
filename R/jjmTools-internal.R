@@ -2,9 +2,9 @@
 # Internal functions ------------------------------------------------------
 
 # Code to read in final data ----------------------------------------------
-.read.dat = function(filename, version){
+.readDat = function(dat, version) {
   ###-Read in the raw datafile-###
-  res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
+  res1      = scan(file = dat, what = 'numeric', quiet = TRUE, sep = "\n",
                     comment.char = "#", allowEscapes = TRUE)
   res1      = strsplit(res1, "\t")
   
@@ -259,7 +259,11 @@
   cols$Pageerr = matrix(NA, ncol = nA, nrow = nA, dimnames = list(age = As[1]:As[2], age = As[1]:As[2]))
   cols$Pageerr[] = matrix(na.omit(.an(unlist(res1[counter:(counter + nA - 1)]))),
                            ncol = nA, nrow = nA, byrow = TRUE); counter = counter + nA
+  
+  attr(cols, which = "filename") = dat
+  attr(cols, which = "version")  = version
   return(cols)
+  
 }
 
 .read.datEx = function(filename, version){ 
@@ -464,7 +468,22 @@
   
 }
 
-.read.ctlMS = function(filename, info, infoDat){
+.readCtl = function(ctl, info) {
+  
+  version = .versionJJM(ctl)
+  
+  control = if(version == "2015MS")
+    .read.ctlMS(filename = ctl, info=info$output, infoDat=info$data) else 
+      .read.ctl(filename = ctl, info=info$output, infoDat=info$data)
+  
+  attr(control, which = "filename") = ctl
+  attr(control, which = "version")  = version
+  
+  return(control)
+}
+
+
+.read.ctlMS = function(filename, info, infoDat) {
 
 Fishery = as.vector(info$fisheryNames)
 Index = as.vector(info$indexModel)
@@ -487,10 +506,10 @@ for(i in seq_along(res1)){
 
 listCtl = list()
 cV = 1
-listCtl$dataFile  = fVector[cV] ;cV = cV + 1
-listCtl$modelName = fVector[cV] ;cV = cV + 1
-listCtl$nStocks   = as.numeric(fVector[cV]) ;cV = cV + 1
-listCtl$nameStock = fVector[cV] ;cV = cV + 1
+listCtl$dataFile  = fVector[cV]; cV = cV + 1
+listCtl$modelName = fVector[cV]; cV = cV + 1
+listCtl$nStocks   = as.numeric(fVector[cV]); cV = cV + 1
+listCtl$nameStock = fVector[cV]; cV = cV + 1
 
 
 fVector = fVector[- c(1,2,3,4)]
@@ -534,7 +553,7 @@ for(i in seq_along(listCtl$Nyrs_sr)){
 }
 
 nShift = sum(listCtl$nregbyStock - 1)
-if(nShift == 0) { listCtl$RegShift = NA }
+if(nShift == 0) listCtl$RegShift = NA
 if(nShift > 0) {
 	listCtl$RegShift = fVector[cV:(cV + nShift - 1)]
 }
@@ -616,10 +635,11 @@ listCtl$RW_q_phases = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
 listCtl$RW_nyrs_q   = fVector[cV:(cV + nIndex - 1)] ; cV = cV + nIndex
 
 nWalkq = sum(listCtl$RW_nyrs_q)
-if(nWalkq == 0){ 
-listCtl$RW_q_yrs = NA
-listCtl$RW_q_sigmas = NA
-cV = cV }
+if(nWalkq == 0) { 
+  listCtl$RW_q_yrs = NA
+  listCtl$RW_q_sigmas = NA
+  cV = cV
+}
 if(nWalkq > 0)  {
   listCtl$RW_q_yrs = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
   listCtl$RW_q_sigmas = fVector[cV:(cV + nWalkq - 1)] ; cV = cV + nWalkq
@@ -667,7 +687,6 @@ listCtl$test = fVector[cV]
 return(listCtl)
 
 }
-
 
 .read.ctl = function(filename, info, infoDat){
 
@@ -812,14 +831,16 @@ return(listCtl)
 
 }
 
-.read.par = function(filename, control, info, infoDat, version){
+.readPar = function(par, control, info){
 
-  res1      = scan(file = filename, what = 'numeric', quiet = TRUE, sep = "\n",
+  version = attr(control, which = "version")
+  
+  res1      = scan(file = par, what = 'numeric', quiet = TRUE, sep = "\n",
                    comment.char = "#", allowEscapes = TRUE)
   res1      = strsplit(res1, "\t") 
 
   fVector = NULL
-  for(i in seq_along(res1)){
+  for(i in seq_along(res1)) {
     res1[[i]] = paste(res1[[i]], collapse = " ")
     Vector = strsplit(res1[[i]], " ")[[1]]
     Vector = Vector [! Vector %in% ""]
@@ -830,15 +851,15 @@ return(listCtl)
   
   if(version == "2015MS"){
 	  nReg = listCtl$nregbyStock
-	  nStock = info$nStock
-	  nPeriod = infoDat$year[2] - infoDat$year[1] + infoDat$age[2]
+	  nStock = info$output$nStock
+	  nPeriod = info$data$year[2] - info$data$year[1] + info$data$age[2]
 	  diffRec = length(unique(listCtl$RecMatrix))
 	  diffGrow = length(unique(listCtl$GrowMatrix))
 	  diffN = length(unique(listCtl$NMatrix))
   } else {
 	  nReg = 1
 	  nStock = 1
-	  nPeriod = infoDat$year[2] - infoDat$year[1] + infoDat$age[2]
+	  nPeriod = info$data$year[2] - info$data$year[1] + info$data$age[2]
 	  diffRec = 1
 	  diffGrow = 1
 	  diffN = 1
@@ -989,12 +1010,16 @@ return(listCtl)
 }
 
 
-.versionJJM = function(head){
+.versionJJM = function(ctl) {
 
-  resx = strsplit(head, "\t")  
+  header = scan(file = ctl, nlines = 10, what = "character", sep = "\n", 
+               quiet = TRUE, comment.char = "#")
+  header = header[! header %in% ""]
+  
+  resx = strsplit(header, "\t")  
   
   tVector = NULL
-  for(i in seq_along(resx)){
+  for(i in seq_along(resx)) {
     resx[[i]] = paste(resx[[i]], collapse = " ")
     Vector = strsplit(resx[[i]], " ")[[1]]
     Vector = Vector [! Vector %in% ""]
@@ -1899,8 +1924,7 @@ if(Projections){
   return(formulaVector)
 }
 
-.getPath = function(path)
-{
+.getPath = function(path) {
   firstChar = substr(path, 1, 1)
   firstSecondChar = substr(path, 1, 2)
   if(firstSecondChar != "..")
@@ -1964,7 +1988,7 @@ if(Projections){
 
 .to = function(ext, output, model) {
   fmt = paste0("%s", ext)
-  out = file.path(output, sprintf(fmt, model))
+  out = file.path(output, sprintf(fmt, basename(model)))
   return(out)
 }
 
@@ -1984,6 +2008,9 @@ if(Projections){
     message(msg)
     models = models[check]
   }
+  
+  if(length(models)<1) stop("No models to be run.")
+
   return(models)
 }
 
@@ -2003,44 +2030,93 @@ if(Projections){
   return(guess)
 }
 
-.setParallelJJM = function(model, exec, tmpDir=NULL) {
+.setParallelJJM = function(model, input, exec, tmpDir=NULL) {
   
   if(is.null(tmpDir)) tmpDir = tempdir()
-  tmpDir = file.path(tmpDir, model)
+  tmpDir = file.path(tmpDir, basename(model))
   if(!file.exists(tmpDir)) dir.create(tmpDir)
   
   ctl = paste0(model, ".ctl") # ctl file
-  dat = .getDatFile(ctl)
-  execs = c("jjm", "jjm.exe")
-  jjm = execs[file.exists(execs)]
+  dat = .getDatFile(ctl, input)
+
+  jjm = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
   
   file.copy(from=ctl, to=tmpDir, overwrite=TRUE)
   file.copy(from=dat, to=tmpDir, overwrite=TRUE)
-  file.copy(from=jjm, to=tmpDir, overwrite=TRUE)
+  file.copy(from=exec, to=file.path(tmpDir, jjm), overwrite=TRUE)
   
   return(tmpDir)
   
 }
 
-.getDatFile = function(ctl) {
-  dat = scan(ctl, nlines=1, what="character", quote = "#")
+.checkExecutable = function(exec, version) {
+  # TO_DO: system.file
+  if(is.null(exec))
+    exec = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
+  
+  exec = normalizePath(exec, mustWork = FALSE)
+  
+  if(!file.exists(exec)) 
+    stop(sprintf("Executable file %s not found.", exec))
+  
+  return(exec)
+  
+}
+
+.getCtlFile = function(model, path) {
+  ctl = paste0(model, ".ctl")
+  ctl = if(is.null(path)) ctl else file.path(path, ctl)
+  ctl = normalizePath(ctl, mustWork=FALSE)
+  return(ctl)
+}
+
+.getDatFile = function(ctl, input=NULL) {
+  if(is.null(input)) input = dirname(normalizePath(ctl, mustWork=FALSE))
+  dat = scan(ctl, nlines=1, what="character", comment.char = "#", quiet=TRUE)
+  dat = normalizePath(file.path(input, dat), mustWork=FALSE)
   return(dat)
 }
 
-.runJJM = function(model, output, exec, useGuess, guess, iprint, wait, temp=NULL, ...) {
-  
-  cat("\nRunning model", model, "|", 
-      as.character(Sys.time()), "\n")
+.getOutFile = function(model, output, ext) {
+  out = file.path(output, paste0(model, ext)) # add path
+  out = normalizePath(out)
+  return(out)
+}
 
-  tmpDir = .setParallelJJM(model=model, exec=exec, tmpDir=temp)  
+.getParFile = function(model, output) .getOutFile(model, output, ext=".par")
+.getYldFile = function(model, output) .getOutFile(model, output, ext=".yld")
+
+.getRepFiles = function(model, output) {
+  output = normalizePath(output, mustWork=FALSE)
+  files = list.files(path = output, pattern = paste0(model, "_[0-9]*_R.rep$"))
+  files = file.path(output, files)    
+  return(files)
+}
+
+
+
+.getModelName = function(ctl) {
+  modelName = scan(ctl, nlines=2, what="character", comment.char = "#",
+                   quiet=TRUE)[2]
+  modelName = gsub(x = modelName, pattern = " ", replacement = "")
+  return(modelName)
+}
+
+.runJJM = function(model, output, input, exec, useGuess, guess, iprint, wait, temp=NULL, ...) {
+  
+  cat("\nRunning model", model, "|", as.character(Sys.time()), "\n")
+  
+  tmpDir = .setParallelJJM(model=model, input=input, exec=exec, tmpDir=temp)  
   setwd(tmpDir)
   .cleanad()
+
+  exec = if(Sys.info()[["sysname"]]=="Windows") "jjm" else "./jjm"
   
   jjm = if(isTRUE(useGuess) & !is.na(guess)) {
-    sprintf("%s -nox -ind %s.ctl -ainp %s -iprint %d", 
-            exec, model, guess, iprint)
+    sprintf("%s -nox -ind %s.ctl -ainp %s -iprint %d", exec,
+            basename(model), guess, iprint)
   } else {
-    sprintf("%s -nox -ind %s.ctl -iprint %d", exec, model, iprint)
+    sprintf("%s -nox -ind %s.ctl -iprint %d", exec, basename(model), iprint)
   }
   
   start   = proc.time()  
@@ -2050,16 +2126,16 @@ if(Projections){
   cat("\n\tModel run finished. Time elapsed =", elapsed[3],"s.")
   cat("\n\tCopying output files...")
   
-  Files = list.files(pattern = "For_R_[[:digit:]].rep")
+  Files = list.files(pattern = "_R_?[0-9]*\\.rep")
   
   # copy outputs to 'output' folder
-  file.copy(from="jjm.par",   to=.to(".par",   output, model), overwrite = TRUE)
-  file.copy(from="jjm.rep",   to=.to(".rep",   output, model), overwrite = TRUE)
-  file.copy(from="jjm.std",   to=.to(".std",   output, model), overwrite = TRUE)
-  file.copy(from="jjm.cor",   to=.to(".cor",   output, model), overwrite = TRUE)
-  file.copy(from="fprof.yld", to=.to(".yld",   output, model), overwrite = TRUE)
+  file.copy(from="jjm.par",   to=.to(".par", output, model), overwrite = TRUE)
+  file.copy(from="jjm.rep",   to=.to(".rep", output, model), overwrite = TRUE)
+  file.copy(from="jjm.std",   to=.to(".std", output, model), overwrite = TRUE)
+  file.copy(from="jjm.cor",   to=.to(".cor", output, model), overwrite = TRUE)
+  file.copy(from="fprof.yld", to=.to(".yld", output, model), overwrite = TRUE)
   
-  for(i in seq_along(Files)){
+  for(i in seq_along(Files)) {
 	file.copy(from = Files[i], 
 			  to=.to(paste0("_", i, "_R.rep"), output, model), overwrite = TRUE)
   }
