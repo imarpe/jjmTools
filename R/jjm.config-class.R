@@ -1,12 +1,13 @@
 
-.getJjmCongif = function(data, control, configName, ...) {
+.getJjmCongif = function(data, control, ...) {
   
   out = list()
   out[[1]] = list()
+  Mname = control$modelName
   
   out[[1]]$Dat = data
   out[[1]]$Ctl = control
-  names(out) = configName
+  names(out) = Mname
   
   # Define jjm.output class
   class(out) = c("jjm.config")
