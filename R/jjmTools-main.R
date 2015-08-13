@@ -199,6 +199,8 @@ readExFiles = function(fileName, type, path = NULL, version = "2015MS", paramete
 
 writeJJM = function(object, outFile, path = NULL){
 		
+	outFile = if(is.null(path)) outFile else file.path(path, outFile)
+		
 	.writeFiles(object = object, outFile = outFile)
 	
 	return(invisible(NULL))
@@ -208,14 +210,9 @@ writeJJM = function(object, outFile, path = NULL){
 
 # Read jjm config ---------------------------------------------------------------
 
-readConfig = function(data, control, configName, ...){
+readConfig = function(data, control, ...){
 		
-  output <- .getJjmCongif(data = data, control = control, 
-							configName = configName, ...)
-  
-  if(length(configName) > 1)
-    warning("The condition has length > 1 and only the first element will be used")
-  
+  output <- .getJjmCongif(data = data, control = control, ...)
   
   return(output)
 	

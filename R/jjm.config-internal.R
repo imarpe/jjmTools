@@ -16,24 +16,9 @@
         modelList2[[j]] = NULL
   
   modelList = modelList2; rm("modelList2")
-  
-  modelNames = NULL
-    for(j in seq_along(modelList)){
-      modelNames = c(modelNames, modelList[[j]]$info$output$model)
-    }
-    
-  # Models
-  models = list()
-  for(i in seq_along(modelList)){
-    models[[i]] = modelList[[i]][c("info", "data", "output")]
-  }
-  
-  names(models) = modelNames
 
-  output = models 
-
-  class(output) = c("jjm.output")
+  class(modelList) = c("jjm.config")
   
-  return(output)
+  return(modelList)
 
 }
