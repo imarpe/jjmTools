@@ -49,7 +49,7 @@ report.jjm.diag = function(object, format="latex", output=NULL, tangle=FALSE,
   }
   
   outputFile = paste0(modelName, "_diag.pdf")
-  render(skeleton, c("all"), output_file=outputFile, output_dir=output)
+  render(skeleton, c("pdf_document"), output_file=outputFile, output_dir=output)
   
   if(isTRUE(open)) shell.exec(outputFile)
   

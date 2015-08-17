@@ -7,7 +7,6 @@ output:
     fig_caption: yes
   pdf_document:
     fig_caption: yes
-    keep_tex: yes
     number_sections: yes
   word_document:
     fig_caption: yes
@@ -305,7 +304,7 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 ```
 
 
-```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("object", "Estimated total biomass (solid line) and the estimated total biomass that would have occurred if no fishing had taken place, 1970-2014"), fig.pos='h', results='hide', warning=FALSE}
+```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("object", "Estimated total biomass (solid line) and the estimated total biomass that would have occurred if no fishing had taken place"), fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "fishedUnfishedBiomass",
       scales = list(x = list(cex = 2), y = list(cex = 2)), 
       main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "Total Biomass", cex = 2),

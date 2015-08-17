@@ -888,7 +888,7 @@
 
 .fit_totalCatchByFleetFUN = function(jjm.out, Nfleets, ...)
 {
-  Obs_catch = grep(pattern ="Obs_catch_[0-9]*", x = names(jjm.out), value=TRUE)
+  Obs_catch = grep(pattern = "Obs_catch_[0-9]*", x = names(jjm.out), value = TRUE)
   
   for(iFleet in 1:Nfleets){
     res = cbind(jjm.out$Yr, jjm.out[[Obs_catch[iFleet]]])
@@ -915,14 +915,14 @@
                 panel = function(...){
                   lst = list(...)
                   idx = mapply(seq,
-                                from = seq(1, length(lst$y), length(lst$y)/4),
-                                to = seq(1, length(lst$y), length(lst$y)/4) + (length(lst$y)/4 - 1))
+                                from = seq(1, length(lst$y), length(lst$y)/Nfleets),
+                                to = seq(1, length(lst$y), length(lst$y)/Nfleets) + (length(lst$y)/Nfleets - 1))
                   panel.grid(h = -1, v = -1)
                   panel.xyplot(..., col = "white")
                   for(iFleet in Nfleets:1){
                     panel.polygon(x = c(lst$x[idx[,iFleet]], rev(lst$x[idx[,iFleet]])),
                                   y = c(rep(0, length(lst$y[idx[,iFleet]])), rev(lst$y[idx[,iFleet]])),
-                                  col = (4:1)[iFleet], border = 0)
+                                  col = (Nfleets:1)[iFleet], border = 0)
                   }
                   
                 }, ...)
@@ -2367,25 +2367,20 @@
 }
 
 .kobeFUN = function(jjm.out) {
-
   kob = jjm.out$msy_mt
-  
-  #Blim = Bref
-  #Flim = Fref
-  
   col = "black"
   
-  F_Fmsy = kob[,4]
-  B_Bmsy = kob[,13]
-  years  = kob[,1]
+  F_Fmsy = kob[, 4]
+  B_Bmsy = kob[, 13]
+  years  = kob[, 1]
   
   n = length(B_Bmsy)
-      
-    xlim= range(pretty(c(0, B_Bmsy)))
-    ylim= range(pretty(c(0, F_Fmsy)))
+  
+  xlim = range(pretty(c(0, B_Bmsy)))
+  ylim = range(pretty(c(0, F_Fmsy)))
 
-  x <- seq(0, max(xlim), by = 0.1)
-  y <- seq(0, max(ylim), by = 0.1)
+  x = seq(0, max(xlim), by = 0.1)
+  y = seq(0, max(ylim), by = 0.1)
 
   y = y[1:length(x)]
 
@@ -2394,12 +2389,12 @@
   panel.text(B_Bmsy[c(1,n)] + 0.05, F_Fmsy[c(1,n)] + 0.2, labels = range(years), cex = 0.8)
   }
 
-  b <- xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = col, pch = c(15, 17), panel = mypanel, cex = 0.8)
-  c <- xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = col, pch = 19, cex = 0.5)
+  b = xyplot(F_Fmsy[c(1,n)] ~ B_Bmsy[c(1,n)], type = "p", col = col, pch = c(15, 17), panel = mypanel, cex = 0.8)
+  c = xyplot(F_Fmsy ~ B_Bmsy, type = "b", col = col, pch = 19, cex = 0.5)
 
   pic = xyplot(y ~ x, type="n", xlim = xlim, ylim = ylim, xlab = toExpress("B/B[msy]"), ylab = toExpress("F/F[msy]"),
-				main="Kobe plot", scales = list(alternating = 1, tck = c(1,0))) + 
-		layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
+               main="Kobe plot", scales = list(alternating = 1, tck = c(1,0))) + 
+    layer_(panel.xblocks(x, x < 1, col = rgb(1, 0, 0, alpha = 0.5), block.y = 1)) +
 		layer_(panel.xblocks(x, x < 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
 		layer_(panel.xblocks(x, x >= 1, col = rgb(1, 1, 0, alpha = 0.5), block.y = 1)) +
 		layer_(panel.xblocks(x, x >= 1, col = rgb(0, 1, 0, alpha = 0.5), block.y = 1, vjust = 1)) +
