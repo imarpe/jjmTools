@@ -4,14 +4,14 @@
 \alias{readJJM}
 \title{Read a model or list of models}
 \usage{
-readJJM(model, path = "", output = "arc", modelName = model, ...)
+readJJM(model, path = "", input = "", version = "", ...)
 }
 \arguments{
 \item{model}{String with the name of model that will be readed or run.}
 
 \item{path}{Directory where the 'admb' folder is located.}
 
-\item{modelName}{alias for \code{model} (to be deprecated).}
+\item{version}{2014: One-stock, 2015: Multi-stock}
 
 \item{...}{Extra arguments}
 }
@@ -19,6 +19,6 @@ readJJM(model, path = "", output = "arc", modelName = model, ...)
 Function to read models and list if models and generate results
 }
 \examples{
-readJJM(model = "mod2.4")
+ readJJM("model2014", path="config", input="input", version="2014")
 }
 

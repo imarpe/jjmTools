@@ -4,16 +4,18 @@
 \alias{runJJM}
 \title{Run a JJM model}
 \usage{
-runJJM(models, path = ".", output = "arc", useGuess = FALSE,
+runJJM("models", path = ".", input = "", useGuess = FALSE, exec = "",
   guess = NULL, iprint = 100, wait = TRUE, parallel = FALSE,
   temp = NULL, ...)
 }
 \arguments{
 \item{models}{String with the name of the models to be run.}
 
-\item{path}{Directory where the 'admb' folder is located.}
+\item{path}{Folder where the .ctl is located.}
 
-\item{output}{Folder to save the outputs, 'arc' by default.}
+\item{input}{Folder where the .dat is located.}
+
+\item{exec}{Executable version. jjm2014.exe: One stock, jjm2015.exe: Multi-stock}
 
 \item{useGuess}{boolean, to use an initial guess for the parameters?}
 
@@ -31,6 +33,6 @@ runJJM(models, path = ".", output = "arc", useGuess = FALSE,
 Function to run one or several JJM models
 }
 \examples{
-model = runJJM(models = "mod2.4")
+model = runJJM(model = "model2014ms", path = "config", input = "input", exec= "jjm2015.exe")
 }
 

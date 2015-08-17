@@ -38,8 +38,6 @@
       
     }
     
-    colnames(out) = c("year", "mean", "sd", "lower", "upper", "model", "stocks")
-    
   }
   
   if(what == "biomass" & isTRUE(total)){
@@ -94,8 +92,9 @@
     
   }
   
-  return(out)
+  colnames(out) = c("year", "mean", "sd", "lower", "upper", "model", "stocks")
   
+  return(out)
 }
 
 

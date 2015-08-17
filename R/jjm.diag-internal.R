@@ -2354,7 +2354,7 @@
   res           = subset(res, class %in% c("YPR", "SpawPR"))
   
   pic = xyplot(data ~ F | class, data = res, type = "l",
-                prepanel = function(...) {list(ylim = range(pretty(c(0, list(...)$y))))},
+               prepanel = function(...) {list(ylim = range(pretty(c(0, list(...)$y))))},
                 layout = c(1, 2),
                 panel = function(...){
                   lst = list(...)
