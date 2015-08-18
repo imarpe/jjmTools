@@ -47,8 +47,8 @@ runJJM.default = function(models, path=NULL, output="results", input=NULL,
   oldwd = getwd()
   on.exit(setwd(oldwd))
   
-  output = normalizePath(output, mustWork = FALSE)
   if(!file.exists(output)) dir.create(output, recursive = TRUE)
+  output = normalizePath(output, mustWork = TRUE)
   
   if(!is.null(path)) models = file.path(path, models)
   

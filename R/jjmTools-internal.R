@@ -2056,8 +2056,6 @@ if(Projections){
   
   exec = normalizePath(exec, mustWork = FALSE)
   
-  
-  
   if(!file.exists(exec)) 
     stop(sprintf("Executable file %s not found.", exec))
   
