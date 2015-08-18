@@ -2056,6 +2056,8 @@ if(Projections){
   
   exec = normalizePath(exec, mustWork = FALSE)
   
+  
+  
   if(!file.exists(exec)) 
     stop(sprintf("Executable file %s not found.", exec))
   
@@ -2129,11 +2131,17 @@ if(Projections){
   Files = list.files(pattern = "_R_?[0-9]*\\.rep")
   
   # copy outputs to 'output' folder
+  
+  if(!file.exists(output)) {
+    cat("\nCreating output directory...\n")
+    dir.create(output, recursive = TRUE)
+  }
+  
   file.copy(from="jjm.par",   to=.to(".par", output, model), overwrite = TRUE)
   file.copy(from="jjm.rep",   to=.to(".rep", output, model), overwrite = TRUE)
   file.copy(from="jjm.std",   to=.to(".std", output, model), overwrite = TRUE)
   file.copy(from="jjm.cor",   to=.to(".cor", output, model), overwrite = TRUE)
-  file.copy(from="fprof.yld", to=.to(".yld", output, model), overwrite = TRUE)
+  file.copy(from="Fprof.yld", to=.to(".yld", output, model), overwrite = TRUE)
   
   for(i in seq_along(Files)) {
 	file.copy(from = Files[i], 
