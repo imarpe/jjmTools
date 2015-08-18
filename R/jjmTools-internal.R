@@ -1708,7 +1708,7 @@ if(Projections){
 
 
 
-.resultCombined = function(..., modelName = modelName){
+.resultCombined = function(..., modelName = modelName, output = "results"){
   
   listModels = .prepareCombine(...)
   
@@ -1739,7 +1739,7 @@ if(Projections){
     outcome[[index]] = finalList[[i]]
   }
   
-  .writeCombinedStocks(combinedModel = outcome, modelName = modelName)
+  .writeCombinedStocks(combinedModel = outcome, output = output, modelName = modelName)
   
   infoData = list(file = listModels$modelList,
                    variables = sum(!is.na(outcome)),
