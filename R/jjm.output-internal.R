@@ -6,7 +6,7 @@
                recruitment = "R",
                ssb         = "SSB",
                noFishTB    = "TotBiom_NoFish"
-               )
+  )
   
   out = NULL
   
@@ -39,6 +39,8 @@
     }
     
   }
+  
+  colnames(out) = c("year", "mean", "sd", "lower", "upper", "model", "stocks")
   
   if(what == "biomass" & isTRUE(total)){
     
@@ -91,8 +93,6 @@
     out = merge(out, outTotal, all = TRUE, sort = FALSE)
     
   }
-  
-  colnames(out) = c("year", "mean", "sd", "lower", "upper", "model", "stocks")
   
   return(out)
 }
