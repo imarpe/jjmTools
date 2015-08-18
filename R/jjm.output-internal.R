@@ -6,7 +6,7 @@
                recruitment = "R",
                ssb         = "SSB",
                noFishTB    = "TotBiom_NoFish"
-               )
+  )
   
   out = NULL
   
@@ -38,9 +38,9 @@
       
     }
     
-    colnames(out) = c("year", "mean", "sd", "lower", "upper", "model", "stocks")
-    
   }
+  
+  colnames(out) = c("year", "mean", "sd", "lower", "upper", "model", "stocks")
   
   if(what == "biomass" & isTRUE(total)){
     
@@ -95,7 +95,6 @@
   }
   
   return(out)
-  
 }
 
 
@@ -430,7 +429,7 @@
   # Models
   models = list()
   for(i in seq_along(modelList)){
-    models[[i]] = modelList[[i]][c("info", "data", "output")]
+    models[[i]] = modelList[[i]][c("info", "data", "control", "parameters", "output")]
   }
   
   names(models) = modelNames

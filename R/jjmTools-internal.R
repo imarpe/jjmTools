@@ -45,7 +45,7 @@
   cols$Fcaton[]     = matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))),
                               ncol = nF, nrow = nY); counter = counter + nF
   cols$Fcatonerr    = matrix(NA, ncol = nF, nrow = nY, dimnames = list(years = Ys[1]:Ys[2],
-                                                                        paste("fishery", 1:nF, sep = "")))
+                                                                       paste("fishery", 1:nF, sep = "")))
   cols$Fcatonerr[]  = matrix(na.omit(.an(unlist(res1[counter:(counter + nF - 1)]))), 
                               ncol = nF, nrow = nY); counter = counter + nF
   cols$FnumyearsA   = matrix(NA, ncol = nF, nrow = 1, dimnames = list("years", paste("Fyears", 1:nF, sep = "")))
@@ -363,7 +363,7 @@
   for(i in 1:nFish){
       Vtemp = fVector[cV:(cV + nYears*nBinAge - 1)]
       Mtemp = matrix(Vtemp, nrow = nYears, byrow = TRUE)
-      listCtl[[paste0("Fishery_", i, "_wt-at-age")]] = Mtemp
+      listCtl[[paste0("Fishery_", i, "_wtatage")]] = Mtemp
       cV = cV + nYears*nBinAge
   }
   
@@ -438,7 +438,7 @@
   for(i in 1:nInd){
     Vtemp = fVector[cV:(cV + nYears*nBinAge - 1)]
     Mtemp = matrix(Vtemp, nrow = nYears, byrow = TRUE)
-    listCtl[[paste0("Index_", i, "_wt-at-age")]] = Mtemp
+    listCtl[[paste0("Index_", i, "_wtatage")]] = Mtemp
     cV = cV + nYears*nBinAge
   }
   
