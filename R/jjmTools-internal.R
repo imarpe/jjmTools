@@ -506,6 +506,7 @@ for(i in seq_along(res1)){
 
 listCtl = list()
 cV = 1
+listCtl$ControlFile = paste0("#", info$filename)
 listCtl$dataFile  = fVector[cV]; cV = cV + 1
 listCtl$modelName = fVector[cV]; cV = cV + 1
 listCtl$nStocks   = as.numeric(fVector[cV]); cV = cV + 1
@@ -711,6 +712,7 @@ for(i in seq_along(res1)){
 
 listCtl = list()
 cV = 1
+listCtl$ControlFile = paste0("#", info$filename)
 listCtl$dataFile  = fVector[cV] ;cV = cV + 1
 listCtl$modelName = fVector[cV] ;cV = cV + 1
 
@@ -1693,13 +1695,13 @@ if(Projections){
 }
 
 
-.writeCombinedStocks = function(combinedModel, modelName = NULL){
+.writeCombinedStocks = function(combinedModel, output = "results", modelName = NULL){
   
   # Final Result
   if(is.null(modelName)) 
-    writeList(combinedModel, file.path("arc","Combine_R.rep"), format = "P") 
+    writeList(combinedModel, file.path(output,"Combine_R.rep"), format = "P") 
   else 
-    writeList(combinedModel, file.path("arc", paste0(modelName, "_R.rep")), format = "P")
+    writeList(combinedModel, file.path(output, paste0(modelName, "_R.rep")), format = "P")
   
   return(invisible())
 }
