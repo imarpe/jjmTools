@@ -171,6 +171,7 @@ readExFiles = function(fileName, type, path = NULL, version = "2015MS", paramete
 			info$fisheryNames = .splitPor(parData$nameFish)
 			info$indexModel = .splitPor(parData$nameIndex)
 			info$nStock = nStock
+			info$filename = fileName
 			infoDat = list()
 			infoDat$age = c(1, parData$LastAge)
 		} 
@@ -179,6 +180,7 @@ readExFiles = function(fileName, type, path = NULL, version = "2015MS", paramete
 			info$fisheryNames = nameFishery
 			info$indexModel = nameIndex
 			info$nStock = nStock
+			info$filename = fileName
 			infoDat = list()
 			infoDat$age = c(1, nAges)
 		}

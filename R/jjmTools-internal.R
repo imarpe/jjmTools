@@ -506,6 +506,7 @@ for(i in seq_along(res1)){
 
 listCtl = list()
 cV = 1
+listCtl$ControlFile = paste0("#", info$filename)
 listCtl$dataFile  = fVector[cV]; cV = cV + 1
 listCtl$modelName = fVector[cV]; cV = cV + 1
 listCtl$nStocks   = as.numeric(fVector[cV]); cV = cV + 1
@@ -541,11 +542,11 @@ MSigma = matrix(VSigma, nrow = 3, byrow = TRUE)
 listCtl$SigmaR   = MSigma
 cV = cV + 3*diffRec
 
-listCtl$phase_Rzero   = fVector[cV:(cV + diffRec - 1)]
-cV = cV + diffRec
+listCtl$phase_Rzero   = fVector[cV:(cV + sum(listCtl$nregbyStock) - 1)]
+cV = cV + sum(listCtl$nregbyStock)
 
-listCtl$Nyrs_sr   = fVector[cV:(cV + diffRec - 1)]
-cV = cV + diffRec
+listCtl$Nyrs_sr   = fVector[cV:(cV + sum(listCtl$nregbyStock) - 1)]
+cV = cV + sum(listCtl$nregbyStock)
 
 for(i in seq_along(listCtl$Nyrs_sr)){
   listCtl[[paste0("Nyrs_sr_", i)]] = fVector[cV:(cV + listCtl$Nyrs_sr[i] - 1)]
@@ -711,6 +712,7 @@ for(i in seq_along(res1)){
 
 listCtl = list()
 cV = 1
+listCtl$ControlFile = paste0("#", info$filename)
 listCtl$dataFile  = fVector[cV] ;cV = cV + 1
 listCtl$modelName = fVector[cV] ;cV = cV + 1
 
@@ -1693,20 +1695,20 @@ if(Projections){
 }
 
 
-.writeCombinedStocks = function(combinedModel, modelName = NULL){
+.writeCombinedStocks = function(combinedModel, output = "results", modelName = NULL){
   
   # Final Result
   if(is.null(modelName)) 
-    writeList(combinedModel, file.path("arc","Combine_R.rep"), format = "P") 
+    writeList(combinedModel, file.path(output,"Combine_R.rep"), format = "P") 
   else 
-    writeList(combinedModel, file.path("arc", paste0(modelName, "_R.rep")), format = "P")
+    writeList(combinedModel, file.path(output, paste0(modelName, "_R.rep")), format = "P")
   
   return(invisible())
 }
 
 
 
-.resultCombined = function(..., modelName = modelName){
+.resultCombined = function(..., modelName = modelName, output = "results"){
   
   listModels = .prepareCombine(...)
   
@@ -1737,7 +1739,7 @@ if(Projections){
     outcome[[index]] = finalList[[i]]
   }
   
-  .writeCombinedStocks(combinedModel = outcome, modelName = modelName)
+  .writeCombinedStocks(combinedModel = outcome, output = output, modelName = modelName)
   
   infoData = list(file = listModels$modelList,
                    variables = sum(!is.na(outcome)),
