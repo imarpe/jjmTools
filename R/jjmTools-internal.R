@@ -2051,8 +2051,11 @@ if(Projections){
 
 .checkExecutable = function(exec, version) {
   # TO_DO: system.file
-  if(is.null(exec))
-    exec = if(Sys.info()[["sysname"]]=="Windows") "jjm.exe" else "jjm"
+  if(is.null(exec)) exec = "jjm"
+  
+  exec = gsub(pattern="\\.exe$", replacement="", x=exec)
+  
+  if(Sys.info()[["sysname"]]=="Windows") exec = paste0(exec, ".exe")
   
   exec = normalizePath(exec, mustWork = FALSE)
   
