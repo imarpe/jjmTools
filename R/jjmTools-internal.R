@@ -542,11 +542,11 @@ MSigma = matrix(VSigma, nrow = 3, byrow = TRUE)
 listCtl$SigmaR   = MSigma
 cV = cV + 3*diffRec
 
-listCtl$phase_Rzero   = fVector[cV:(cV + diffRec - 1)]
-cV = cV + diffRec
+listCtl$phase_Rzero   = fVector[cV:(cV + sum(listCtl$nregbyStock) - 1)]
+cV = cV + sum(listCtl$nregbyStock)
 
-listCtl$Nyrs_sr   = fVector[cV:(cV + diffRec - 1)]
-cV = cV + diffRec
+listCtl$Nyrs_sr   = fVector[cV:(cV + sum(listCtl$nregbyStock) - 1)]
+cV = cV + sum(listCtl$nregbyStock)
 
 for(i in seq_along(listCtl$Nyrs_sr)){
   listCtl[[paste0("Nyrs_sr_", i)]] = fVector[cV:(cV + listCtl$Nyrs_sr[i] - 1)]
