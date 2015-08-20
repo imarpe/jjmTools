@@ -1836,12 +1836,13 @@
     TotCatch    = jjm.out[[iFlt]] + TotCatch
   
   summaryData = rbind(cbind(jjm.out$Yr, jjm.out$TotBiom[,-1], "Total biomass"),
-                       cbind(jjm.out$Yr, jjm.out$TotBiom_NoFish[,-1], "Unfished biomass"),
-                       cbind(jjm.out$Yr, jjm.out$R[,-1], "Recruitment"),
-					   cbind(jjm.out$Yr, cbind(rowMeans(jjm.out$TotF[,-1]), 
-                                               rowMeans(jjm.out$TotF[,-1]), 
-                                               rowMeans(jjm.out$TotF[,-1]), 
-                                               rowMeans(jjm.out$TotF[,-1])), "Fishing mortality"))
+                      cbind(jjm.out$Yr, cbind(rowMeans(jjm.out$TotF[,-1]), 
+                                              rowMeans(jjm.out$TotF[,-1]), 
+                                              rowMeans(jjm.out$TotF[,-1]), 
+                                              rowMeans(jjm.out$TotF[,-1])), "Fishing mortality"),
+                      cbind(jjm.out$Yr, jjm.out$R[,-1], "Recruitment"),
+                      cbind(jjm.out$Yr, jjm.out$TotBiom_NoFish[,-1], "Unfished biomass"))
+  
   
   summaryData = rbind(cbind(summaryData[,c(1:2, 6)], "point"), 
                        cbind(summaryData[,c(1, 4, 6)], "lower"),
@@ -1850,7 +1851,7 @@
   colnames(summaryData) = c("year", "data", "class", "estim")
   summaryData = data.frame(summaryData, stringsAsFactors = FALSE)
   summaryData$class = factor(summaryData$class, ordered = FALSE,
-                              levels = c("Fishing mortality", "Recruitment", "Unfished biomass", "Total biomass"))
+                              levels = c("Unfished biomass", "Recruitment", "Fishing mortality", "Total biomass"))
   summaryData$year = as.integer(summaryData$year)
   summaryData$data = as.numeric(summaryData$data)
   
@@ -1866,11 +1867,11 @@
                   lower = (length(jjm.out$Yr) + 1):(2*length(jjm.out$Yr))
                   upper = (2*length(jjm.out$Yr) + 1):(3*length(jjm.out$Yr))
                   
-                  # Ftot
-				  if(panel.number() == 1){
+                  # NoFish
+				          if(panel.number() == 1){
+				            panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
                     panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
-                    panel.lines(x[point], jjm.out$msy_mt[,5], lwd = 4, 
-                                col = adjustcolor("red", alpha.f = alpha.f))
+
                   }
 
                   # Recruitment
@@ -1879,9 +1880,8 @@
                     panel.segments(x[lower], y[lower], x[lower], y[upper])
                   }
                   
-                  # BnoFish
+                  # Ftot
                   if(panel.number() == 3){
-                    panel.polygon(c(x[lower], rev(x[upper])), c(y[lower], rev(y[upper])), col = "grey", border = NA)
                     panel.xyplot(x[point], y[point], lwd = 2, lty = 1, type = "l", col = 1)
                   }
                   
