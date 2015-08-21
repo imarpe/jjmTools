@@ -7,7 +7,7 @@
   res1      = scan(file = dat, what = 'numeric', quiet = TRUE, sep = "\n",
                     comment.char = "#", allowEscapes = TRUE)
   res1      = strsplit(res1, "\t")
-  
+
   #- Get some initial dimensions
   nY        = length(.an(unlist(res1[[1]][1])):.an(unlist(res1[[2]][1]))) #number of years
   Ys        = na.omit(.an(unlist(res1[1:2]))) #Years
