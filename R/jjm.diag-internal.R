@@ -2678,7 +2678,9 @@
     msg = if(sum(!indVar)==1) 
       paste("Variable", sQuote(var[!indVar]), "does not exist.") else
         paste("Variables", sQuote(var[!indVar]), "do not exist.")
-    stop(msg)
+    var = var[indVar]
+    if(length(var)==0) return(invisible())
+    warning(msg)
   }
   
   if(isTRUE(plot)) {
