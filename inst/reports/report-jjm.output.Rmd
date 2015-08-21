@@ -12,7 +12,6 @@ options(width = 300)
 ```
 
 ```{r pander, echo=FALSE, results='asis'}
-
 table   = summary(object, Projections = TRUE, Fmult = Fmult,
                   BiomProj = BiomProj, CapProj = CapProj, 
                   MRS = MRS)$proj[[1]]

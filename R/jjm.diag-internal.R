@@ -1964,17 +1964,16 @@
   
   if(length(grep("SR_Curve_years", names(jjm.out))) == 0 ){
     pic2 = .fit_stockRecruitmentFUN(jjm.out, 
-                                  ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
-                                  main = "Stock Recruitment")
+                                    ylab = "Recruitment", xlab = "Spawning Stock Biomass",
+                                    main = "Stock Recruitment")
   
   } else {
 	pic2 = .fit_stockRecruitmentFUN2(jjm.out, cols, 
-                                  ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
-                                  main = "Stock Recruitment")
+	                                 ylab = "Recruitment", xlab = "Spawning Stock Biomass", 
+	                                 main = "Stock Recruitment")
 								  }
   
   pic3 = arrangeGrob(pic1, pic2)
-  
   return(pic3)
 }
 
