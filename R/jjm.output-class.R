@@ -96,6 +96,7 @@ print.summary.jjm.output = function(x, ...) {
   for(i in seq_along(x$plots)){
     
     cat(names(x$plots)[i], "\n")
+    plot(x$plots[[i]])
   
   }
   
