@@ -7,7 +7,7 @@
   res1      = scan(file = dat, what = 'numeric', quiet = TRUE, sep = "\n",
                     comment.char = "#", allowEscapes = TRUE)
   res1      = strsplit(res1, "\t")
-  
+
   for(i in seq_along(res1)){
     res1[[i]] = paste(res1[[i]], collapse = " ")
     res1[[i]] = strsplit(res1[[i]], " ")[[1]]

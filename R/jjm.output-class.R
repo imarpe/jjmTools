@@ -83,7 +83,7 @@ print.summary.jjm.output = function(x, ...) {
   
   if(!is.null(x$projections)) cat("\nProjection Table (s):\n\n")
   
-  for(i in seq_along(x$projections)){
+  for(i in seq_along(x$projections)) {
     
     cat(names(x$projections)[i], "\n")
     print(x$projections[[i]], ...)
