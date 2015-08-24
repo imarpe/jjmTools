@@ -896,9 +896,9 @@ return(listCtl)
   listPar$log_k    = fVector[cV:(cV + diffGrow - 1)] ; cV = cV + diffGrow
   listPar$log_Lo   = fVector[cV:(cV + diffGrow - 1)] ; cV = cV + diffGrow
   listPar$log_sdage = fVector[cV:(cV + diffGrow - 1)] ; cV = cV + diffGrow
-  listPar$mean_log_rec = fVector[cV:(cV + diffRec - 1)] ; cV = cV + diffRec
+  listPar$mean_log_rec = fVector[cV:(cV + sum(nReg) - 1)] ; cV = cV + sum(nReg)
   listPar$steepness = fVector[cV:(cV + diffRec - 1)] ; cV = cV + diffRec
-  listPar$log_Rzero = fVector[cV:(cV + diffRec - 1)] ; cV = cV + diffRec
+  listPar$log_Rzero = fVector[cV:(cV + sum(nReg) - 1)] ; cV = cV + sum(nReg)
   cV = cV + nStock * nPeriod
   listPar$log_sigmar = fVector[cV:(cV + diffRec - 1)] ; cV = cV + diffRec
 
@@ -971,7 +971,11 @@ return(listCtl)
         }
       }
       
-      if(i > 5 & i < 10){
+      if(i == 6 | i == 8){
+        outMatrix[i,] = listPar[[i]]
+      }
+      
+      if(i == 7 | i == 9){
         for(k in seq_along(countR)){
           if(k == 1) { outMatrix[i,k] = listPar[[i]][countR[k]] } 
           if(k > 1) {
