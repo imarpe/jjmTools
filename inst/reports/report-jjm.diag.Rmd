@@ -64,9 +64,9 @@ tab <- local({
 \end{centering}
 ```{r echo=FALSE, fig.width = 15, fig.height = 14, fig.cap = fig$cap("object", "Total catch estimation over time."),  fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "totalCatch", 
-     scales = list(x = list(cex = 2), y = list(cex = 2)), main = "", 
-     xlab = list(label = "Years", cex = 2), ylab = list(label = "Catch in kt", cex = 2), 
-     plot = FALSE)
+           scales = list(x = list(cex = 2), y = list(cex = 2)), main = "", 
+           xlab = list(label = "Years", cex = 2), ylab = list(label = "Catch in kt", cex = 2), 
+           plot = FALSE)
 if(length(pic) != 1){
 do.call(grid.arrange, c(pic, list(heights = c(1, 1))))  
 } else{
@@ -77,9 +77,9 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 
 ```{r echo=FALSE, fig.width = 15, fig.height = 13, fig.cap = fig$cap("object", "Catch residuals by fleet"), fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "catchResidualsByFleet",
-    scales = list(x = list(cex = 2), y = list(cex = 2)), 
-    main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "Residuals", cex = 2),
-    plot = FALSE)
+           scales = list(x = list(cex = 2), y = list(cex = 2)),
+           main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "Residuals", cex = 2),
+           plot = FALSE)
 if(length(pic) != 1){
 do.call(grid.arrange, c(pic, list(heights = c(2, 1)))) 
 }else{
@@ -90,9 +90,9 @@ do.call(grid.arrange, c(pic, list(heights = c(2, 1))))
 
 ```{r echo=FALSE, fig.width = 15, fig.height = 13, fig.cap = fig$cap("object", "Absolute residuals by fleet"), fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "absoluteResidualCatchByFleet",
-      scales = list(x = list(cex = 2), y = list(cex = 2)), 
-      main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2),
-      plot = FALSE)
+           scales = list(x = list(cex = 2), y = list(cex = 2)), 
+           main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2),
+           plot = FALSE)
 if(length(pic) != 1){
 do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))  
 }else{
@@ -101,37 +101,37 @@ do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))
 ```
 
 
-```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("object", "..."), fig.pos='h', results='hide', warning=FALSE}
-plot(object, what = "output", var = "residualsCatchAtLengthByFleet",
-     scales = list(x = list(cex = 2), y = list(cex = 2)), 
-      main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2),
-      plot = FALSE)
-if(length(pic) != 1){
-do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))  
-}else{
-  do.call(grid.arrange, pic)
-}
+```{r echo=FALSE, fig.width = 15, fig.height = 13, fig.cap = fig$cap("object", "..."), fig.pos='h', results='hide', warning=FALSE}
+# pic = plot(object, what = "output", var = "residualsCatchAtLengthByFleet",
+#            scales = list(x = list(cex = 2), y = list(cex = 2)),
+#            main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2), 
+#            plot = FALSE)
+# if(length(pic) != 1){
+# do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))  
+# }else{
+#   do.call(grid.arrange, pic)
+# }
 ```
 
 
 ```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("object", "Length compositions. Bars represent the observed data and dots represent the model fit and color codes correspond to cohorts."), fig.pos='h', results='hide', warning=FALSE}
-plot(object, what = "output", var = "lengthFitsCatch",
-     scales = list(x = list(cex = 2), y = list(cex = 2)), 
-      main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2),
-      plot = FALSE)
-if(length(pic) != 1){
-do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))  
-}else{
-  do.call(grid.arrange, pic)
-}
+# pic = plot(object, what = "output", var = "lengthFitsCatch",
+#            scales = list(x = list(cex = 2), y = list(cex = 2)), 
+#            main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2),
+#            plot = FALSE)
+# if(length(pic) != 1){
+# do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))  
+# }else{
+#   do.call(grid.arrange, pic)
+# }
 ```
 
 
 ```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("object", "Predicted and observed catches by fleet"), fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "predictedObservedCatchesByFleet",
-      scales = list(x = list(cex = 2), y = list(cex = 2)), 
-      main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "Thousands tons", cex = 2),
-      plot = FALSE)
+           scales = list(x = list(cex = 2), y = list(cex = 2)), 
+           main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "Thousands tons", cex = 2),
+           plot = FALSE)
 if(length(pic) != 1){
 do.call(grid.arrange, c(pic, list(heights = c(1, 1))))  
 }else{
@@ -147,8 +147,9 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 \vspace{2cm}
 ```{r echo=FALSE, fig.width = 12, fig.height = 11, fig.cap = fig$cap("object", "Model fit to different indices. Vertical bars represent 2 standard deviations around the observations."), fig.pos='h', results='hide', warning=FALSE}
 pic = plot(object, what = "output", var = "predictedObservedIndices",
-      scales = list(x = list(cex = 1), y = list(cex = 1)), 
-      main = "", xlab = list(label = "Years", cex = 1.5), ylab = list(label = "Normalized index value", cex = 1.5),
+           scales = list(x = list(cex = 1), y = list(cex = 1)), 
+           main = "", xlab = list(label = "Years", cex = 1.5), ylab = list(label = "Normalized index value", cex =
+                                                                             1.5),
       plot = FALSE)
 if(length(pic) != 1){
 do.call(grid.arrange, c(pic, list(heights = c(2, 1))))  
@@ -243,8 +244,10 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 
 
 ```{r echo=FALSE, fig.width = 7, fig.height = 9, fig.cap = fig$cap("object", "N at age"), fig.pos='h', results='hide', warning=FALSE}
-pic = plot(object, what = "output", var = "nAtAGe",
-      plot = FALSE)
+pic = plot(object, what = "output", var = "nAtAGe", 
+           scales = list(x = list(cex = 0.5), y = list(cex = 0.5)), 
+           main = "", xlab = list(label = "Years", cex = 1), ylab = list(label = "N at Age", cex = 1),
+           plot = FALSE)
 if(length(pic) != 1){
 do.call(grid.arrange, c(pic, list(heights = c(1, 1))))  
 }else{
@@ -253,11 +256,11 @@ do.call(grid.arrange, c(pic, list(heights = c(1, 1))))
 ```
 
 
-```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("object", "..."), fig.pos='h', results='hide', warning=FALSE}
-plot(object, what = "output", var = "ProportionAtAGe",
-scales = list(x = list(cex = 2), y = list(cex = 2)), 
-      main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2),
-      plot = FALSE)
+```{r echo=FALSE, fig.width = 15, fig.height = 15, fig.cap = fig$cap("object", "Abundance proportion at age"), fig.pos='h', results='hide', warning=FALSE}
+pic  = plot(object, what = "output", var = "nProportionAtAGe",
+            scales = list(x = list(cex = 2), y = list(cex = 2)),
+            main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "Proportion of N at age", cex = 2),
+            plot = FALSE)
 if(length(pic) != 1){
 do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))  
 }else{
@@ -267,15 +270,15 @@ do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))
 
 
 ```{r echo=FALSE, fig.width = 15, fig.height = 12, fig.cap = fig$cap("object", "..."), fig.pos='h', results='hide', warning=FALSE}
-plot(object, what = "output", var = "fisheryMeanLength",
-     scales = list(x = list(cex = 2), y = list(cex = 2)), 
-      main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2),
-      plot = FALSE)
-if(length(pic) != 1){
-do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))  
-}else{
-  do.call(grid.arrange, pic)
-}
+# pic = plot(object, what = "output", var = "fisheryMeanLength",
+#            scales = list(x = list(cex = 2), y = list(cex = 2)),
+#            main = "", xlab = list(label = "Years", cex = 2), ylab = list(label = "model - obs", cex = 2),
+#            plot = FALSE)
+# if(length(pic) != 1){
+# do.call(grid.arrange, c(pic, list(heights = c(1.5, 1))))  
+# }else{
+#   do.call(grid.arrange, pic)
+# }
 ```
 
 

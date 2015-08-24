@@ -276,17 +276,17 @@
   # 12a: Proportions catch by age modelled and observed
   if(.an(ageFleets)[1] != 0){        
     outPlots$residualsCatchAtAgeByFleet = .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages,
-                                                                              xlab = "Years", ylab = "Absolute residual catch", 
-                                                                              main = "Absolute residual catch by fleet",
-                                                                              scales = list(alternating = 1, tck = c(1, 0)))
+                                                                             xlab = "Years", ylab = "Absolute residual catch", 
+                                                                             main = "Absolute residual catch by fleet",
+                                                                             scales = list(alternating = 1, tck = c(1, 0)))
   }
   
   # 12b: Proportions catch by length modelled and observed
   if(.an(lgtFleets)[1] != 0){    
     outPlots$residualsCatchAtLengthByFleet = .fit_residualsCatchAtLengthByFleetFUN(lgtFleets, jjm.out, lengths, Nfleets,
-                                                                                    xlab = "Years", ylab = "Age", 
-                                                                                    main = "Residuals catch-at-age by fleet",
-                                                                                    scales = list(alternating = 3))
+                                                                                   xlab = "Years", ylab = "Length", 
+                                                                                   main = "Residuals catch-at-length by fleet",
+                                                                                   scales = list(alternating = 3))
   }
   
   # 13a: Fitted age by year by fleet
