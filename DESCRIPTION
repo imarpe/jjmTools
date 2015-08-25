@@ -9,6 +9,7 @@ Authors@R: c( person("Ricardo", "Oliveros-Ramos", email = "roliveros@imarpe.gob.
     person("Niels", "Hintzen", email = "niels.hintzen@wur.nl", role = "aut"),
     person("Enrique", "Ramos-Vasquez", role = "ctb"))
 License: GPL-2
-Depends: PBSadmb, rmarkdown, doBy, foreach, pander, latticeExtra, gridExtra, RColorBrewer
+Depends: PBSadmb, rmarkdown, doBy, foreach, pander, latticeExtra, gridExtra
+Imports: grid
 LazyData: TRUE
 Encoding: utf-8
