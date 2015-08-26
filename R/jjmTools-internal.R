@@ -2027,7 +2027,11 @@ if(Projections){
 
 .checkGuess = function(models, guess, output) {
   
-  if(is.null(guess)) guess = file.path(output, paste0(models, ".par"))
+  if(is.null(guess)) {
+    guess = file.path(output, paste0(models, ".par"))
+  } else {
+    guess = file.path(output, guess)
+  }
   if(length(guess)==1) {
     guess = rep(guess, length(models))
     warning("Using the same initial guess for all models.")

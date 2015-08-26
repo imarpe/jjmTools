@@ -50,11 +50,12 @@ runJJM.default = function(models, path=NULL, output="results", input=NULL,
   if(!file.exists(output)) dir.create(output, recursive = TRUE)
   output = normalizePath(output, mustWork = TRUE)
   
+  guess  = .checkGuess(models, guess, output) 
+  
   if(!is.null(path)) models = file.path(path, models)
   
   exec   = .checkExecutable(exec=exec, version=version)
   models = .checkModels(models)
-  guess  = .checkGuess(models, guess, output) 
   
   # Run models
   base  = getwd()
