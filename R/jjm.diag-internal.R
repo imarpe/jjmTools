@@ -611,7 +611,7 @@
 
 .input_ageFleetsFUN = function(jjm.in, ageFleets, ages, ...)
 {
-  for(iFleet in seq_along(.an(ageFleets))){
+  for(iFleet in .an(ageFleets)){
     res = .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
                                   apply(jjm.in$Fagecomp[,,iFleet], 1, sum, na.rm = T), "/"),
                             jjm.in$years[1]:jjm.in$years[2],
@@ -619,10 +619,10 @@
     
     res = cbind(res, jjm.in$Fnames[iFleet])
     
-    if(iFleet == seq_along(.an(ageFleets))[1])
+    if(iFleet == .an(ageFleets)[1])
       tot = res
     
-    if(iFleet != seq_along(.an(ageFleets))[1])
+    if(iFleet != .an(ageFleets)[1])
       tot = rbind(tot,res)
   }
   
@@ -644,7 +644,7 @@
 
 .input_ageFleets2FUN = function(jjm.in, ageFleets, cols, ages, ...)
 {
-  for(iFleet in seq_along(.an(ageFleets))){
+  for(iFleet in .an(ageFleets)){
     res = .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
                                   apply(jjm.in$Fagecomp[,,iFleet], 1, sum, na.rm = T), "/"),
                             jjm.in$years[1]:jjm.in$years[2],
@@ -652,10 +652,10 @@
     
     res = cbind(res, jjm.in$Fnames[iFleet])
     
-    if(iFleet == seq_along(.an(ageFleets))[1])
+    if(iFleet == .an(ageFleets)[1])
       tot = res
     
-    if(iFleet != seq_along(.an(ageFleets))[1])
+    if(iFleet != .an(ageFleets)[1])
       tot = rbind(tot,res)
   }
   
@@ -669,7 +669,7 @@
 
 .input_ageFleetsPlotsFUN = function(jjm.in, ages, cols, ageFleets, ...)
 {
-  for(iFleet in seq_along(.an(ageFleets))){
+  for(iFleet in .an(ageFleets)){
     res = .createDataFrame(sweep(jjm.in$Fagecomp[,,iFleet], 1,
                                   apply(jjm.in$Fagecomp[,,iFleet], 1, sum, na.rm = TRUE), "/"),
                             jjm.in$years[1]:jjm.in$years[2],
@@ -677,10 +677,10 @@
     
     res = cbind(res, jjm.in$Fnames[iFleet])
     
-    if(iFleet == seq_along(.an(ageFleets))[1])
+    if(iFleet == .an(ageFleets)[1])
       tot = res
     
-    if(iFleet != seq_along(.an(ageFleets))[1])
+    if(iFleet != .an(ageFleets)[1])
       tot = rbind(tot,res)
   }
   
@@ -909,9 +909,10 @@
       subset(res, fleet == jjm.out$Fshry_names[iFleet - 1])$catch
   }
   
+  legend.text = factor(jjm.out$Fshry_names, levels = jjm.out$Fshry_names)
   pic = xyplot(catch ~ year, data = res, groups = fleet,
                 type = "l",
-                auto.key = list(space = "right", points = FALSE, lines = FALSE, col = 1:Nfleets),
+                auto.key = list(space = "right", text = levels(legend.text), points = FALSE, lines = FALSE, col = rev(1:Nfleets)),
                 panel = function(...){
                   lst = list(...)
                   idx = mapply(seq,
@@ -1003,14 +1004,14 @@
   pobs_fsh = grep(pattern = "pobs_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   phat_fsh = grep(pattern = "phat_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   
-  for(iFleet in seq_along(.an(ageFleets))) {
-    obs = .createDataFrame(jjm.out[[pobs_fsh[iFleet]]][,-1],
-                           jjm.out[[pobs_fsh[iFleet]]][,1], ages)
-    mod = .createDataFrame(jjm.out[[phat_fsh[iFleet]]][,-1],
-                           jjm.out[[phat_fsh[iFleet]]][,1], ages)
+  for(iFleet in .an(ageFleets)) {
+    obs = .createDataFrame(jjm.out[[pobs_fsh[grep(pattern = iFleet, pobs_fsh)]]][,-1],
+                           jjm.out[[pobs_fsh[grep(pattern = iFleet, pobs_fsh)]]][,1], ages)
+    mod = .createDataFrame(jjm.out[[phat_fsh[grep(pattern = iFleet, phat_fsh)]]][,-1],
+                           jjm.out[[phat_fsh[grep(pattern = iFleet, phat_fsh)]]][,1], ages)
     
-    if(iFleet == seq_along(.an(ageFleets))[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet, 1], nrow(obs)))
-    if(iFleet != seq_along(.an(ageFleets))[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
+    if(iFleet == .an(ageFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet, 1], nrow(obs)))
+    if(iFleet != .an(ageFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
   }
   
   colnames(tot)   = c("year","obs","age","model","fleet")
@@ -1037,19 +1038,19 @@
   pobs_len_fsh = grep(pattern = "pobs_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   phat_len_fsh = grep(pattern = "phat_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   
-  for(iFleet in seq_along(.an(lgtFleets))) {
-    obs = .createDataFrame(jjm.out[[pobs_len_fsh[iFleet]]][,-1],
-                           jjm.out[[pobs_len_fsh[iFleet]]][,1], lengths)
-    mod = .createDataFrame(jjm.out[[phat_len_fsh[iFleet]]][,-1],
-                           jjm.out[[phat_len_fsh[iFleet]]][,1], lengths)
+  for(iFleet in .an(lgtFleets)) {
+    obs = .createDataFrame(jjm.out[[pobs_len_fsh[grep(pattern = iFleet, pobs_len_fsh)]]][,-1],
+                           jjm.out[[pobs_len_fsh[grep(pattern = iFleet, pobs_len_fsh)]]][,1], lengths)
+    mod = .createDataFrame(jjm.out[[phat_len_fsh[grep(pattern = iFleet, phat_len_fsh)]]][,-1],
+                           jjm.out[[phat_len_fsh[grep(pattern = iFleet, phat_len_fsh)]]][,1], lengths)
     
     if(Nfleets == 1){
-      if(iFleet == seq_along(.an(lgtFleets))[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs)))
-      if(iFleet != seq_along(.an(lgtFleets))[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs))))
+      if(iFleet == .an(lgtFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs)))
+      if(iFleet != .an(lgtFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs))))
     }
     if(Nfleets != 1){
-      if(iFleet == seq_along(.an(lgtFleets))[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs)))
-      if(iFleet != seq_along(.an(lgtFleets))[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
+      if(iFleet == .an(lgtFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs)))
+      if(iFleet != .an(lgtFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
     }
   }
   colnames(tot)   = c("year", "obs", "length", "model", "fleet")
@@ -1076,18 +1077,18 @@
   pobs_fsh = grep(pattern = "pobs_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   phat_fsh = grep(pattern = "phat_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   
-  for(iFleet in seq_along(.an(ageFleets))){
+  for(iFleet in .an(ageFleets)){
 #     obs = .createDataFrame(jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,-1],
 #                             jjm.out[[paste("pobs_fsh_", iFleet, sep = "")]][,1], ages)
 #     mod = .createDataFrame(jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,-1],
 #                             jjm.out[[paste("phat_fsh_", iFleet, sep = "")]][,1], ages)
 
-    obs = .createDataFrame(jjm.out[[pobs_fsh[iFleet]]][,-1],
-                           jjm.out[[pobs_fsh[iFleet]]][,1], ages)
-    mod = .createDataFrame(jjm.out[[phat_fsh[iFleet]]][,-1],
-                           jjm.out[[phat_fsh[iFleet]]][,1], ages)
+    obs = .createDataFrame(jjm.out[[pobs_fsh[grep(pattern = iFleet, pobs_fsh)]]][,-1],
+                           jjm.out[[pobs_fsh[grep(pattern = iFleet, pobs_fsh)]]][,1], ages)
+    mod = .createDataFrame(jjm.out[[phat_fsh[grep(pattern = iFleet, phat_fsh)]]][,-1],
+                           jjm.out[[phat_fsh[grep(pattern = iFleet, phat_fsh)]]][,1], ages)
     
-    if(iFleet == seq_along(.an(ageFleets))[1]) {
+    if(iFleet == .an(ageFleets)[1]) {
       x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
       colnames(x) = c("year", "data", "age", "class", "fleet")
       
@@ -1097,7 +1098,7 @@
       tot = rbind(x,y)
     }
     
-    if(iFleet != seq_along(.an(ageFleets))[1]){
+    if(iFleet != .an(ageFleets)[1]){
       x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
       colnames(x) = c("year", "data", "age", "class", "fleet")
       
@@ -1122,7 +1123,7 @@
   
   cols  = rainbow(length(ages))
   ageFitsCatch = list()
-  for(iFleet in c(jjm.out$Fshry_names)[seq_along(.an(ageFleets))]){
+  for(iFleet in c(jjm.out$Fshry_names)[.an(ageFleets)]){
     tmpres  = subset(res, fleet == iFleet)
     tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] = 0
     
@@ -1154,18 +1155,18 @@
   pobs_len_fsh = grep(pattern = "pobs_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   phat_len_fsh = grep(pattern = "phat_len_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   
-  for(iFleet in seq_along(.an(lgtFleets))){
+  for(iFleet in .an(lgtFleets)){
 #     obs = .createDataFrame(jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,-1],
 #                             jjm.out[[paste("pobs_len_fsh_", iFleet, sep = "")]][,1], lengths)
 #     mod = .createDataFrame(jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,-1],
 #                             jjm.out[[paste("phat_len_fsh_", iFleet, sep = "")]][,1], lengths)
     
-    obs = .createDataFrame(jjm.out[[pobs_len_fsh[iFleet]]][,-1],
-                           jjm.out[[pobs_len_fsh[iFleet]]][,1], lengths)
-    mod = .createDataFrame(jjm.out[[phat_len_fsh[iFleet]]][,-1],
-                           jjm.out[[phat_len_fsh[iFleet]]][,1], lengths)
+    obs = .createDataFrame(jjm.out[[pobs_len_fsh[grep(pattern = iFleet, pobs_len_fsh)]]][,-1],
+                           jjm.out[[pobs_len_fsh[grep(pattern = iFleet, pobs_len_fsh)]]][,1], lengths)
+    mod = .createDataFrame(jjm.out[[phat_len_fsh[grep(pattern = iFleet, phat_len_fsh)]]][,-1],
+                           jjm.out[[phat_len_fsh[grep(pattern = iFleet, phat_len_fsh)]]][,1], lengths)
     
-    if(iFleet == seq_along(.an(lgtFleets))[1]) {
+    if(iFleet == .an(lgtFleets)[1]) {
       x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
       colnames(x) = c("year", "data", "length", "class", "fleet")
       
@@ -1175,7 +1176,7 @@
       tot = rbind(x, y)
     }
     
-    if(iFleet != seq_along(.an(lgtFleets))[1]){
+    if(iFleet != .an(lgtFleets)[1]){
       x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Fshry_names[iFleet])
       colnames(x) = c("year", "data", "length", "class", "fleet")
       
@@ -1200,7 +1201,7 @@
   
   cols  = rainbow(length(lengths))
   lengthFitsCatch = list()
-  for(iFleet in c(jjm.out$Fshry_names)[seq_along(.an(lgtFleets))]){
+  for(iFleet in c(jjm.out$Fshry_names)[.an(lgtFleets)]){
     tmpres  = subset(res, fleet == iFleet)
     pic = xyplot(data ~ length | factor(year), data = tmpres,
                   groups = class,
@@ -1342,11 +1343,11 @@
   pobs_ind = grep(pattern = "pobs_ind_[0-9]*", x = names(jjm.out), value=TRUE)
   phat_ind = grep(pattern = "phat_ind_[0-9]*", x = names(jjm.out), value=TRUE)
   
-  for(iSurvey in seq_along(.an(ageSurveys))) {
-    obs = .createDataFrame(jjm.out[[pobs_ind[iSurvey]]][,-1],
-                           jjm.out[[pobs_ind[iSurvey]]][,1], ages)
-    mod = .createDataFrame(jjm.out[[phat_ind[iSurvey]]][,-1], 
-                           jjm.out[[phat_ind[iSurvey]]][,1], ages)
+  for(iSurvey in .an(ageSurveys)) {
+    obs = .createDataFrame(jjm.out[[pobs_ind[grep(pattern = iSurvey, pobs_ind)]]][,-1],
+                           jjm.out[[pobs_ind[grep(pattern = iSurvey, pobs_ind)]]][,1], ages)
+    mod = .createDataFrame(jjm.out[[phat_ind[grep(pattern = iSurvey, phat_ind)]]][,-1], 
+                           jjm.out[[phat_ind[grep(pattern = iSurvey, phat_ind)]]][,1], ages)
     
     if(iSurvey == .an(ageSurveys)[1]){
       x = cbind(obs, rep("obs", nrow(obs)), jjm.out$Index_names[iSurvey])
@@ -1383,7 +1384,7 @@
   
   cols  = rainbow(length(ages))
   ageFitsSurvey = list()
-  for(iSurvey in c(jjm.out$Index_names)[seq_along(.an(ageFleets))]){
+  for(iSurvey in c(jjm.out$Index_names)[.an(ageFleets)]){
     tmpres = subset(res, survey == iSurvey)
     tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] = 0
     
@@ -1624,16 +1625,16 @@
   
   EffN_Fsh = grep(pattern = "EffN_Fsh_[0-9]*", x = names(jjm.out), value = TRUE)
   
-  for(iFleet in seq_along(.an(ageFleets))){
-    res = data.frame(jjm.out[[EffN_Fsh[iFleet]]][,c(1, 4, 5, 7, 8)])
+  for(iFleet in .an(ageFleets)){
+    res = data.frame(jjm.out[[EffN_Fsh[grep(pattern = iFleet, EffN_Fsh)]]][,c(1, 4, 5, 7, 8)])
     colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
     
     for(i in 2:5){
       tot = data.frame(cbind(res[,1], res[,i]))
       tot$class = names(res)[i]
       tot$Fleet = jjm.out$Fshry_names[iFleet]
-      if(iFleet == seq_along(.an(ageFleets))[1] & i == 2) total = tot
-      if(iFleet != seq_along(.an(ageFleets))[1] | i != 2) total = rbind(total, tot)
+      if(iFleet == .an(ageFleets)[1] & i == 2) total = tot
+      if(iFleet != .an(ageFleets)[1] | i != 2) total = rbind(total, tot)
     }
   }
   colnames(total) = c("year", "data", "class", "fleet")
@@ -1670,8 +1671,8 @@
 {
   EffN_Length_Fsh = grep(pattern = "EffN_Length_Fsh_[0-9]*", x = names(jjm.out), value = TRUE)
   
-  for(iFleet in seq_along(.an(lgtFleets))){
-    res = data.frame(jjm.out[[EffN_Length_Fsh]][,c(1, 4, 5, 7, 8)])
+  for(iFleet in .an(lgtFleets)){
+    res = data.frame(jjm.out[[EffN_Length_Fsh[grep(pattern = iFleet, EffN_Length_Fsh)]]][,c(1, 4, 5, 7, 8)])
     colnames(res) = c("Year", "Obs", "Model", "Obs5", "Obs95")
     
     for(i in 2:5){
@@ -1679,8 +1680,8 @@
       tot$class = names(res)[i]
       tot$Fleet = jjm.out$Fshry_names[iFleet]
       
-      if(iFleet == seq_along(.an(lgtFleets))[1] & i == 2) total = tot
-      if(iFleet != seq_along(.an(lgtFleets))[1] | i != 2) total = rbind(total, tot)
+      if(iFleet == .an(lgtFleets)[1] & i == 2) total = tot
+      if(iFleet != .an(lgtFleets)[1] | i != 2) total = rbind(total, tot)
     }
   }
   colnames(total) = c("year", "data", "class", "fleet")
