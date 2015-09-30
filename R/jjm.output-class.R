@@ -106,14 +106,14 @@ print.summary.jjm.output = function(x, ...) {
 
 
 
-plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, total = FALSE,
+plot.jjm.output = function(x, what = "biomass", stack = TRUE, endvalue = FALSE, total = FALSE, combine = FALSE,
                            cols = NULL, poslegend = "right", scen = 1, ...){
   
-    switch(what, biomass     = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
-               recruitment   = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
-               ssb           = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
-               noFishTB      = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
-               ftot          = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, ...),
+    switch(what, biomass     = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, combine, ...),
+               recruitment   = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, combine, ...),
+               ssb           = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, combine, ...),
+               noFishTB      = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, combine, ...),
+               ftot          = .funPlotSeries(x, what, cols, stack, endvalue, poslegend, total, combine, ...),
                kobe          = .funPlotKobe(x, what, cols, stack, endvalue, poslegend, ...),
                catchProj     = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),
                ssbProj       = .funPlotProj(x, what, cols, stack, endvalue, poslegend, ...),

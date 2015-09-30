@@ -70,6 +70,7 @@ runJJM.default = function(models, path=NULL, output="results", input=NULL,
     
     res = NULL
     for(i in seq_along(models)) {
+      setwd(base)
       rtime = .runJJM(model=models[i], output=output, input=input, exec=exec, 
                       useGuess=useGuess, guess=guess[i], iprint=iprint, 
                       wait=wait, temp=temp, ...)
@@ -83,7 +84,7 @@ runJJM.default = function(models, path=NULL, output="results", input=NULL,
     tempDir = tempdir()
     res = foreach(i=seq_along(models), .combine=c) %dopar% {
       setwd(base)
-      .runJJM(model=models[i], output=output, exec=exec, useGuess=useGuess, 
+      .runJJM(model=models[i], output=output, input=input, exec=exec, useGuess=useGuess, 
               guess=guess[i], iprint=iprint, wait=wait, temp=temp, ...)  
     }  
     

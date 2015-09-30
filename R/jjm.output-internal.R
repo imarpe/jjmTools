@@ -442,7 +442,7 @@
 
 }
 
-.funPlotSeries = function(x, what, cols, stack, endvalue, poslegend, total, ...){
+.funPlotSeries = function(x, what, cols, stack, endvalue, poslegend, total, combine, ...){
   
   dataShape = .reshapeJJM(x, what = what, total = total)
   if(is.null(cols)) cols = rep(trellis.par.get("superpose.symbol")$col, 2)
@@ -455,43 +455,94 @@
     listStocks = x[[i]]$output 
   }
   
-  if(stack == !TRUE){
-    pic = xyplot(mean ~ year | model, data = dataShape, groups = stocks, ylab = "", 
-                 ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
-                 xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
-                 scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
-                 key = list(lines = list(col = cols[1:length(names(listStocks))], lwd = 3),
-                            text = list(names(listStocks))
-                            , ...),                
-                 par.settings = mtheme,
-                 upper = dataShape$upper, lower = dataShape$lower,
-                 panel = function(x, y, ...){
-                   panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                   panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
-                   if(endvalue){
-                     ltext(x = x[dataShape$year == max(dataShape$year)], 
-                           y = y[dataShape$year == max(dataShape$year)], 
-                           labels = round(y[dataShape$year == max(dataShape$year)],0), 
-                           pos = 3, offset = 1, cex = 0.9,
-                           font = 2, adj = 0)
+  if(combine == !TRUE){
+    if(stack == !TRUE){
+      pic = xyplot(mean ~ year | model, data = dataShape, groups = stocks, ylab = "", 
+                   ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
+                   xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
+                   scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
+                   key = list(lines = list(col = cols[1:length(names(listStocks))], lwd = 3),
+                              text = list(names(listStocks))
+                              , ...),                
+                   par.settings = mtheme,
+                   upper = dataShape$upper, lower = dataShape$lower,
+                   panel = function(x, y, ...){
+                     panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                     panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
+                     if(endvalue){
+                       ltext(x = x[dataShape$year == max(dataShape$year)], 
+                             y = y[dataShape$year == max(dataShape$year)], 
+                             labels = round(y[dataShape$year == max(dataShape$year)],0), 
+                             pos = 3, offset = 1, cex = 0.9,
+                             font = 2, adj = 0)
+                     }
                    }
-                 }
-                 , ...)
-  } else {pic = xyplot(mean ~ year | stocks + model, data = dataShape, groups = stocks, ylab = "",
-                       #ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
-                       #xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
-                       scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
-                       upper = dataShape$upper, lower = dataShape$lower,
-                       panel = function(x, y, ...){
-                         panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
-                         panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
-                         if(endvalue){
-                           ltext(x = rev(x)[1], y = rev(y)[1], 
-                                 labels = round(rev(y)[1],0), pos=3, offset=1, cex=0.9,
-                                 font = 2, adj = 0)
-                         }
-                       }, ...)
+                   , ...)
+    } else {pic = xyplot(mean ~ year | stocks + model, data = dataShape, groups = stocks, ylab = "",
+                         #ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
+                         #xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
+                         scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
+                         upper = dataShape$upper, lower = dataShape$lower,
+                         panel = function(x, y, ...){
+                           panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                           panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
+                           if(endvalue){
+                             ltext(x = rev(x)[1], y = rev(y)[1], 
+                                   labels = round(rev(y)[1],0), pos=3, offset=1, cex=0.9,
+                                   font = 2, adj = 0)
+                           }
+                         }, ...)
+    }
+    
+  } else {
+    
+    dataShape$combine=""
+    dataShape$listStocks=paste(dataShape$model,dataShape$stocks)
+    
+    if(stack == !TRUE){
+      pic = xyplot(mean ~ year | combine, data = dataShape, groups = listStocks, ylab = "", 
+                   ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
+                   xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
+                   scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
+                   key = list(lines = list(col = cols[1:length(unique(dataShape$listStocks))], lwd = 3),
+                              text = list(unique(dataShape$listStocks))
+                              , ...),                
+                   par.settings = mtheme,
+                   upper = dataShape$upper, lower = dataShape$lower,
+                   panel = function(x, y, ...){
+                     panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                     panel.xyplot(x, y, type ='l', cex = 0.6, lty = 1, lwd = 2, ...)
+                     if(endvalue){
+                       ltext(x = x[dataShape$year == max(dataShape$year)], 
+                             y = y[dataShape$year == max(dataShape$year)], 
+                             labels = round(y[dataShape$year == max(dataShape$year)],0), 
+                             pos = 3, offset = 1, cex = 0.9,
+                             font = 2, adj = 0)
+                     }
+                   }
+                   , ...)
+      
+    } else {
+      
+      pic = xyplot(mean ~ year | listStocks, data = dataShape, groups = listStocks, ylab = "",
+                   #ylim = c(0.8*min(dataShape$lower), 1.1*max(dataShape$upper)),
+                   #xlim = c(min(dataShape$year - 1), max(dataShape$year + 1)),
+                   scales = list(alternating = 1, tck = c(1, 0), y = list(relation = "free", rot = 0)),
+                   upper = dataShape$upper, lower = dataShape$lower,
+                   panel = function(x, y, ...){
+                     panel.superpose(x, y, panel.groups = .my.panel.bands, type = 'l', ...)
+                     panel.xyplot(x, y, type = 'l', cex = 0.6, lty = 1, lwd = 2, ...)
+                     if(endvalue){
+                       ltext(x = rev(x)[1], y = rev(y)[1], 
+                             labels = round(rev(y)[1],0), pos=3, offset=1, cex=0.9,
+                             font = 2, adj = 0)
+                     }
+                   }, ...)
+      
+    }
+
   }
+  
   
   return(pic)
   
