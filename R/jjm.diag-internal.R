@@ -131,6 +131,92 @@
   ages      = jjm.in$ages[1]:jjm.in$ages[2]
   lengths   = jjm.in$lengths[1]:jjm.in$lengths[2]
   
+  if(jjm.info$nStock > 1)	{ #attr(toJjm.in, "version")
+    
+    Fleets    = jjm.out$Fshry_names
+    idxFleets = unlist(strsplit(names(jjm.out)[grep("sel_fsh_", names(jjm.out))], split = "_"))
+    idxFleets = idxFleets[seq(3, length(idxFleets), 3)]
+    idxSurveys= unlist(strsplit(names(jjm.out)[grep("sel_ind_", names(jjm.out))], split = "_"))
+    idxSurveys= idxSurveys[seq(3, length(idxSurveys), 3)]
+    
+    # jjm.out
+    SrvVarName = c("q_", "Obs_Survey_", "Index_Q_", "pobs_ind_", "pobs_len_ind_",
+                   "phat_ind_", "phat_len_ind_", "sdnr_age_ind_",
+                   "sdnr_length_ind_", "sel_ind_", "Survey_Index_", "Age_Survey_",
+                   "Sel_Survey_", "Q_Survey_", "Q_power_Survey_", "wt_ind_",
+                   "EffN_Survey_")
+    FshVarName = c("F_age_", "pobs_fsh_", "pobs_len_fsh_", "phat_fsh_", "phat_len_fsh_", "sdnr_age_fsh_",
+                   "Obs_catch_", "Pred_catch_", "F_fsh_", "sel_fsh_", "Sel_Fshry_",
+                   "EffN_Fsh_", "EffN_Length_Fsh_", "C_fsh_", "wt_fsh_")
+    for(iSrvVarName in SrvVarName) {
+      for(idx in seq_along(idxSurveys)) {
+        if(!is.null(jjm.out[[paste0(iSrvVarName, idxSurveys[idx])]])) {
+          jjm.temp = jjm.out[[paste0(iSrvVarName, idxSurveys[idx])]]
+          jjm.out[[paste0(iSrvVarName, idxSurveys[idx])]] = NULL
+          jjm.out[[paste0(iSrvVarName, idx)]] = jjm.temp
+        }
+      }
+    }
+    for(iFshVarName in FshVarName) {
+      for(idx in seq_along(idxFleets)) {
+        if(!is.null(jjm.out[[paste0(iFshVarName, idxFleets[idx])]])) {
+          jjm.temp = jjm.out[[paste0(iFshVarName, idxFleets[idx])]]
+          jjm.out[[paste0(iFshVarName, idxFleets[idx])]] = NULL
+          jjm.out[[paste0(iFshVarName, idx)]] = jjm.temp
+        }
+      }
+    }
+    idxStk = unlist(strsplit(names(jjm.out)[grep("P_age2len_", names(jjm.out))], split = "_"))
+    idxStk = idxStk[seq(3, length(idxStk), 3)]
+    if(as.numeric(idxStk) >  1) {
+      jjm.temp = jjm.out[[paste0("P_age2len_", idxStk)]]
+      jjm.out[[paste0("P_age2len_", idxStk)]] = NULL
+      jjm.out[["P_age2len_1"]] = jjm.temp
+    }
+    idxStk = unlist(strsplit(names(jjm.out)[grep("^age2len_", names(jjm.out))], split = "_"))
+    idxStk = idxStk[seq(2, length(idxStk), 2)]
+    if(as.numeric(idxStk) >  1) {
+      jjm.temp = jjm.out[[paste0("age2len_", idxStk)]]
+      jjm.out[[paste0("age2len_", idxStk)]] = NULL
+      jjm.out[["age2len_1"]] = jjm.temp
+    }
+    
+    # jjm.in
+    idxF = .an(idxFleets)  
+    idxS = .an(idxSurveys)
+    jjm.in[["Fnum"]] = Nfleets
+    jjm.in[["Fnames"]] = jjm.in[["Fnames"]][idxF]
+    DatName = c("Fcaton", "Fcatonerr", "FnumyearsA", "FnumyearsL", "Fageyears",
+                "Flengthyears", "Fagesample", "Flengthsample")
+    for(iDatName in DatName) {
+      jjm.in[[iDatName]] = jjm.in[[iDatName]][,idxF]
+      if(is.null(dim(jjm.in[[iDatName]])))
+        dim(jjm.in[[iDatName]]) = c(length(jjm.in[[iDatName]]), 1)
+    }
+    DatName = c("Fagecomp", "Flengthcomp", "Fwtatage")
+    for(iDatName in DatName) {
+      jjm.in[[iDatName]] = jjm.in[[iDatName]][,,idxF]
+      if(length(dim(jjm.in[[iDatName]])) < 3)
+        dim(jjm.in[[iDatName]]) = c(dim(jjm.in[[iDatName]]), 1)
+    }
+    jjm.in[["Inum"]] = Nsurveys
+    jjm.in[["Inames"]] = jjm.in[["Inames"]][idxS]
+    DatName = c("Inumyears", "Iyears", "Imonths", "Index", "Indexerr",
+                "Inumageyears", "Inumlengthyears", "Iyearslength",
+                "Iyearsage", "Iagesample", "Ilengthsample")
+    for(iDatName in DatName) {
+      jjm.in[[iDatName]] = jjm.in[[iDatName]][,idxS]
+      if(is.null(dim(jjm.in[[iDatName]])))
+        dim(jjm.in[[iDatName]]) = c(length(jjm.in[[iDatName]]), 1)
+    }
+    DatName = c("Ipropage", "Iproplength", "Iwtatage")
+    for(iDatName in DatName) {
+      jjm.in[[iDatName]] = jjm.in[[iDatName]][,,idxS]
+      if(length(dim(jjm.in[[iDatName]])) < 3)
+        dim(jjm.in[[iDatName]]) = c(dim(jjm.in[[iDatName]]), 1)
+    }
+  }
+  
   #- Get the age-structured fleets and length-structured fleets out
   if(length(grep("pobs_fsh_", names(jjm.out))) > 0){
     ageFleets = unlist(strsplit(names(jjm.out)[grep("pobs_fsh_", names(jjm.out))], split = "_"))
@@ -275,7 +361,7 @@
   
   # 12a: Proportions catch by age modelled and observed
   if(.an(ageFleets)[1] != 0){        
-    outPlots$residualsCatchAtAgeByFleet = .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages,
+    outPlots$residualsCatchAtAgeByFleet = .fit_residualsCatchAtAgeByFleetFUN(ageFleets, jjm.out, ages, Nfleets,
                                                                              xlab = "Years", ylab = "Absolute residual catch", 
                                                                              main = "Absolute residual catch by fleet",
                                                                              scales = list(alternating = 1, tck = c(1, 0)))
@@ -323,7 +409,7 @@
   
   # 15b: Fitted age by year by survey
   if(.an(ageSurveys)[1] != 0){
-    outPlots$ageFitsSurvey = .fit_ageFitsSurveyFUN(ageSurveys, jjm.out, ages, ageFleets,
+    outPlots$ageFitsSurvey = .fit_ageFitsSurveyFUN(ageSurveys, jjm.out, ages,
                                                     xlab = "Age", ylab = "Proportion at age", 
                                                     scales = list(alternating = 3))
   }
@@ -630,7 +716,7 @@
   yrs           = rev(sort(unique(res$year)))[1:10]
   
   pic = barchart(data ~ age | fleet* as.factor(year), data = subset(res, year %in% yrs),
-                 xlim = range(pretty(c(min(res$year), max(res$year)))),
+                 #xlim = range(pretty(c(min(res$year), max(res$year)))),
                  scales = list(rotation = 90, alternating = 3, y = list(axs = "i")), horizontal = FALSE,
                  groups = fleet, strip = FALSE, strip.left = strip.custom(style = 1), reverse.rows = TRUE,
                  panel = function(...){
@@ -999,7 +1085,7 @@
   return(pic)
 }
 
-.fit_residualsCatchAtAgeByFleetFUN = function(ageFleets, jjm.out, ages, ...)
+.fit_residualsCatchAtAgeByFleetFUN = function(ageFleets, jjm.out, ages, Nfleets, ...)
 {
   pobs_fsh = grep(pattern = "pobs_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
   phat_fsh = grep(pattern = "phat_fsh_[0-9]*", x = names(jjm.out), value=TRUE)
@@ -1010,8 +1096,14 @@
     mod = .createDataFrame(jjm.out[[phat_fsh[grep(pattern = iFleet, phat_fsh)]]][,-1],
                            jjm.out[[phat_fsh[grep(pattern = iFleet, phat_fsh)]]][,1], ages)
     
-    if(iFleet == .an(ageFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet, 1], nrow(obs)))
-    if(iFleet != .an(ageFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
+    if(Nfleets == 1){
+      if(iFleet == .an(ageFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs)))
+      if(iFleet != .an(ageFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet], nrow(obs))))
+    }
+    if(Nfleets != 1){
+      if(iFleet == .an(ageFleets)[1]) tot = cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet, 1], nrow(obs)))
+      if(iFleet != .an(ageFleets)[1]) tot = rbind(tot, cbind(obs, mod$data, rep(jjm.out$Fshry_names[iFleet,1], nrow(obs))))
+    }
   }
   
   colnames(tot)   = c("year","obs","age","model","fleet")
@@ -1338,7 +1430,7 @@
   return(pic)
 }
 
-.fit_ageFitsSurveyFUN = function(ageSurveys, jjm.out, ages, ageFleets, ...)
+.fit_ageFitsSurveyFUN = function(ageSurveys, jjm.out, ages, ...)
 {
   pobs_ind = grep(pattern = "pobs_ind_[0-9]*", x = names(jjm.out), value=TRUE)
   phat_ind = grep(pattern = "phat_ind_[0-9]*", x = names(jjm.out), value=TRUE)
@@ -1384,7 +1476,7 @@
   
   cols  = rainbow(length(ages))
   ageFitsSurvey = list()
-  for(iSurvey in c(jjm.out$Index_names)[.an(ageFleets)]){
+  for(iSurvey in c(jjm.out$Index_names)[.an(ageSurveys)]){
     tmpres = subset(res, survey == iSurvey)
     tmpres$data[tmpres$data <= 1e-2 & tmpres$age == 1] = 0
     
